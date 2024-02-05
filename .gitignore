@@ -1,0 +1,19 @@
+# General rules that apply to the whole project
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Client-specific rules
+client/node_modules/
+client/.pnp
+client/pnp.js
+client/coverage/
+client/build/
+client/.DS_Store
+client/.env
+
+# Server-specific rules
+server/venv/
+server/.env
+
