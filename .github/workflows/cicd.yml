@@ -30,8 +30,9 @@ jobs:
             cd /home/ubuntu/nsrentals
             git pull origin dev
             echo "REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}" > ./client/.env
+            sudo systemctl restart nsr.service
             cd client
             npm install
             npm run build
-            sudo systemctl restart nsr.service
+            sudo scp -r build/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/html
             sudo systemctl restart nginx.service

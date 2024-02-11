@@ -15,7 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Nova Scotia Rentals Development in Progress
+          Nova Scotial Rentals - A work in progress by Blackholes
         </a>
       </header>
     </div>
