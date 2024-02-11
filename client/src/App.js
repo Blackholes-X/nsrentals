@@ -1,21 +1,21 @@
-import React from "react";
-import "./App.css";
-// Import the Sample component
-import Sample from "./pages/Sample/Sample"; // Make sure the path matches the location of your Sample.js file
+import logo from './logo.svg';
+import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {/* Render the Sample component as part of the app */}
-        <Sample />
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
         <a
           className="App-link"
-          href="/"
+          href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Developed by Blackholes
+          Learn React
         </a>
       </header>
     </div>
