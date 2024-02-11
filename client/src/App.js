@@ -15,7 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Developed by Blackholes
+          Nova Scotia Rentals Development in Progress
         </a>
       </header>
     </div>

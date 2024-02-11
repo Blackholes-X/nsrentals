@@ -8,7 +8,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 @api.route('/')
 def welcome():
-    return 'Welcome to backend'
+    return 'Welcome to backend by Blackholes'
 
 @api.route('/sample', methods=['GET'])
 def test_message():
