@@ -8,11 +8,11 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 @api.route('/')
 def welcome():
-    return 'Welcome to backend by Blackholes'
+    return 'Welcome to backend'
 
 @api.route('/sample', methods=['GET'])
 def test_message():
-    return 'Message from backend'
+    return 'Message from backend of NSR by Blackholes'
 
 # Register the blueprint with the prefix /api
 app.register_blueprint(api, url_prefix='/api')
