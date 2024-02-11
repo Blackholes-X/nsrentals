@@ -5,11 +5,12 @@ app = Flask(__name__)
 # Allow all origins or specify a specific origin
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-@app.route('/')
+# Update the routes to include the '/api' prefix
+@app.route('/api/')
 def welcome():
     return 'Welcome to backend'
 
-@app.route('/sample', methods=['GET'])
+@app.route('/api/sample', methods=['GET'])
 def test_message():
     return 'Message from backend'
 
