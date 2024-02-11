@@ -18,7 +18,7 @@ function Sample() {
 
   return (
     <div>
-      <h1>Welcome to the Sample Component!</h1>
+      <h1>Development Starts here!</h1>
       <p>This is a simple component called by App.js.</p>
       {/* Display the response from the backend */}
       <p>Response from backend: {message}</p>

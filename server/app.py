@@ -12,7 +12,7 @@ def welcome():
 
 @api.route('/sample', methods=['GET'])
 def test_message():
-    return 'NSR by Blackholes'
+    return 'NSR by @Blackholes'
 
 # Register the blueprint with the prefix /api
 app.register_blueprint(api, url_prefix='/api')
