@@ -34,5 +34,5 @@ jobs:
             cd client
             npm install
             npm run build
-            sudo scp -r build/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/html
+            sudo scp -r build/* /var/www/html
             sudo systemctl restart nginx.service
