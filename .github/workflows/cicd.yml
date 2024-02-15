@@ -31,8 +31,19 @@ jobs:
             git pull origin dev
             echo "REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}" > ./client/.env
             sudo systemctl restart nsr.service
+
+            # Navigate to client directory, build, and deploy
             cd client
             npm install
             npm run build
             sudo scp -r build/* /var/www/html
+
+            # Navigate to server directory, setup venv and install requirements
+            cd ../server
+            if [ ! -d "venv" ]; then
+              python3 -m venv venv
+            fi
+            source venv/bin/activate
+            pip install -r requirements.txt
+
             sudo systemctl restart nginx.service
