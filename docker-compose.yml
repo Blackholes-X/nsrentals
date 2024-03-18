@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./client
+      args:
+        REACT_APP_BACKEND_URL: http://backend:8070
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./server
+    ports:
+      - "8070:8070"
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: nsrentals
+      POSTGRES_USER: blackholes
+      POSTGRES_PORT: "5432"
+      POSTGRES_PASSWORD: "Blackholes@7007"
