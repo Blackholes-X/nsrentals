@@ -1,13 +1,6 @@
 # Use an official Python runtime as a parent image
 FROM python:3.9
 
-# Set environment variables
-ENV POSTGRES_HOST="localhost" \
-    POSTGRES_DB="nsrentals" \
-    POSTGRES_USER="blackholes" \
-    POSTGRES_PORT="5432" \
-    POSTGRES_PASSWORD="Blackholes@7007"
-
 # Set the working directory in the container
 WORKDIR /usr/src/app
 

@@ -1,0 +1,73 @@
+name: CICD for NS Rentals Application
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push-docker-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log into Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build Docker images using docker-compose
+      - name: Build Docker images
+        run: docker-compose build
+        env:
+          REACT_APP_BACKEND_URL: ${{ secrets.REACT_APP_BACKEND_URL }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
+      # Tag and push the frontend Docker image
+      - name: Tag and push frontend Docker image
+        run: |
+          docker tag nsrentals_client:latest ${{ secrets.DOCKER_USERNAME }}/nsrentals_client:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/nsrentals_client:latest
+
+      # Tag and push the backend Docker image
+      - name: Tag and push backend Docker image
+        run: |
+          docker tag nsrentals_server:latest ${{ secrets.DOCKER_USERNAME }}/nsrentals_server:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/nsrentals_server:latest
+
+  deploy-to-aws:
+    runs-on: ubuntu-latest
+    needs: build-and-push-docker-images
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to AWS EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER_NAME }}@${{ secrets.SERVER_IP }} "\
+          cd /home/ubuntu/nsrentals && \
+          git checkout main && \
+          git pull origin main && \
+          docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} && \
+          docker pull ${{ secrets.DOCKER_USERNAME }}/nsrentals_client:latest && \
+          docker pull ${{ secrets.DOCKER_USERNAME }}/nsrentals_server:latest && \
+          docker tag ${{ secrets.DOCKER_USERNAME }}/nsrentals_client:latest nsrentals_client:latest && \
+          docker tag ${{ secrets.DOCKER_USERNAME }}/nsrentals_server:latest nsrentals_server:latest && \
+          docker-compose stop && \
+          docker-compose rm -f client server && \
+          docker-compose up -d && \
+          docker image prune -a -f"
