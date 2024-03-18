@@ -1,0 +1,62 @@
+.dashboard {
+    padding: 40px;
+    background: #f8f9fa; /* Lighter background for a fresher look */
+    min-height: 100vh;
+  }
+  
+  .dashboard h1 {
+    text-align: center;
+    color: #212529; /* Slightly darker color for better contrast */
+    font-family: 'Helvetica Neue', sans-serif, Arial, sans-serif;
+    margin-bottom: 40px;
+    font-weight: 300; /* Lighter font weight for a modern appearance */
+  }
+  
+  .company-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
+    gap: 30px;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .company {
+    background: #ffffff;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column; /* Organize content vertically */
+    justify-content: space-between; /* Distribute space inside the card */
+  }
+  
+  .company h2 {
+    color: #007bff;
+    margin-top: 0;
+    font-family: 'Helvetica Neue', sans-serif, Arial, sans-serif;
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+  
+  .company p {
+    font-size: 16px;
+    color: #495057; /* Darker gray for text */
+    line-height: 1.5;
+    margin: 5px 0;
+  }
+  
+  .company:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+  }
+  
+  /* Adding a footer for visual balance and completeness */
+  .dashboard-footer {
+    text-align: center;
+    padding: 20px;
+    color: #adb5bd; /* Subtle color for footer text */
+    font-size: 14px;
+  }
+  
