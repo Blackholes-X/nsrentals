@@ -1,25 +1,18 @@
 import React from "react";
-import "./App.css";
-// Import the Sample component
-import Sample from "./pages/Sample/Sample"; // Make sure the path matches the location of your Sample.js file
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App() {
+import { Home, Competitors, NoPage } from "./pages";
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        {/* Render the Sample component as part of the app */}
-        <Sample />
-        <a
-          className="App-link"
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Nova Scotial Rentals - A work in progress by Blackholes
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<Home />}></Route>
+        <Route path="/Competitors" element={<Competitors />}></Route>
+        <Route path="*" element={<NoPage />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
