@@ -1,23 +1,29 @@
 version: "3.8"
 
 services:
-  frontend:
+  client:
     build:
       context: ./client
+      dockerfile: Dockerfile
       args:
-        REACT_APP_BACKEND_URL: http://backend:8070
+        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL}
+    image: nsrentals_client:latest
     ports:
       - "80:80"
     depends_on:
       - backend
 
-  backend:
-    build: ./server
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     ports:
       - "8070:8070"
+    image: nsrentals_server:latest
     environment:
-      POSTGRES_HOST: db
-      POSTGRES_DB: nsrentals
-      POSTGRES_USER: blackholes
-      POSTGRES_PORT: "5432"
-      POSTGRES_PASSWORD: "Blackholes@7007"
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
