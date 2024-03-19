@@ -73,6 +73,6 @@ def create_comp_rental_listings_table():
             conn.close()
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
             
-create_comp_rental_listings_table()
+    create_comp_rental_listings_table()

@@ -2,7 +2,7 @@ import pandas as pd
 from typing import List
 from dotenv import load_dotenv
 
-from scrapers import ws_blackbaygrp 
+from scrapers import ws_blackbaygrp , ws_facade
 
 from src import db_utils as DU
 from src import create_tables
@@ -24,6 +24,7 @@ class Scraper:
         # Scraper functions/classes from different modules
         scraper_functions = [
             ws_blackbaygrp.scrape,
+            ws_facade.scrape
         ]
         
         # Collect DataFrames from each scraper

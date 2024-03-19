@@ -15,7 +15,7 @@ def get_unique_listings(text_html_content):
     user_prompt = f"""
     Please analyze the provided HTML content to identify and enumerate the rental options available. Structure your response as a JSON array, where each object represents a distinct rental listing. 
     Ensure each JSON object includes the number of bedrooms, minimum price, maximum price and a description. If a listing specifies only one price, use this value for both the minimum and maximum price fields. 
-    Note that the prices should be numerical values without any currency symbols or text prefixes. 
+    Note that the prices should be numerical values without any currency symbols or text prefixes. If there was no price mentioned keep it -1.
     For instance:
         {{
             "rental_listings": [
@@ -71,7 +71,7 @@ def get_features_from_llm(text_html_content, unique_listings, property_managemen
 
     Attributes for each JSON object include:
     - **listing_name**: The official name of the listing.
-    - **address**: The complete street address.
+    - **address**: The complete street address mentioned in the text_html_content.
     - **property_management_name**: Name of the property management firm; -1 if unavailable.
     - **monthly_rent**: The minimum monthly rent; -1 if unavailable.
     - **bedroom_count**, **bathroom_count**: The count of bedrooms and the count of bathroom, with -1 for unknown bathroom count.
