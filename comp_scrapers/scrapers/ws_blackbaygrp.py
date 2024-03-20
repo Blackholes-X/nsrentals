@@ -2,6 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
 from bs4 import BeautifulSoup
 
 import os
@@ -77,7 +81,14 @@ def scrape() -> pd.DataFrame:
     
     :return: A DataFrame containing all the scraped data.
     """
-    driver = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run Chrome in headless mode (without a GUI).
+    chrome_options.add_argument("--no-sandbox")  # Bypass OS security model; required in some environments.
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems.
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])  # Disable logging (optional).
+
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    # driver = webdriver.Chrome()
     
     try:
         urls = get_listing_urls(driver)

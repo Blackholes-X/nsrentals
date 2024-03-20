@@ -48,5 +48,5 @@ class Scraper:
 if __name__ == "__main__":
     scraper = Scraper()
     combined_data = scraper.call_scrapers()
-    combined_data.to_csv('combined_data.csv')
+    # combined_data.to_csv('combined_data.csv')
     # print(combined_data)
