@@ -2,9 +2,12 @@ import os
 import json
 
 from openai import OpenAI
+from dotenv import load_dotenv
 
 from src import config as C
 
+
+load_dotenv()
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 
