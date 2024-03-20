@@ -62,6 +62,12 @@ jobs:
           cd /home/ubuntu/nsrentals && \
           git checkout main && \
           git pull origin main && \
+          echo 'REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}' > .env && \
+          echo 'POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}' >> .env && \
+          echo 'POSTGRES_DB=${{ secrets.POSTGRES_DB }}' >> .env && \
+          echo 'POSTGRES_USER=${{ secrets.POSTGRES_USER }}' >> .env && \
+          echo 'POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}' >> .env && \
+          echo 'POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}' >> .env && \
           docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} && \
           docker pull ${{ secrets.DOCKER_USERNAME }}/nsrentals_client:latest && \
           docker pull ${{ secrets.DOCKER_USERNAME }}/nsrentals_server:latest && \
