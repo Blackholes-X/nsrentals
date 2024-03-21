@@ -30,6 +30,8 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          JWT_AUTH_SECRET_KEY: ${{ secrets.JWT_AUTH_SECRET_KEY }}
+          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
 
       # Tag and push the frontend Docker image
       - name: Tag and push frontend Docker image
@@ -68,6 +70,8 @@ jobs:
           echo 'POSTGRES_USER=${{ secrets.POSTGRES_USER }}' >> .env && \
           echo 'POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}' >> .env && \
           echo 'POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}' >> .env && \
+          echo 'JWT_AUTH_SECRET_KEY=${{ secrets.JWT_AUTH_SECRET_KEY }}' >> .env && \
+          echo 'JWT_ALGORITHM=${{ secrets.JWT_ALGORITHM }}' >> .env && \
           docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} && \
           docker pull ${{ secrets.DOCKER_USERNAME }}/nsrentals_client:latest && \
           docker pull ${{ secrets.DOCKER_USERNAME }}/nsrentals_server:latest && \
