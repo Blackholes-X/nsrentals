@@ -21,6 +21,7 @@ def get_db_connection():
 
 def save_df_to_comp_rental_listings(df):
     '''Insert DataFrame rows into the comp_rental_listings table.'''
+    load_dotenv()
     conn = None
     try:
         conn = get_db_connection()
@@ -59,6 +60,7 @@ def save_df_to_comp_rental_listings(df):
 
 
 def filter_existing_urls(urls):
+    load_dotenv()
     """Filter out URLs already present in the comp_rental_listings table's source column."""
     filtered_urls = []
     conn = None

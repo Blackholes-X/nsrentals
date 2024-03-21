@@ -12,7 +12,7 @@ import os
 import time
 import json
 import pandas as pd
-from typing import List
+from typing import List 
 
 from src import config as C
 from src import get_from_llm as LLM
