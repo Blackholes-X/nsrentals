@@ -1,6 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
+from pydantic import BaseModel, EmailStr
 
 class Listing(BaseModel):
     id: int
@@ -35,3 +36,13 @@ class CompanyDetails(BaseModel):
     average_price_0_bedroom: Optional[float]
     average_price_1_bedroom: Optional[float]
     average_price_2_bedroom: Optional[float]
+
+
+class UserCredentials(BaseModel):
+    user_email: EmailStr
+    user_name: str
+
+class UserResponse(BaseModel):
+    user_email: EmailStr
+    user_name: str
+    access_token: str

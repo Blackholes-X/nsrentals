@@ -87,3 +87,40 @@ def get_company_details():
         if conn: conn.close()
 
 
+def store_user_and_access_token(email, name, access_token):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # SQL statement for inserting user data
+        insert_sql = """
+        INSERT INTO nsrentalsusers (name, email, access_token, creation_date, modified_date)
+        VALUES (%s, %s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        ON CONFLICT (email) 
+        DO UPDATE SET
+            name = EXCLUDED.name,
+            access_token = EXCLUDED.access_token,
+            modified_date = CURRENT_TIMESTAMP;
+        """
+        
+        # Execute the insert statement
+        cur.execute(insert_sql, (name, email, access_token))
+        
+        # Commit the changes
+        conn.commit()
+        print("User data stored successfully.")
+    
+    except Exception as e:
+        print(f"An error occurred while storing user data: {e}")
+        if conn:
+            conn.rollback()
+    
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+
