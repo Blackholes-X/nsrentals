@@ -18,19 +18,17 @@ def get_db_connection():
 
 
 
-def create_comp_rental_listings_table():
+def create_all_tables():
     conn = None
     cur = None
     try:
         conn = get_db_connection()
         cur = conn.cursor()
 
-        # Execute a query to check if the rental listings table exists
+        ## comp_rental_listings
         cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'comp_rental_listings');")
         exists = cur.fetchone()[0]
-
         if not exists:
-            # Create the rental listings table with additional source, website, and load_datetime columns
             cur.execute("""
                 CREATE TABLE comp_rental_listings (
                     id SERIAL PRIMARY KEY,
@@ -58,10 +56,12 @@ def create_comp_rental_listings_table():
                     load_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                 );
             """)
-            conn.commit()
             print("Table 'comp_rental_listings' created successfully.")
         else:
             print("Table 'comp_rental_listings' already exists.")
+        
+
+        ## hrm_building_listings
         cur.execute("""
                 SELECT EXISTS (
                     SELECT FROM pg_tables 
@@ -70,7 +70,6 @@ def create_comp_rental_listings_table():
                 );
             """)
         exists = cur.fetchone()[0]
-
         if not exists:
             cur.execute("""
                 CREATE TABLE hrm_building_listings (
@@ -79,7 +78,7 @@ def create_comp_rental_listings_table():
                     address TEXT NOT NULL,
                     property_management_name VARCHAR(255) DEFAULT NULL, 
                     permit_value NUMERIC(12, 2),
-                    floors INTEGER CHECK (floors > 0), 
+                    floors INTEGER , 
                     units_or_size VARCHAR(255), 
                     building_type VARCHAR(255) NOT NULL,
                     image TEXT, 
@@ -89,6 +88,12 @@ def create_comp_rental_listings_table():
                     units_or_size VARCHAR(255)
                 );
             """)
+            print("Table 'comp_rental_listings' created successfully.")
+        else:
+            print("Table 'comp_rental_listings' already exists.")
+       
+       
+       ## hrm_buildings_permit 
         cur.execute("""
         SELECT EXISTS (
             SELECT FROM pg_tables 
@@ -97,23 +102,25 @@ def create_comp_rental_listings_table():
               );
         """)
         exists = cur.fetchone()[0]
-
         if not exists:
             cur.execute("""
                 CREATE TABLE hrm_buildings_permit (
                     id SERIAL PRIMARY KEY,
                     civic_address TEXT NOT NULL,
-                    floors INTEGER CHECK (floors > 0),
+                    floors INTEGER,
                     units_or_size VARCHAR(255), 
                     building_type VARCHAR(255) NOT NULL,
                     permit_value NUMERIC(10, 2), 
                     latest_update TIMESTAMP NOT NULL
                 );
             """)
-
-
+            print("Table 'comp_rental_listings' created successfully.")
+        else:
+            print("Table 'comp_rental_listings' already exists.")
+        
+        conn.commit()
     except Exception as e:
-        print(f"An error occurred in create_comp_rental_listings_table: {e}", exc_info=True)
+        print(f"An error occurred in create_all_tables: {e}", exc_info=True)
 
     finally:
         if cur is not None:
@@ -123,5 +130,4 @@ def create_comp_rental_listings_table():
 
 
 if __name__ == "__main__":
-            
-    create_comp_rental_listings_table()
+    create_all_tables()

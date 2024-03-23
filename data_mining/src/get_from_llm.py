@@ -153,3 +153,68 @@ def get_features_from_llm(text_html_content, unique_listings, property_managemen
         print(f"Failed to parse JSON: {e}")
         return None
 
+
+
+def get_scraped_content_hrm_llm(cleaned_data, property_management_name):
+
+    system_prompt = "You are a helpful data mining expert helping to collect rental information from text extracted from scraped content."
+
+    user_prompt = f"""
+    Given the JSON content from {property_management_name} which is a place where all ongoing projects are posted, your task is to extract and format the information into a JSON list. Each object within the list should represent a unique building listing. 
+
+    Attributes for each JSON object include:
+    - **listing_name**: The official name of the building. -1 if unavailable.
+    - **address**: The address mentioned in the description of the json object given. -1 if unavailable.
+    - **property_management_name**: Name of the property management firm given in the description of the json object; -1 if unavailable.
+    - **permit_value**: The cost of the project mentioned in the description of the json object; -1 if unavailable.
+    - **floors**: The number of floors mention in the description of the json object; -1 if unavailable.
+    - **units_or_Size**: The number of units or size mention in the description of the json object; -1 if unavailable.
+    - **building_type**: Whether water is included; 1 if included, 0 if not included else -1.
+    - **image**: URL to the image of the listing in the img_url of the json object given; -1 if unavailable.
+    - **url**: URL to the listing given in the listing_link of the json object given; -1 if unavailable.
+
+    The json object for the ongoing projects: {cleaned_data}
+
+    A sample response looks like this:
+    {{
+        "rental_listings": [
+            {{
+                "listing_name": "The Abraham",
+                "address": "2180 Robie Street, Halifax",
+                "property_management_name": "Commons View Holdings Ltd",
+                "permit_Value": $22.4M,
+                "floors": 9,
+                "units_or_size": 108,
+                "building_type": "Mixed Use",
+                "image": "https://halifaxdevelopments.files.wordpress.com/2023/12/20231230_1443154408972597760767942.jpg?w=1024",
+                "url": "https://halifaxdevelopments.ca/2023/12/30/the-abraham/"
+            }},
+            {{..}}
+        ]
+    }}
+    """
+
+
+
+    response = client.chat.completions.create(
+        model=C.OPENAI_MODEL,
+        response_format={ "type": "json_object" },
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+        )
+
+    # Extract the response content
+    response_content = response.choices[0].message.content
+    # Remove the markdown code block notation and leading/trailing backticks
+    cleaned_response = response_content.replace("```json", "").replace("```", "").strip()
+
+    # Attempt to parse the cleaned response as JSON
+    try:
+        response_json = json.loads(cleaned_response)
+        return response_json
+    except json.JSONDecodeError as e:
+        print(f"Failed to parse JSON: {e}")
+        return None
+
