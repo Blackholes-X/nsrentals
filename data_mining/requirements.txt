@@ -8,3 +8,6 @@ psycopg2-binary==2.9.9
 openai==1.14.1
 webdriver-manager==4.0.1
 tqdm==4.62.0
+bs4==0.0.2
+requests==2.31.0
+lxml==5.1.0

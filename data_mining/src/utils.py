@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup, Comment
 import re
+import requests
+from datetime import datetime
 
 def tag_visible(element):
     if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
@@ -18,3 +20,17 @@ def text_from_html(body):
     cleaned_text = re.sub(r'\n{3,}', '\n\n\n', cleaned_text)
 
     return cleaned_text
+
+
+def get_html_content(site):
+    headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+}
+    content = requests.get(site, headers=headers).text
+    return content
+
+def reorder_dataframe_columns(df, column_order):
+    filtered_column_order = [col for col in column_order if col in df.columns]
+    return df[filtered_column_order]
+def get_today_date_formatted():
+    return datetime.now().strftime('%Y-%m-%d')

@@ -7,7 +7,7 @@ from src import utils as U
 import requests
 from src import get_from_llm as LLM
 import os
-
+from tqdm import tqdm
 
 PROPERTY_MANAGEMENT_FIRM = "FACADE investments - NAhas"
 WEBSITE_URL = C.FACADE_GRP
@@ -84,8 +84,9 @@ def scrape() -> pd.DataFrame:
     """
     
     try:
+        print(f"Scraping Facade")
         urls = DU.filter_existing_urls([WEBSITE_URL])
-        for url in urls:
+        for url in tqdm(urls):
             res=requests.get(url)
 
             # Assuming res.text contains your full HTML

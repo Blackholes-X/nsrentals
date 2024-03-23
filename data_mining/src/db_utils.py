@@ -175,3 +175,39 @@ def url_exists_in_db(url):
     finally:
         if cur: cur.close()
         if conn: conn.close()
+
+
+
+def save_df_to_public_rental_data(df):
+    '''Insert DataFrame rows into the public_rental_data table.'''
+    conn = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        for index, row in df.iterrows():
+            cur.execute("""
+                INSERT INTO public_rental_data (
+                    sitename, source, listing_name, building_name, apartment_number, address,
+                    add_lat, add_long, property_management_name, monthly_rent, property_type,
+                    bedroom_count, bathroom_count, apartment_size, amenities, lease_period
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """, (
+                row['sitename'], row['source'], row['listing_name'], row['building_name'],
+                row['apartment_number'], row['address'], row['add_lat'], row['add_long'],
+                row['property_management_name'], row['monthly_rent'], row['property_type'],
+                row['bedroom_count'], row['bathroom_count'], row['apartment_size'],
+                row['amenities'], row['lease_period']
+            ))
+            conn.commit()
+
+        print("Dataframe successfully saved to public_rental_data table.")
+
+    except Exception as e:
+        print(f"An error occurred while saving dataframe to public_rental_data table: {e}")
+        if conn:
+            conn.rollback()
+
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()

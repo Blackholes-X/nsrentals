@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 import os
 import time
@@ -81,6 +82,7 @@ def scrape() -> pd.DataFrame:
     
     :return: A DataFrame containing all the scraped data.
     """
+    print(f"Scraping Blackbay Group!")
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Run Chrome in headless mode (without a GUI).
     chrome_options.add_argument("--no-sandbox")  # Bypass OS security model; required in some environments.
@@ -97,7 +99,7 @@ def scrape() -> pd.DataFrame:
         urls = DU.filter_existing_urls(urls)
         
         listings_data = []
-        for index, url in enumerate(urls):
+        for url in tqdm(urls):
             try:
                 extracted_relevant_html = extract_listing_relevant_html(url, driver)
                 

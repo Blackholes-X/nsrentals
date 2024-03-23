@@ -5,10 +5,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import pandas as pd
+from tqdm import tqdm
 from typing import List 
 from bs4 import BeautifulSoup
 from src import db_utils as DU
 from src import config as C
+from src import get_from_llm as llm
 
 WEBSITE_URL = C.HRM_BUILDING_LISTING
 PROPERTY_MANAGEMENT_FIRM="Halifax Regional Municiaplity development blog"
@@ -98,6 +100,7 @@ def scrape() -> pd.DataFrame:
     
     :return: A DataFrame containing all the scraped data.
     """
+    print("Scraping HRM Building Scrapers!")
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Run Chrome in headless mode (without a GUI).
     chrome_options.add_argument("--no-sandbox")  # Bypass OS security model; required in some environments.
@@ -113,14 +116,14 @@ def scrape() -> pd.DataFrame:
         
         listings_data = []
         # print('url',urls)
-        for index, url in enumerate(urls):
+        for index, url in tqdm(enumerate(urls)):
             if not DU.url_exists_in_db(url):
                 try:
                     extracted_relevant_html = extract_listing_relevant_html(url, driver)
                     
                     cleaned_content = get_clean_data(extracted_relevant_html)
 
-                    listing_details = get_scraped_content_hrm_llm(cleaned_content,PROPERTY_MANAGEMENT_FIRM)
+                    listing_details = llm.get_scraped_content_hrm_llm(cleaned_content,PROPERTY_MANAGEMENT_FIRM)
                     for listing in listing_details["rental_listings"]:
                         listing["source_name"] = PROPERTY_MANAGEMENT_FIRM
                         listings_data.append(listing)

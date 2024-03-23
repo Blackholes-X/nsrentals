@@ -83,9 +83,7 @@ def create_all_tables():
                     building_type VARCHAR(255) NOT NULL,
                     image TEXT, 
                     url TEXT, 
-                    source_name VARCHAR(255) NOT NULL,
-                    permit_value NUMERIC(12, 2), 
-                    units_or_size VARCHAR(255)
+                    source_name VARCHAR(255) NOT NULL
                 );
             """)
             print("Table 'comp_rental_listings' created successfully.")
@@ -120,7 +118,7 @@ def create_all_tables():
         
         conn.commit()
     except Exception as e:
-        print(f"An error occurred in create_all_tables: {e}", exc_info=True)
+        print(f"An error occurred in create_all_tables: {e}")
 
     finally:
         if cur is not None:

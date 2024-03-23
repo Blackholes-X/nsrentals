@@ -48,13 +48,24 @@ def scrape_main_content(website_url):
 
     # Extract project details
     project_list_items = main_content_cleaned.find_all('li')
-    projects = [item.get_text().split('-') for item in project_list_items]
-
+    projects = [item.get_text().split('–') for item in project_list_items]
+    print(projects[0])
     # Define the column names for the DataFrame
     columns = ['civic_address', 'floors', 'units_or_size', 'building_type', 'permit_value', 'latest_update']
 
-    # Create a DataFrame from the projects list
-    df_projects = pd.DataFrame(projects, columns=columns)
+    # Initialize an empty DataFrame with the specified columns
+    df_projects = pd.DataFrame(columns=columns)
+
+    # Iterate over the projects list and add each project to the DataFrame one by one
+    for project in projects:
+        # print(project)
+        try:
+            # Convert the current project (list) to a DataFrame
+            project_df = pd.DataFrame([project], columns=columns)
+            # Append the project_df to the df_projects DataFrame
+            df_projects = pd.concat([df_projects, project_df], ignore_index=True)
+        except Exception as ex:
+            print(f"Exception for project: {project}")
     return df_projects
 
 def scrape() -> pd.DataFrame:
@@ -64,9 +75,13 @@ def scrape() -> pd.DataFrame:
     :return: A DataFrame containing all the scraped data.
     """
     try:
+        print(f"Scraping HRM!..")
         df_projects = scrape_main_content(WEBSITE_URL)
     except Exception as ex:
         print(f"Exception occurred while scraping: {ex}")
         df_projects = pd.DataFrame()  
     
     return df_projects
+
+df = scrape()
+print(df)
