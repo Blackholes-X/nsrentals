@@ -12,6 +12,7 @@ __pycache__
 .vscode
 *.log
 *.json
+*.csv
 
 # Client-specific rules
 client/node_modules
