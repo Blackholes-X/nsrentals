@@ -46,3 +46,5 @@ class UserResponse(BaseModel):
     user_email: EmailStr
     user_name: str
     access_token: str
+
+

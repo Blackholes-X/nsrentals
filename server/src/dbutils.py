@@ -56,6 +56,63 @@ def get_recent_listings_by_management(property_management_name: str, records_lim
 
 
 
+def get_all_comp_listings(records_limit: int):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # SQL query to select the recent 'n' listings without filtering by property management firm
+        cur.execute("""
+            SELECT * FROM comp_rental_listings
+            ORDER BY load_datetime DESC
+            LIMIT %s
+        """, (records_limit,))
+
+        listings = cur.fetchall()
+        if listings:
+            columns = [desc[0] for desc in cur.description]
+            return [dict(zip(columns, listing)) for listing in listings]
+        else:
+            return []
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+
+def get_listings_by_ids(id1: int, id2: int):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # SQL query to fetch listings by the two given IDs
+        cur.execute("""
+            SELECT * FROM comp_rental_listings
+            WHERE id IN (%s, %s);
+        """, (id1, id2))
+
+        listings = cur.fetchall()
+        if listings:
+            columns = [desc[0] for desc in cur.description]
+            return [dict(zip(columns, listing)) for listing in listings]
+        else:
+            return []
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+
+
+
 def get_company_details():
     conn = None
     cur = None

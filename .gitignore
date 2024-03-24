@@ -12,6 +12,7 @@ __pycache__
 .vscode
 *.log
 *.json
+*.csv
 
 # Client-specific rules
 client/node_modules
@@ -25,3 +26,8 @@ client/.env
 
 # Server-specific rules
 
+venv
+__pycache__
+output.html
+scraped_data.csv
+test*
