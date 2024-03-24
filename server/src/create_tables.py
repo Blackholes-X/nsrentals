@@ -240,10 +240,86 @@ def create_sec_public_rental_data_table():
             conn.close()
 
 
+def create_sec_comp_rental_listings():
+    conn = None
+    cur = None
+    try:
+        # Assuming get_db_connection is a function that returns a connection to your PostgreSQL database
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Execute a query to check if the table exists
+        cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'sec_comp_rental_listings');")
+        exists = cur.fetchone()[0]
+
+        if not exists:
+            # Create the table with the specified columns
+            cur.execute("""
+                CREATE TABLE sec_comp_rental_listings (
+                    id SERIAL PRIMARY KEY,
+                    listing_name VARCHAR(255),
+                    building_name VARCHAR(255),
+                    apartment_number VARCHAR(50),
+                    address VARCHAR(255),
+                    add_lat FLOAT,
+                    add_long FLOAT,
+                    property_management_name VARCHAR(255),
+                    monthly_rent VARCHAR(255),
+                    property_type VARCHAR(255),
+                    bedroom_count VARCHAR(255),
+                    bathroom_count VARCHAR(255),
+                    utility_water INTEGER,
+                    utility_heat INTEGER,
+                    utility_electricity INTEGER,
+                    utility_laundry INTEGER,
+                    utility_wifi INTEGER,
+                    included_appliances TEXT,
+                    parking_availability INTEGER,
+                    parking_rates INTEGER,
+                    parking_slots INTEGER,
+                    parking_distance INTEGER,
+                    parking_restrictions INTEGER,
+                    parking_availability_status INTEGER,
+                    pet_friendly INTEGER,
+                    smoking_allowed INTEGER,
+                    apartment_size VARCHAR(255),
+                    apartment_size_unit INTEGER,
+                    is_furnished INTEGER,
+                    lease_duration VARCHAR(255),
+                    availability_status INTEGER,
+                    dist_hospital FLOAT,
+                    dist_school FLOAT,
+                    dist_restaurant FLOAT,
+                    dist_downtown FLOAT,
+                    dist_busstop FLOAT,
+                    source VARCHAR(255),
+                    website VARCHAR(255),
+                    image TEXT,
+                    description TEXT,
+                    property_image TEXT,
+                    load_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            conn.commit()
+            print("Table 'sec_comp_rental_listings' created successfully.")
+        else:
+            print("Table 'sec_comp_rental_listings' already exists.")
+
+    except Exception as e:
+        print(f"An error occurred in create_sec_comp_rental_listings: {e}", exc_info=True)
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+
 
 # if __name__ == "__main__":
             
 create_comp_rental_listings_table()
+
+create_sec_comp_rental_listings()
 
 create_nsrentalsusers_table()
 

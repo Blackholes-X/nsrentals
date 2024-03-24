@@ -88,3 +88,7 @@ def update_utilities_and_parking(row):
     if 'parking' in row['included_appliances'].lower():
         row['parking_availability'] = 1
     return row
+
+
+
+

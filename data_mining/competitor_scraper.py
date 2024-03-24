@@ -2,7 +2,7 @@ import pandas as pd
 from typing import List
 from dotenv import load_dotenv
 
-from scrapers import ws_blackbaygrp , ws_facade
+from competitor_scrapers import ws_blackbaygrp , ws_facade
 
 from src import db_utils as DU
 from src import create_tables

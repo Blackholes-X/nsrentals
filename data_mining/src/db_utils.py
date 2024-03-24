@@ -287,3 +287,100 @@ def save_df_to_sec_public_rental_data(df):
 
     except Exception as e:
         print(f"An error occurred while saving DataFrame to sec_public_rental_data table: {e}")
+
+
+
+def save_df_to_sec_comp_rental_listings(df):
+    """Insert DataFrame rows into the sec_comp_rental_listings table using SQLAlchemy."""
+    database_uri = get_database_uri()  # Ensure this function returns your database connection string
+
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+
+        # Insert DataFrame into the database in a transaction
+        with engine.begin() as connection:
+            df.to_sql('sec_comp_rental_listings', con=connection, if_exists='append', index=False)
+
+        print("DataFrame successfully saved to sec_comp_rental_listings table.")
+
+    except Exception as e:
+        print(f"An error occurred while saving DataFrame to sec_comp_rental_listings table: {e}")
+
+
+
+
+def read_data_from_comp_rental_listings():
+    '''Fetch all rows from the comp_rental_listings table and return as DataFrame.'''
+    conn = None
+    try:
+        conn = get_db_connection()  # Assuming get_db_connection() is a function that returns a DB connection
+        query = "SELECT * FROM comp_rental_listings"
+        df = pd.read_sql(query, conn)
+        return df
+
+    except Exception as e:
+        print(f"An error occurred while fetching data from comp_rental_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
+    finally:
+        if conn:
+            conn.close()
+
+
+
+def transform_comp_dataframe(df):
+    # Define a dictionary for the new structure
+    column_mapping = {
+        'listing_name': 'listing_name',
+        'building_name': 'listing_name',
+        'apartment_number': -1,
+        'address': 'address',
+        'add_lat': -1.0,
+        'add_long': -1.0,
+        'property_management_name': 'property_management_name',
+        'monthly_rent': 'monthly_rent',
+        'property_type': None,
+        'bedroom_count': 'bedroom_count',
+        'bathroom_count': 'bathroom_count',
+        'utility_water': -1,
+        'utility_heat': -1,
+        'utility_electricity': -1,
+        'utility_laundry': -1,
+        'included_appliances': 'included_appliances',
+        'parking_availability': -1,
+        'parking_rates': -1,
+        'parking_slots': -1,
+        'parking_distance': -1,
+        'parking_restrictions': -1,
+        'parking_availability_status': -1,
+        'pet_friendly': -1,
+        'smoking_allowed': -1,
+        'apartment_size': 'apartment_size',
+        'apartment_size_unit': -1,
+        'is_furnished': -1,
+        'lease_duration': -1,
+        'availability_status': -1,
+        'dist_hospital': -1,
+        'dist_school': -1,
+        'dist_restaurant': -1,
+        'dist_downtown': -1,
+        'dist_busstop': -1,
+        'source': 'source',
+        'website': 'website',
+        'image': 'image',
+        'description': 'description',
+        'load_datetime': 'load_datetime'
+    }
+    
+    # Create a new dataframe with the required structure
+    new_df = pd.DataFrame(columns=column_mapping.keys())
+    
+    # Map existing columns or fill with default values
+    for new_col, mapping in column_mapping.items():
+        if isinstance(mapping, str):  # If the mapping is a column name from the old dataframe
+            new_df[new_col] = df[mapping] if mapping in df.columns else None
+        else:  # If the mapping is a default value
+            new_df[new_col] = mapping
+    
+    return new_df
