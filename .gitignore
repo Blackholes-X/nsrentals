@@ -25,3 +25,8 @@ client/.env
 
 # Server-specific rules
 
+venv
+__pycache__
+output.html
+scraped_data.csv
+test*

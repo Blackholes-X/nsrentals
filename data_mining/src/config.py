@@ -17,6 +17,9 @@ KIJIJI_LINK = "https://www.kijiji.ca/b-real-estate/city-of-halifax/c34l1700321"
 # KIJIJI_LINK = "https://www.kijiji.ca/b-for-rent/city-of-halifax/apartment-for-rent/k0c30349001l1700321"
 RENTSEEKER_LINK = "https://www.rentseeker.ca/rentals/apartments/nova-scotia/halifax"
 
+utilities = ['heat', 'electricity', 'laundry', 'wifi']
+
+
 desired_column_order = [
     "sitename",
     "source",
@@ -41,6 +44,7 @@ apartment_features = [
     "add_lat", "add_long", "property_management_name", "monthly_rent","lease_period",
     "amenities", "apartment_size", "bedroom_count", "bathroom_count", "property_type"
 ]
+
 
 ## HRM Sites
 HRM_PERMIT_TRACKING = 'https://halifaxdevelopments.ca/2024-permit-tracking/'
