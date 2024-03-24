@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import psycopg2
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+import urllib
 
 load_dotenv()
 
@@ -211,3 +213,77 @@ def save_df_to_public_rental_data(df):
     finally:
         if cur: cur.close()
         if conn: conn.close()
+
+
+
+def read_data_from_public_rental_data():
+    '''Fetch all rows from the public_rental_data table and return as DataFrame.'''
+    try:
+        # Create an SQLAlchemy engine just for this operation
+        DATABASE_URI = (
+            f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:" +
+            f"{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:" +
+            f"{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+        )
+        engine = create_engine(DATABASE_URI)
+        
+        query = "SELECT * FROM public_rental_data"
+        df = pd.read_sql(query, engine)
+        
+        return df
+
+    except Exception as e:
+        print(f"An error occurred while fetching data from public_rental_data table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+    
+
+def read_data_from_public_rental_data():
+    """Fetch all rows from the public_rental_data table and return as DataFrame."""
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM public_rental_data"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from public_rental_data table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of erro
+    
+
+def get_database_uri():
+    """Generate the database connection URI."""
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    return f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" \
+           f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+
+
+
+def save_df_to_sec_public_rental_data(df):
+    """Insert DataFrame rows into the sec_public_rental_data table using SQLAlchemy."""
+    database_uri = get_database_uri()
+
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+
+        # Insert DataFrame into the database in a transaction
+        with engine.begin() as connection:
+            df.to_sql('sec_public_rental_data', con=connection, if_exists='append', index=False)
+
+        print("DataFrame successfully saved to sec_public_rental_data table.")
+
+    except Exception as e:
+        print(f"An error occurred while saving DataFrame to sec_public_rental_data table: {e}")
