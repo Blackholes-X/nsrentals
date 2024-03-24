@@ -35,11 +35,11 @@ def transform_dataframe(df):
         'is_furnished': -1,
         'lease_duration': 'lease_period',
         'availability_status': -1,
-        'dist_hospital': -1,
-        'dist_school': -1,
-        'dist_restaurant': -1,
-        'dist_downtown': -1,
-        'dist_busstop': -1,
+        'dist_hospital': -1.0,
+        'dist_school': -1.0,
+        'dist_restaurant': -1.0,
+        'dist_downtown': -1.0,
+        'dist_busstop': -1.0,
         'source': 'source',
         'website': 'sitename',
         'image': 'property_management_name',
@@ -88,3 +88,7 @@ def update_utilities_and_parking(row):
     if 'parking' in row['included_appliances'].lower():
         row['parking_availability'] = 1
     return row
+
+
+
+

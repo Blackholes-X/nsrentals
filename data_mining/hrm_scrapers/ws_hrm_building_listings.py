@@ -13,7 +13,7 @@ from src import config as C
 from src import get_from_llm as llm
 
 WEBSITE_URL = C.HRM_BUILDING_LISTING
-PROPERTY_MANAGEMENT_FIRM="Halifax Regional Municiaplity development blog"
+PROPERTY_MANAGEMENT_FIRM="Halifax Regional Municipality development blog"
 
 def get_listing_urls(driver) -> List[str]:
     """

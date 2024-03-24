@@ -2,11 +2,13 @@ from src.config import *
 from src.utils import *
 from src.db_utils import *
 from src.dp_utils import *
+from data_processing import address_utils
+from data_processing import address_utils
 
 
 
 # Assuming transform_dataframe returns a DataFrame ready for processing
-def process():
+def general_post_process():
     df_public_rental_data = read_data_from_public_rental_data()
     trans_df = transform_dataframe(df_public_rental_data)
 
@@ -34,10 +36,22 @@ def process():
 
     # Convert apartment_size to string if keeping VARCHAR in DB
     trans_df['apartment_size'] = trans_df['apartment_size'].astype(str)
-
+    trans_df.drop(columns={'dist_busstop'},inplace=True)
+    address_preprocessor = address_utils.AddressPreprocessor()
+    processed_df = address_preprocessor.get_address_data(trans_df)
     # print(trans_df.dtypes)
+    
+    save_df_to_sec_public_rental_data(processed_df)
 
-    save_df_to_sec_public_rental_data(trans_df)
+
+
+def public_post_process():
+
+    df_comp_data = read_data_from_comp_rental_listings()
+    transform_comp_dataframe_df = transform_comp_dataframe(df_comp_data)
+
+    
+    save_df_to_sec_comp_rental_listings(transform_comp_dataframe_df)
 
 
     
@@ -45,4 +59,5 @@ def process():
 
 
 if __name__ == "__main__":
-    process()
+    general_post_process()
+    public_post_process()
