@@ -99,7 +99,7 @@ class AddressPreprocessor:
             return geodesic(current_coords, downtown_coords).miles
         else:
             # Return the existing distance if conditions are not met
-            return row['dists_downtown']
+            return row['dist_downtown']
 
 
     # main function to get all the address related data
@@ -111,4 +111,7 @@ class AddressPreprocessor:
         downtown_lat,downtown_long = self.get_lat_lng("Downtown Halifax")
         downtown_halifax_coords = (downtown_lat,downtown_long)
         df['dist_downtown'] = df.apply(lambda row: self.calculate_distance(row, downtown_halifax_coords), axis=1)
+        rm_columns = [f'{pt}_lat' for pt in place_types] + [f'{pt}_long' for pt in place_types]
+        df.rename(columns={'dist_bus_stop': 'dist_busstop'},inplace=True)
+        df.drop(columns=rm_columns,inplace=True)
         return df

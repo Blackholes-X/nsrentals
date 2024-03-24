@@ -2,6 +2,8 @@ from src.config import *
 from src.utils import *
 from src.db_utils import *
 from src.dp_utils import *
+from data_processing import address_utils
+from data_processing import address_utils
 
 
 
@@ -34,10 +36,12 @@ def general_post_process():
 
     # Convert apartment_size to string if keeping VARCHAR in DB
     trans_df['apartment_size'] = trans_df['apartment_size'].astype(str)
-
+    trans_df.drop(columns={'dist_busstop'},inplace=True)
+    address_preprocessor = address_utils.AddressPreprocessor()
+    processed_df = address_preprocessor.get_address_data(trans_df)
     # print(trans_df.dtypes)
     
-    save_df_to_sec_public_rental_data(trans_df)
+    save_df_to_sec_public_rental_data(processed_df)
 
 
 
