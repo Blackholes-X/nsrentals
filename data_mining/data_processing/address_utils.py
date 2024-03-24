@@ -2,9 +2,8 @@ import os
 import pandas as pd
 import requests
 from geopy.distance import geodesic
-import json
 
-class DataPreprocessor:
+class AddressPreprocessor:
     def __init__(self, dataframe, api_key_env='GOOGLE_API_KEY'):
         self.df = dataframe
         self.api_key = os.getenv(api_key_env)
@@ -22,7 +21,7 @@ class DataPreprocessor:
 
     def update_lat_lng(self, row):
         lat, lng = self.get_lat_lng(row['address'])
-        return (lat, lng) if lat != -1.0 and lng != -1.0 else (-1.0, -1.0)
+        return (lat, lng) if lat != -1.0 and lng != -1.0 else (None, None)
 
     def find_closest_place(self, lat, lng, place_type, min_rating=None):
         """Find the closest place of a specific type to the given coordinates."""
@@ -56,14 +55,20 @@ class DataPreprocessor:
         for place_type in place_types:
             dist_column = f'dist_{place_type}'
             # Check if the distance column exists and if any value is -1.0, indicating the need for processing.
-            if dist_column not in self.df.columns or self.df[dist_column].eq(-1.0).any():
+            if dist_column not in self.df.columns or self.df[dist_column] is not None:
                 columns = [f'{place_type}_lat', f'{place_type}_lng', dist_column]
                 self.df[columns] = zip(*self.df.apply(lambda row: (-1.0, -1.0, -1.0) if (dist_column in row and row[dist_column] != -1.0)
-                                                    else self.find_closest_place(row['add_lat'], row['add_long'], place_type, min_rating), axis=1))
+                                                    else self.find_closest_place(row['add_lat'], row['add_lng'], place_type, min_rating), axis=1))
 
-
-
-    def preprocess_data(self):
-        self.df[['add_lat', 'add_long']] = self.df.apply(lambda row: self.update_lat_lng(row), axis=1, result_type='expand')
-        self.df = self.df[self.df['add_lat'] != -1.0]  # Filter rows where lat and long are not -1.0
+    def process_data(self):
+    # Ensure 'add_lat' and 'add_lng' columns exist with default values of -1.0
+        if 'add_lat' not in self.df.columns:
+            self.df['add_lat'] = -1.0
+        if 'add_lng' not in self.df.columns:
+            self.df['add_lng'] = -1.0   
+        # Now, update 'add_lat' and 'add_lng' with actual values
+        self.df[['add_lat', 'add_lng']] = self.df.apply(lambda row: self.update_lat_lng(row), axis=1, result_type='expand')
+        
+        
+        # Process place types
         self.process_place_types()

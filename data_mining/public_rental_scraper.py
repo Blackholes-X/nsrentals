@@ -6,7 +6,7 @@ from src.config import *
 from src.utils import *
 from src.db_utils import *
 
-class Scraper():
+class PublicRentalScraper():
     def __init__(self, contents):
         self.contents = contents
         
@@ -53,7 +53,7 @@ class Scraper():
 
 def start_scraping():
     contents_df = pd.DataFrame()
-    scraper = Scraper(contents_df)
+    scraper = PublicRentalScraper(contents_df)
 
     apartments_data_df = scraper.scrape_apartments("Apartments")
     print(f"Length of apartments_data_df: {len(apartments_data_df)}")

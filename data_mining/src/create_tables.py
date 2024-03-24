@@ -74,21 +74,21 @@ def create_all_tables():
             cur.execute("""
                 CREATE TABLE hrm_building_listings (
                     id SERIAL PRIMARY KEY,
-                    listing_name VARCHAR(255) NOT NULL,
-                    address TEXT NOT NULL,
+                    listing_name VARCHAR(255),
+                    address TEXT ,
                     property_management_name VARCHAR(255) DEFAULT NULL, 
-                    permit_value NUMERIC(12, 2),
-                    floors INTEGER , 
+                    permit_value  VARCHAR(255),
+                    floors  VARCHAR(255) , 
                     units_or_size VARCHAR(255), 
-                    building_type VARCHAR(255) NOT NULL,
+                    building_type VARCHAR(255) ,
                     image TEXT, 
                     url TEXT, 
-                    source_name VARCHAR(255) NOT NULL
+                    source_name VARCHAR(255) 
                 );
             """)
-            print("Table 'comp_rental_listings' created successfully.")
+            print("Table 'hrm_building_listings' created successfully.")
         else:
-            print("Table 'comp_rental_listings' already exists.")
+            print("Table 'hrm_building_listings' already exists.")
        
        
        ## hrm_buildings_permit 
@@ -105,20 +105,20 @@ def create_all_tables():
                 CREATE TABLE hrm_buildings_permit (
                     id SERIAL PRIMARY KEY,
                     civic_address TEXT NOT NULL,
-                    floors INTEGER,
+                    floors  VARCHAR(255),
                     units_or_size VARCHAR(255), 
-                    building_type VARCHAR(255) NOT NULL,
-                    permit_value NUMERIC(10, 2), 
-                    latest_update TIMESTAMP NOT NULL
+                    building_type VARCHAR(255) ,
+                    permit_value VARCHAR(255) , 
+                    latest_update  TEXT
                 );
             """)
-            print("Table 'comp_rental_listings' created successfully.")
+            print("Table 'hrm_buildings_permit' created successfully.")
         else:
-            print("Table 'comp_rental_listings' already exists.")
+            print("Table 'hrm_buildings_permit' already exists.")
         
         conn.commit()
     except Exception as e:
-        print(f"An error occurred in create_all_tables: {e}")
+        print(f'An error occurred in create_all_tables: {e}')
 
     finally:
         if cur is not None:
@@ -126,6 +126,7 @@ def create_all_tables():
         if conn is not None:
             conn.close()
 
+load_dotenv()
+create_all_tables()
 
-if __name__ == "__main__":
-    create_all_tables()
+
