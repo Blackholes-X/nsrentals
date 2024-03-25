@@ -214,26 +214,61 @@ def save_df_to_public_rental_data(df):
         if cur: cur.close()
         if conn: conn.close()
 
-
-
-def read_data_from_public_rental_data():
-    '''Fetch all rows from the public_rental_data table and return as DataFrame.'''
+def save_df_to_parking_data(df: pd.DataFrame):
+    
+    '''Insert DataFrame rows into the parking_data table.'''
+    load_dotenv()
+    conn = None
     try:
-        # Create an SQLAlchemy engine just for this operation
-        DATABASE_URI = (
-            f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:" +
-            f"{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:" +
-            f"{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
-        )
-        engine = create_engine(DATABASE_URI)
-        
-        query = "SELECT * FROM public_rental_data"
-        df = pd.read_sql(query, engine)
-        
-        return df
+        conn = get_db_connection()  # Ensure this function returns a valid connection object
+        cur = conn.cursor()
+
+        for index, row in df.iterrows():
+            cur.execute("""
+                INSERT INTO parking_data (
+                    address, lot, price, type, description
+                ) VALUES (%s, %s, %s, %s, %s);
+            """, (
+                row['address'], row['lot'], row['price'], 
+                row['type'], row['description']
+            ))
+            conn.commit()
+
+        print("DataFrame successfully saved to parking_data table.")
 
     except Exception as e:
-        print(f"An error occurred while fetching data from public_rental_data table: {e}")
+        print(f"An error occurred while saving DataFrame to parking_data table: {e}")
+        if conn:
+            conn.rollback()
+
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+
+def read_data_from_sec_parking_data():
+    """Fetch all rows from the sec_parking_data table and return as DataFrame."""
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_parking_data"  # Updated to 'sec_parking_data'
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_parking_data table: {e}")
         return pd.DataFrame()  # Return an empty DataFrame in case of error
     
 
@@ -262,6 +297,31 @@ def read_data_from_public_rental_data():
         print(f"Error fetching data from public_rental_data table: {e}")
         return pd.DataFrame()  # Return an empty DataFrame in case of erro
     
+def read_data_from_parking_data():
+    """Fetch all rows from the parking_data table and return as DataFrame."""
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM parking_data"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from parking_data table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
 
 def get_database_uri():
     """Generate the database connection URI."""
@@ -269,6 +329,22 @@ def get_database_uri():
     return f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" \
            f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
 
+def save_df_to_sec_parking_data(df):
+    """Insert DataFrame rows into the sec_parking_data table using SQLAlchemy."""
+    database_uri = get_database_uri()
+
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+
+        # Insert DataFrame into the database in a transaction
+        with engine.begin() as connection:
+            df.to_sql('sec_parking_data', con=connection, if_exists='append', index=False)
+
+        print("DataFrame successfully saved to sec_parking_data table.")
+
+    except Exception as e:
+        print(f"An error occurred while saving DataFrame to sec_parking_data table: {e}")
 
 
 def save_df_to_sec_public_rental_data(df):

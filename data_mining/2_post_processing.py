@@ -2,7 +2,7 @@ from src.config import *
 from src.utils import *
 from src.db_utils import *
 from src.dp_utils import *
-from data_processing import address_utils
+from data_processing import address_utils, parking_utils
 
 
 
@@ -35,12 +35,21 @@ def general_post_process():
 
     # Convert apartment_size to string if keeping VARCHAR in DB
     trans_df['apartment_size'] = trans_df['apartment_size'].astype(str)
-    trans_df.drop(columns={'dist_busstop','dist_downtown'},inplace=True)
+    trans_df.drop(columns={'dist_busstop','dist_downtown','parking_availability_status'},inplace=True)
+
+    # address data
     address_preprocessor = address_utils.AddressPreprocessor()
     processed_df = address_preprocessor.get_address_data(trans_df)
+
+    # parking data
+    df_sec_parking_data = read_data_from_sec_parking_data()
+    parking_preprocessor = parking_utils.ParkingUtils(df_sec_parking_data)
+    updated_trans_df = parking_preprocessor.update_trans_df_with_nearest_parking(processed_df)
+
+
     # print(trans_df.dtypes)
     
-    save_df_to_sec_public_rental_data(processed_df)
+    save_df_to_sec_public_rental_data(updated_trans_df)
 
 
 
