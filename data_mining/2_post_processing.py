@@ -35,7 +35,7 @@ def general_post_process():
 
     # Convert apartment_size to string if keeping VARCHAR in DB
     trans_df['apartment_size'] = trans_df['apartment_size'].astype(str)
-    trans_df.drop(columns={'dist_busstop','dist_downtown'},inplace=True)
+    trans_df.drop(columns={'dist_busstop','dist_downtown','parking_availability_status'},inplace=True)
 
     # address data
     address_preprocessor = address_utils.AddressPreprocessor()
