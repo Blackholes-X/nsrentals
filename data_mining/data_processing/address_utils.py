@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 class AddressPreprocessor:
     def __init__(self, api_key_env='GOOGLE_API_KEY'):
         self.api_key = os.getenv(api_key_env)
-        print(self.api_key)
         
     def get_lat_lng(self,address):
         """Convert an address to latitude and longitude."""

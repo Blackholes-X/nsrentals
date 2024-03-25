@@ -115,6 +115,56 @@ def create_all_tables():
             print("Table 'hrm_buildings_permit' created successfully.")
         else:
             print("Table 'hrm_buildings_permit' already exists.")
+
+
+        cur.execute("""
+            SELECT EXISTS (
+                SELECT FROM pg_tables 
+                WHERE schemaname = 'public' 
+                AND tablename  = 'parking_data'
+            );
+        """)
+        exists = cur.fetchone()[0]
+        if not exists:
+            cur.execute("""
+                CREATE TABLE parking_data (
+                    id SERIAL PRIMARY KEY,
+                    address VARCHAR(255),
+                    lot INTEGER,
+                    price VARCHAR(50),
+                    type VARCHAR(50),
+                    description TEXT
+                );
+            """)
+            print("Table 'parking_data' created successfully.")
+        else:
+            print("Table 'parking_data' already exists.")
+
+        cur.execute("""
+            SELECT EXISTS (
+                SELECT FROM pg_tables 
+                WHERE schemaname = 'public' 
+                AND tablename  = 'sec_parking_data'
+            );
+        """)
+        exists = cur.fetchone()[0]
+        if not exists:
+            cur.execute("""
+                CREATE TABLE sec_parking_data (
+                    id SERIAL PRIMARY KEY,
+                    address VARCHAR(255),
+                    lot INTEGER,
+                    price FLOAT,
+                    type VARCHAR(50),
+                    description TEXT,
+                    add_lat FLOAT,
+                    add_long FLOAT
+                );
+            """)
+            print("Table 'sec_parking_data' created successfully.")
+        
+        else:
+            print("Table 'sec_parking_data' already exists.")
         
         conn.commit()
     except Exception as e:
