@@ -331,6 +331,12 @@ def get_database_uri():
     return f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" \
            f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
 
+def get_server_database_uri():
+    """Generate the database connection URI."""
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    return f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" \
+           f"@{os.getenv('POSTGRES_SERVER_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+
 def save_df_to_sec_parking_data(df):
     """Insert DataFrame rows into the sec_parking_data table using SQLAlchemy."""
     database_uri = get_database_uri()
