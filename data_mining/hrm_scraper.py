@@ -22,7 +22,7 @@ class HrmScraper:
 
         # Scraper functions/classes from different modules
         scraper_functions = [
-           # ws_hrm_permit_tracking.scrape,
+           ws_hrm_permit_tracking.scrape,
             ws_hrm_building_listings.scrape
         ]
         

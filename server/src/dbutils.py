@@ -126,7 +126,7 @@ def get_company_details():
                ROUND(AVG(CASE WHEN bedroom_count = 0 THEN monthly_rent END), 2) AS average_price_0_bedroom,
                ROUND(AVG(CASE WHEN bedroom_count = 1 THEN monthly_rent END), 2) AS average_price_1_bedroom,
                ROUND(AVG(CASE WHEN bedroom_count = 2 THEN monthly_rent END), 2) AS average_price_2_bedroom
-        FROM comp_rental_listings
+        FROM sec_comp_rental_listings
         GROUP BY property_management_name
         """)
         
