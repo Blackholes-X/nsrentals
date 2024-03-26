@@ -7,8 +7,8 @@ from src.utils import *
 from src.db_utils import *
 
 class PublicRentalScraper():
-    def __init__(self, contents):
-        self.contents = contents
+    def __init__(self):
+        pass
         
     def scrape_apartments(self, site):
         scraped_df = pd.DataFrame()     
@@ -51,46 +51,38 @@ class PublicRentalScraper():
             print(f"Problem with Scraping: {str(ex)}")
             return scraped_df
 
+
 def start_scraping():
-    contents_df = pd.DataFrame()
-    scraper = PublicRentalScraper(contents_df)
+    scraper = PublicRentalScraper()
+    # Define a list to store the names of all scrapers for logging purposes
+    scraper_names = ["Apartments", "FIND_ALL_RENTALS", "HAPPIPAD", "KILLAM", "ZUMPER", "RENTSEEKER", "ZILLOW", "KIJIJI"]
+    all_data_frames = []  # List to hold all individual DataFrames for final combination
 
-    apartments_data_df = scraper.scrape_apartments("Apartments")
-    print(f"Length of apartments_data_df: {len(apartments_data_df)}")
+    for scraper_name in scraper_names:
+        data_df = scraper.scrape_apartments(scraper_name)
+        print(f"Length of {scraper_name} data_df: {len(data_df)}")
+        print(f"Length of {scraper_name} columns: {data_df.columns}")
 
-    find_all_rentals_data_df = scraper.scrape_apartments("FIND_ALL_RENTALS")
-    print(f"Length of find_all_rentals_data_df: {len(find_all_rentals_data_df)}")
-    
-    happipad_data_df = scraper.scrape_apartments("HAPPIPAD")
-    print(f"Length of happipad_data_df: {len(happipad_data_df)}")
-    
-    killam_data_df = scraper.scrape_apartments("KILLAM")
-    print(f"Length of killam_data_df: {len(killam_data_df)}")
-    
-    zumper_data_df = scraper.scrape_apartments("ZUMPER")
-    print(f"Length of zumper_data_df: {len(zumper_data_df)}")
-    
-    zillow_data_df = scraper.scrape_apartments("ZILLOW")
-    print(f"Length of find_all_rentals_data_df: {len(zillow_data_df)}")
+        if not data_df.empty:
+            # Process and save each individual scraped data immediately
+            processed_df = reorder_dataframe_columns(data_df, desired_column_order)
+            save_df_to_public_rental_data(processed_df)
+            # processed_df.to_csv(f"{scraper_name}_data.csv", index=False)
+            print(f"Data from {scraper_name} processed and saved.")
+            all_data_frames.append(processed_df)
+        else:
+            print(f"No data scraped from {scraper_name}.")
 
-    # kijiji_data_df = scraper.scrape_apartments("KIJIJI")
-    # print(f"Length of kijiji_data_df: {len(kijiji_data_df)}")
-
-    rentseeker_df = scraper.scrape_apartments("RENTSEEKER")
-    print(f"Length of rentseeker_df: {len(rentseeker_df)}")
-
-    combined_data_df = pd.concat([apartments_data_df, find_all_rentals_data_df, happipad_data_df, zumper_data_df, killam_data_df, zillow_data_df], ignore_index=True)
-    # combined_data_df = pd.concat([apartments_data_df, find_all_rentals_data_df, happipad_data_df, zumper_data_df, killam_data_df, zillow_data_df, kijiji_data_df], ignore_index=True)
-    ordered_df = reorder_dataframe_columns(combined_data_df, desired_column_order)
-    
-    if not ordered_df.empty:
-        save_df_to_public_rental_data(ordered_df)
-        ordered_df.to_csv("dataset.csv", index=False)
-        print("Scraping completed. Data saved to dataset.csv.")
+    if all_data_frames:
+        # Combine all DataFrames into one if there were any successful scrapes
+        combined_data_df = pd.concat(all_data_frames, ignore_index=True)
+        # combined_data_df.to_csv("dataset.csv", index=False)
+        print("Scraping completed. Combined data saved to dataset.csv.")
     else:
-        print("No data scraped.")
+        print("No data scraped from any sources.")
 
-    return ordered_df
+    return combined_data_df if all_data_frames else pd.DataFrame()
+
 
 if __name__ == "__main__":
     start_scraping()

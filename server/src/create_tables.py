@@ -17,6 +17,27 @@ def get_db_connection():
     return conn
 
 
+def execute_table_creation(table_creation_sql, table_name):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(f"SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = '{table_name}');")
+        exists = cur.fetchone()[0]
+        if not exists:
+            cur.execute(table_creation_sql)
+            conn.commit()
+            print(f"Table '{table_name}' created successfully.")
+        else:
+            print(f"Table '{table_name}' already exists.")
+    except Exception as e:
+        print(f'An error occurred in creating table {table_name}: {e}')
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+
 
 def create_comp_rental_listings_table():
     conn = None
@@ -178,7 +199,7 @@ def create_sec_public_rental_data_table():
         exists = cur.fetchone()[0]
 
         if not exists:
-            # Create the table with the specified columns
+            # Create the table with the specified columns, updating data types to match sec_comp_rental_listings
             cur.execute("""
                 CREATE TABLE sec_public_rental_data (
                     id SERIAL PRIMARY KEY,
@@ -189,10 +210,10 @@ def create_sec_public_rental_data_table():
                     add_lat FLOAT,
                     add_long FLOAT,
                     property_management_name VARCHAR(255),
-                    monthly_rent VARCHAR(255),
+                    monthly_rent INTEGER NOT NULL,  -- Changed from VARCHAR(255) to INTEGER
                     property_type VARCHAR(255),
-                    bedroom_count VARCHAR(255),
-                    bathroom_count VARCHAR(255),
+                    bedroom_count INTEGER NOT NULL,  -- Changed from VARCHAR(255) to INTEGER
+                    bathroom_count INTEGER NOT NULL,  -- Changed from VARCHAR(255) to INTEGER
                     utility_water INTEGER,
                     utility_heat INTEGER,
                     utility_electricity INTEGER,
@@ -200,15 +221,16 @@ def create_sec_public_rental_data_table():
                     utility_wifi INTEGER,
                     included_appliances TEXT,
                     parking_availability INTEGER,
-                    parking_rates INTEGER,
+                    parking_rates INTEGER,  -- Assuming you want to keep consistent with sec_comp_rental_listings changes
                     parking_slots INTEGER,
-                    parking_distance INTEGER,
+                    parking_distance FLOAT,
                     parking_restrictions INTEGER,
                     parking_availability_status INTEGER,
+                    parking_address TEXT,
                     pet_friendly INTEGER,
                     smoking_allowed INTEGER,
-                    apartment_size VARCHAR(255),
-                    apartment_size_unit INTEGER,
+                    apartment_size INTEGER,  -- Consider changing if this stores numerical values
+                    apartment_size_unit VARCHAR(50),
                     is_furnished INTEGER,
                     lease_duration VARCHAR(255),
                     availability_status INTEGER,
@@ -217,6 +239,10 @@ def create_sec_public_rental_data_table():
                     dist_restaurant FLOAT,
                     dist_downtown FLOAT,
                     dist_busstop FLOAT,
+                    dist_larry_uteck_area FLOAT,
+                    dist_central_halifax FLOAT,
+                    dist_clayton_park FLOAT,
+                    dist_rockingham FLOAT, 
                     source VARCHAR(255),
                     website VARCHAR(255),
                     image TEXT,
@@ -240,6 +266,7 @@ def create_sec_public_rental_data_table():
             conn.close()
 
 
+
 def create_sec_comp_rental_listings():
     conn = None
     cur = None
@@ -255,50 +282,50 @@ def create_sec_comp_rental_listings():
         if not exists:
             # Create the table with the specified columns
             cur.execute("""
-                CREATE TABLE sec_comp_rental_listings (
-                    id SERIAL PRIMARY KEY,
-                    listing_name VARCHAR(255),
-                    building_name VARCHAR(255),
-                    apartment_number VARCHAR(50),
-                    address VARCHAR(255),
-                    add_lat FLOAT,
-                    add_long FLOAT,
-                    property_management_name VARCHAR(255),
-                    monthly_rent VARCHAR(255),
-                    property_type VARCHAR(255),
-                    bedroom_count VARCHAR(255),
-                    bathroom_count VARCHAR(255),
-                    utility_water INTEGER,
-                    utility_heat INTEGER,
-                    utility_electricity INTEGER,
-                    utility_laundry INTEGER,
-                    utility_wifi INTEGER,
-                    included_appliances TEXT,
-                    parking_availability INTEGER,
-                    parking_rates INTEGER,
-                    parking_slots INTEGER,
-                    parking_distance INTEGER,
-                    parking_restrictions INTEGER,
-                    parking_availability_status INTEGER,
-                    pet_friendly INTEGER,
-                    smoking_allowed INTEGER,
-                    apartment_size VARCHAR(255),
-                    apartment_size_unit INTEGER,
-                    is_furnished INTEGER,
-                    lease_duration VARCHAR(255),
-                    availability_status INTEGER,
-                    dist_hospital FLOAT,
-                    dist_school FLOAT,
-                    dist_restaurant FLOAT,
-                    dist_downtown FLOAT,
-                    dist_busstop FLOAT,
-                    source VARCHAR(255),
-                    website VARCHAR(255),
-                    image TEXT,
-                    description TEXT,
-                    property_image TEXT,
-                    load_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-                );
+                    CREATE TABLE sec_comp_rental_listings (
+                        id SERIAL PRIMARY KEY,
+                        listing_name VARCHAR(255),
+                        building_name VARCHAR(255),
+                        apartment_number VARCHAR(50),
+                        address VARCHAR(255),
+                        add_lat FLOAT,
+                        add_long FLOAT,
+                        property_management_name VARCHAR(255),
+                        monthly_rent VARCHAR(255),  -- Consider changing this to a numeric type if it stores numerical values
+                        property_type VARCHAR(255),
+                        bedroom_count INTEGER,  -- Changed from VARCHAR(255) to INTEGER
+                        bathroom_count INTEGER,  -- Changed from VARCHAR(255) to INTEGER
+                        utility_water INTEGER,
+                        utility_heat INTEGER,
+                        utility_electricity INTEGER,
+                        utility_laundry INTEGER,
+                        utility_wifi INTEGER,
+                        included_appliances TEXT,
+                        parking_availability INTEGER,
+                        parking_rates INTEGER,
+                        parking_slots INTEGER,
+                        parking_distance INTEGER,
+                        parking_restrictions INTEGER,
+                        parking_availability_status INTEGER,
+                        pet_friendly INTEGER,
+                        smoking_allowed INTEGER,
+                        apartment_size VARCHAR(255),  -- Consider changing if this stores numerical values
+                        apartment_size_unit INTEGER,
+                        is_furnished INTEGER,
+                        lease_duration VARCHAR(255),
+                        availability_status INTEGER,
+                        dist_hospital FLOAT,
+                        dist_school FLOAT,
+                        dist_restaurant FLOAT,
+                        dist_downtown FLOAT,
+                        dist_busstop FLOAT,
+                        source VARCHAR(255),
+                        website VARCHAR(255),
+                        image TEXT,
+                        description TEXT,
+                        property_image TEXT,
+                        load_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    );
             """)
             conn.commit()
             print("Table 'sec_comp_rental_listings' created successfully.")
@@ -314,15 +341,234 @@ def create_sec_comp_rental_listings():
             conn.close()
 
 
+def create_south_west_listings_table():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Make sure this function correctly sets up your database connection
+        cur = conn.cursor()
 
-# if __name__ == "__main__":
-            
+        # Execute a query to check if the south_west_listings table exists
+        cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'south_west_listings');")
+        exists = cur.fetchone()[0]
+
+        if not exists:
+            # Create the south_west_listings table with the same structure as comp_rental_listings
+            cur.execute("""
+                CREATE TABLE south_west_listings (
+                    id SERIAL PRIMARY KEY,
+                    listing_name VARCHAR(255) NOT NULL,
+                    address TEXT NOT NULL,
+                    property_management_name VARCHAR(255) DEFAULT '-1',
+                    monthly_rent INTEGER NOT NULL,
+                    bedroom_count INTEGER NOT NULL,
+                    bathroom_count INTEGER NOT NULL,
+                    utility_water INTEGER NOT NULL,
+                    utility_heat INTEGER NOT NULL,
+                    utility_electricity INTEGER NOT NULL,
+                    wifi_included INTEGER NOT NULL,
+                    utility_laundry INTEGER NOT NULL,
+                    included_appliances text[],
+                    parking_availability INTEGER NOT NULL,
+                    apartment_size INTEGER, 
+                    apartment_size_unit VARCHAR(50), 
+                    is_furnished INTEGER NOT NULL,
+                    availability_status VARCHAR(50) DEFAULT 'Unk',
+                    image TEXT,
+                    description TEXT NOT NULL,
+                    source TEXT,
+                    website TEXT,
+                    load_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            conn.commit()
+            print("Table 'south_west_listings' created successfully.")
+        else:
+            print("Table 'south_west_listings' already exists.")
+
+    except Exception as e:
+        print(f"An error occurred in create_south_west_listings_table: {e}", exc_info=True)
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+
+def create_sec_southwest_listings():
+    conn = None
+    cur = None
+    try:
+        # Assuming get_db_connection is a function that returns a connection to your PostgreSQL database
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Execute a query to check if the sec_southwest_listings table exists
+        cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'sec_southwest_listings');")
+        exists = cur.fetchone()[0]
+
+        if not exists:
+            # Create the sec_southwest_listings table with the specified columns
+            cur.execute("""
+                    CREATE TABLE sec_southwest_listings (
+                        id SERIAL PRIMARY KEY,
+                        listing_name VARCHAR(255),
+                        building_name VARCHAR(255),
+                        apartment_number VARCHAR(50),
+                        address VARCHAR(255),
+                        add_lat FLOAT,
+                        add_long FLOAT,
+                        property_management_name VARCHAR(255),
+                        monthly_rent VARCHAR(255),  -- Consider changing this to a numeric type if it stores numerical values
+                        property_type VARCHAR(255),
+                        bedroom_count INTEGER,  -- Changed from VARCHAR(255) to INTEGER
+                        bathroom_count INTEGER,  -- Changed from VARCHAR(255) to INTEGER
+                        utility_water INTEGER,
+                        utility_heat INTEGER,
+                        utility_electricity INTEGER,
+                        utility_laundry INTEGER,
+                        utility_wifi INTEGER,
+                        included_appliances TEXT,
+                        parking_availability INTEGER,
+                        parking_rates INTEGER,
+                        parking_slots INTEGER,
+                        parking_distance INTEGER,
+                        parking_restrictions INTEGER,
+                        parking_availability_status INTEGER,
+                        pet_friendly INTEGER,
+                        smoking_allowed INTEGER,
+                        apartment_size VARCHAR(255),  -- Consider changing if this stores numerical values
+                        apartment_size_unit INTEGER,
+                        is_furnished INTEGER,
+                        lease_duration VARCHAR(255),
+                        availability_status INTEGER,
+                        dist_hospital FLOAT,
+                        dist_school FLOAT,
+                        dist_restaurant FLOAT,
+                        dist_downtown FLOAT,
+                        dist_busstop FLOAT,
+                        source VARCHAR(255),
+                        website VARCHAR(255),
+                        image TEXT,
+                        description TEXT,
+                        property_image TEXT,
+                        load_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    );
+            """)
+            conn.commit()
+            print("Table 'sec_southwest_listings' created successfully.")
+        else:
+            print("Table 'sec_southwest_listings' already exists.")
+
+    except Exception as e:
+        print(f"An error occurred in create_sec_southwest_listings: {e}", exc_info=True)
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+
+
+
+def create_table_comp_rental_listings():
+    execute_table_creation("""
+        CREATE TABLE comp_rental_listings (
+            id SERIAL PRIMARY KEY,
+            listing_name VARCHAR(255) NOT NULL,
+            address TEXT NOT NULL,
+            property_management_name VARCHAR(255) DEFAULT '-1',
+            monthly_rent INTEGER NOT NULL,
+            bedroom_count INTEGER NOT NULL,
+            bathroom_count INTEGER NOT NULL,
+            utility_water INTEGER NOT NULL,
+            utility_heat INTEGER NOT NULL,
+            utility_electricity INTEGER NOT NULL,
+            wifi_included INTEGER NOT NULL,
+            utility_laundry INTEGER NOT NULL,
+            included_appliances text[],
+            parking_availability INTEGER NOT NULL,
+            apartment_size INTEGER, 
+            apartment_size_unit VARCHAR(50), 
+            is_furnished INTEGER NOT NULL,
+            availability_status VARCHAR(50) DEFAULT 'Unk',
+            image TEXT,
+            description TEXT NOT NULL,
+            source TEXT,
+            website TEXT,
+            load_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+    """, "comp_rental_listings")
+
+def create_table_hrm_building_listings():
+    execute_table_creation("""
+        CREATE TABLE hrm_building_listings (
+            id SERIAL PRIMARY KEY,
+            listing_name VARCHAR(255),
+            address TEXT,
+            property_management_name VARCHAR(255) DEFAULT NULL,
+            permit_value  VARCHAR(255),
+            floors  VARCHAR(255),
+            units_or_size VARCHAR(255),
+            building_type VARCHAR(255),
+            image TEXT,
+            url TEXT,
+            source_name VARCHAR(255)
+        );
+    """, "hrm_building_listings")
+
+def create_table_hrm_buildings_permit():
+    execute_table_creation("""
+        CREATE TABLE hrm_buildings_permit (
+            id SERIAL PRIMARY KEY,
+            civic_address TEXT NOT NULL,
+            floors  VARCHAR(255),
+            units_or_size VARCHAR(255),
+            building_type VARCHAR(255),
+            permit_value VARCHAR(255),
+            latest_update  TEXT
+        );
+    """, "hrm_buildings_permit")
+
+def create_table_parking_data():
+    execute_table_creation("""
+        CREATE TABLE parking_data (
+            id SERIAL PRIMARY KEY,
+            address VARCHAR(255),
+            lot INTEGER,
+            price VARCHAR(50),
+            type VARCHAR(50),
+            description TEXT
+        );
+    """, "parking_data")
+
+def create_table_sec_parking_data():
+    execute_table_creation("""
+        CREATE TABLE sec_parking_data (
+            id SERIAL PRIMARY KEY,
+            address VARCHAR(255),
+            lot INTEGER,
+            price FLOAT,
+            type VARCHAR(50),
+            description TEXT,
+            add_lat FLOAT,
+            add_long FLOAT
+        );
+    """, "sec_parking_data")
+
+
+
+
 create_comp_rental_listings_table()
-
 create_sec_comp_rental_listings()
-
 create_nsrentalsusers_table()
-
 create_public_rental_data_table()
-
 create_sec_public_rental_data_table()
+create_table_comp_rental_listings()
+create_table_hrm_building_listings()
+create_table_hrm_buildings_permit()
+create_table_parking_data()
+create_table_sec_parking_data()
+create_south_west_listings_table()
+create_sec_southwest_listings()

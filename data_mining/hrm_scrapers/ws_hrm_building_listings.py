@@ -4,6 +4,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
 import pandas as pd
 from tqdm import tqdm
 from typing import List 
@@ -94,6 +96,7 @@ def get_clean_data(extracted_relevant_html):
         cleaned_data.append(item_data)
     return cleaned_data
 
+
 def scrape() -> pd.DataFrame:
     """
     Orchestrates the scraping process.
@@ -106,7 +109,9 @@ def scrape() -> pd.DataFrame:
     chrome_options.add_argument("--no-sandbox")  # Bypass OS security model; required in some environments.
     chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems.
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])  # Disable logging (optional).
-    driver = webdriver.Chrome(options=chrome_options)
+    # driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+
     
     try:
         urls = get_listing_urls(driver)
