@@ -2,14 +2,15 @@ civic_address,floors,units_or_size,building_type,permit_value,latest_update
 BEDFORD SQUARE (40 HUNTLEY) (HFX) , 6 Floors , 144 Beds , LTC , $16.9M , BP Issued Feb 12.
 COUNTRY MEADOWS (1531 LUCASVILLE) (HPR) , 3 Floors , ? Units , RES , ? Value , GAP Submitted Feb 28.
 DARTMOUTH TOWERS (20 BEST) (DART) , ? Floors , ? Units , MU , ? Value , BLAS Issued Mar 15.
-"EVENTIDE, THE (1540 CARLTON) (HFX) ", 9 Floors , 55 Units , RES , $22.0M , BLAS Submitted Feb 15.
+"EVENTIDE, THE (1540 CARLTON) (HFX) ", 9 Floors , 55 Units , RES , $22.0M , BLAS Issued Mar 22.
 GEM PRINCETON LTC (2 MARIE) (HFX) , 3 Floors , 128 Beds , LTC , $55.1M , BP Submitted Mar 01.
 LAKESIDE COMMUNITY CENTRE (1492 ST MARGARETS BAY) (LAKE) , 1 Floor , 1’492m2 , REC , $20.1M , BP Submitted Mar 07.
+MACARA PRESIDO (2860 GOTTINGEN STREET) (HFX) , ? Floors , ? Units , MU , ? Value , GAP Issued Mar 21.
 MOFFATT’S PHARMACY II (184 PORTLAND) (DART) , 9 Floors , 175 Units , MU , $28.0M ," BLAS Issued Feb 20, BP Submitted in 2023."
 PORT WEST (3644 DUTCH VILLAGE ROAD) (HFX) , 8 Floors , 74 Units , MU , $12.4M , CRANE Issued Feb 22.
 REGENCY AT SACKVILLE DOWNS III (100 ARKLE) (LSAC) , 7 Floors , 100 Units , RES , $19.5M , GAP Issued Feb 16.
 RICHMOND YARDS RA (6016 ALMON) (HFX) , 7 Floors , 75 Units , MU , $12.2M , BLAS Issued Jan 08.
-SOQU RESIDENCES (6324 QUINPOOL) (HFX) , 8 Floors , ? Units , MU , ? Value , GAP Issued Jan 16.
+SOQU RESIDENCES (6353 PEPPERELL) (HFX) , 8 Floors , 155 Units , MU , $19.3M ," GAP Issued Jan 16, BP Issued Mar 20."
 STONEMOUNT AT LOON LAKE (WEST) , 2x? Floors , 600 Units , LTC , ? Value , DOP Issued Jan 12.
 2254 BARRINGTON STREET (HFX) , 7 Floors , 117 Units , RES , $36.0M , BP Issued Feb 22.
 398 BEAVER BANK ROAD (BEAV) , ? Floors , 76 Units , RES , ? Value , DOP Submitted Feb 14.
@@ -24,13 +25,15 @@ STONEMOUNT AT LOON LAKE (WEST) , 2x? Floors , 600 Units , LTC , ? Value , DOP Is
 6427 NORTH STREET (HFX) , 7 Floors , 73 Units , RES , $17.5M , GAP Issued Feb 28. 
 212 PORTLAND STREET (DART) , ? Floors , ? Units , ? Use , ? Value , DEM submitted for six lots Jan 12.
 344 PRINCE ALBERT ROAD (DART) , 4 Floors , 16 Units , RES , ? Value , DEM Issued Feb 12. BP Submitted in 2023.
-119 PINECREST DRIVE (DART) , 5 Floors , ? Units , RES , ? Value , OP Submitted Mar 12.
+119 PINECREST DRIVE (DART) , 5 Floors , ? Units , RES , ? Value , DOP Submitted Mar 12.
 120 PINECREST DRIVE (DART) , ? Floors , ? Units , RES , ? Value , GAP Submitted Mar 14.
 2688 ROBIE STREET (HFX) , 10 Floors , ? Units , RES , ? Value , DEM Issued Jan 11.
+2731 ROBIE STREET (HFX) , 8 Floors , 26 Units , RES , $5.2M , BP Issued Mar 18.
 361 SACKVILLE DRIVE (LSAC) , 5 Floors , 65 Units , RES , $25.0M , BP Submitted Feb 14.
 1108 SACKVILLE DRIVE (MSAC) , 4 Floors , 50 Units , RES , $12.5M , BP Issued Jan 26.
 1132 SACKVILLE DRIVE (MSAC) , 4 Floors , 50 Units , RES , $12.5M , BP Issued Jan 26.
 219 SETON ROAD (HFX) , 6 Floors , 144 Units , CU , $16.9M , BLAS Issued Jan 09.
+## TERRASTONE RIDGE (DART) , 6 Floors , 76 Units , RES , $25.0M , BP Submitted Mar 22.
 28 VIRIDIAN DRIVE (DART) , 6 Floors , 95 Units , RES , $17.1M , BP Issued Feb 06.
 5688 WEST STREET (HFX) , 5 Floors , 16 Units , RES , $3.0M ," GAP Submitted Mar 07, BP Submitted Mar 04, DOP Issued Feb 09."
 294 WINDMILL ROAD (DART) , 7 Floors , 79 Units , RES , ? Value , DOP Submitted Mar 06.

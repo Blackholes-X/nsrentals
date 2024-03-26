@@ -49,9 +49,9 @@ async def create_token(user_credentials: M.UserCredentials):
     }
 
 
-### ---------------- Competitor Listings -----------------------------
+### ---------------- Competitors -----------------------------
 
-@app.get("/competitors/company-details", response_model=List[M.CompanyDetails])
+@app.get("/competitors/competetor-details", response_model=List[M.CompanyDetails])
 def company_details():
     details = DU.get_company_details()
     if details is None:

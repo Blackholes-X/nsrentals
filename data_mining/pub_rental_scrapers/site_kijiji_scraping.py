@@ -35,12 +35,13 @@ def extract_amenities(html_content):
 def extract_apartment_data(article, html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
     apartment_features = [
-        "source", "sitename", "property_image", "property_management_name",
+        "source", "sitename", "property_image", "image_source", "property_management_name",
         "listing_name", "apartment_number", "building_name", "address",
         "monthly_rent", "amenities", "bedroom_count", "bathroom_count", 
-        "property_type", "apartment_size", "latitude", "longitude", 
+        "property_type", "apartment_size", "add_lat", "add_long", 
         "city", "state", "lease_period"
     ]
+
 
     listing_details = {feature: '-1' for feature in apartment_features}
 
