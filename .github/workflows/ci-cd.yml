@@ -63,6 +63,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER_NAME }}@${{ secrets.SERVER_IP }} "\
           cd /home/ubuntu/nsrentals && \
           git checkout main && \
+          git stash && \
           git pull origin main && \
           echo 'REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}' > .env && \
           echo 'POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}' >> .env && \
