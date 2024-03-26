@@ -21,6 +21,7 @@ def general_post_process():
     trans_df['bedroom_count'] = trans_df['bedroom_count'].apply(extract_numeric_value)
     trans_df['bathroom_count'] = trans_df['bathroom_count'].apply(extract_numeric_value)
     trans_df['apartment_size'] = trans_df['apartment_size'].apply(extract_apartment_size)
+    trans_df['property_image'] = trans_df['image']
 
     # Initialize utility columns with 0
     for utility in utilities:
@@ -29,43 +30,40 @@ def general_post_process():
 
     trans_df = trans_df.apply(update_utilities_and_parking, axis=1)
 
-    trans_df['monthly_rent'] = trans_df['monthly_rent'].astype(str)
-    trans_df['bedroom_count'] = trans_df['bedroom_count'].astype(str)
-    trans_df['bathroom_count'] = trans_df['bathroom_count'].astype(str)
+    # # # address data
+    # # address_preprocessor = address_utils.AddressPreprocessor()
+    # # processed_df = address_preprocessor.get_address_data(trans_df)
 
-    # Convert apartment_size to string if keeping VARCHAR in DB
-    trans_df['apartment_size'] = trans_df['apartment_size'].astype(str)
-    trans_df.drop(columns={'dist_busstop','dist_downtown','parking_availability_status'},inplace=True)
-
-    # address data
-    address_preprocessor = address_utils.AddressPreprocessor()
-    processed_df = address_preprocessor.get_address_data(trans_df)
-
-    # parking data
-    df_sec_parking_data = read_data_from_sec_parking_data()
-    parking_preprocessor = parking_utils.ParkingUtils(df_sec_parking_data)
-    updated_trans_df = parking_preprocessor.update_trans_df_with_nearest_parking(processed_df)
+    # # # parking data
+    # # df_sec_parking_data = read_data_from_sec_parking_data()
+    # # parking_preprocessor = parking_utils.ParkingUtils(df_sec_parking_data)
+    # # updated_trans_df = parking_preprocessor.update_trans_df_with_nearest_parking(processed_df)
+    # # save_df_to_sec_public_rental_data(updated_trans_df)
 
 
-    # print(trans_df.dtypes)
-    
-    save_df_to_sec_public_rental_data(updated_trans_df)
+    save_df_to_sec_public_rental_data(trans_df)
 
 
 
-def public_post_process():
+def comp_post_process():
 
     df_comp_data = read_data_from_comp_rental_listings()
     transform_comp_dataframe_df = transform_comp_dataframe(df_comp_data)
 
-    
     save_df_to_sec_comp_rental_listings(transform_comp_dataframe_df)
 
 
-    
+def southwest_post_process():
+    df_sw_data = read_southwest_listing_csv(csv_path='data/SouthWestListingStructuredData.csv')
+    trans_sw_data = transform_sw_dataframe(df_sw_data)
 
+    save_df_to_southwest_listings(trans_sw_data)
 
 
 if __name__ == "__main__":
+    
     general_post_process()
-    public_post_process()
+    
+    # comp_post_process()
+
+    # southwest_post_process()

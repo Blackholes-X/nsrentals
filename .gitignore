@@ -12,7 +12,6 @@ __pycache__
 .vscode
 *.log
 *.json
-*.csv
 
 
 # Client-specific rules
@@ -24,7 +23,6 @@ client/build
 client/.DS_Store
 client/.env
 
-data_mining/data
 
 
 # Server-specific rules

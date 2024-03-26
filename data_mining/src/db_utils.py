@@ -4,6 +4,8 @@ import psycopg2
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 import urllib
+from datetime import datetime
+import ast
 
 load_dotenv()
 
@@ -385,6 +387,28 @@ def save_df_to_sec_comp_rental_listings(df):
 
 
 
+def save_df_to_southwest_listings(df):
+    """
+    Insert DataFrame rows into the southwest_listings table using SQLAlchemy.
+
+    Parameters:
+    df (pandas.DataFrame): The DataFrame to be saved into the database.
+    """
+    database_uri = get_database_uri()  # Make sure this function returns your database connection string
+
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+
+        # Insert DataFrame into the database in a transaction
+        with engine.begin() as connection:
+            df.to_sql('sec_southwest_listings', con=connection, if_exists='append', index=False)
+
+        print("DataFrame successfully saved to southwest_listings table.")
+
+    except Exception as e:
+        print(f"An error occurred while saving DataFrame to southwest_listings table: {e}")
+
 
 def read_data_from_comp_rental_listings():
     '''Fetch all rows from the comp_rental_listings table and return as DataFrame.'''
@@ -405,6 +429,27 @@ def read_data_from_comp_rental_listings():
 
 
 
+def read_southwest_listing_csv(csv_path='SouthWestListingStructuredData.csv'):
+    """
+    Reads a CSV file into a pandas DataFrame.
+
+    Parameters:
+    csv_path (str): The path to the CSV file to be read.
+
+    Returns:
+    pandas.DataFrame: A DataFrame containing the data from the CSV file.
+    """
+    try:
+        # Load the CSV file into a DataFrame
+        df = pd.read_csv(csv_path)
+        print("CSV file loaded successfully.")
+        return df
+    except Exception as e:
+        print(f"An error occurred while reading the CSV file: {e}")
+        return None
+
+
+
 def transform_comp_dataframe(df):
     # Define a dictionary for the new structure
     column_mapping = {
@@ -419,12 +464,13 @@ def transform_comp_dataframe(df):
         'property_type': None,
         'bedroom_count': 'bedroom_count',
         'bathroom_count': 'bathroom_count',
-        'utility_water': -1,
-        'utility_heat': -1,
-        'utility_electricity': -1,
-        'utility_laundry': -1,
+        'utility_water': 'utility_water',
+        'utility_heat': 'utility_heat',
+        'utility_electricity': 'utility_electricity',
+        'utility_laundry': 'utility_laundry',
+        'utility_wifi': 'wifi_included',
         'included_appliances': 'included_appliances',
-        'parking_availability': -1,
+        'parking_availability': 'parking_availability',
         'parking_rates': -1,
         'parking_slots': -1,
         'parking_distance': -1,
@@ -446,6 +492,7 @@ def transform_comp_dataframe(df):
         'website': 'website',
         'image': 'image',
         'description': 'description',
+        'property_image': 'image',
         'load_datetime': 'load_datetime'
     }
     
@@ -459,4 +506,77 @@ def transform_comp_dataframe(df):
         else:  # If the mapping is a default value
             new_df[new_col] = mapping
     
+    return new_df
+
+
+
+def transform_sw_dataframe(df):
+    # First, attempt to convert the 'image' column from string to list if necessary
+    if 'image' in df.columns:
+        # Safely evaluate the string representation of the list
+        # This requires the image column to be in a format that ast.literal_eval can understand, e.g., "[item1, item2]"
+        df['image'] = df['image'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+
+    # Define a dictionary for the new structure, excluding load_datetime for now
+    column_mapping = {
+        'listing_name': 'listing_name',
+        'building_name': 'listing_name',  # Consider if this mapping is correct or needs adjustment
+        'apartment_number': -1,
+        'address': 'address',
+        'add_lat': -1.0,
+        'add_long': -1.0,
+        'property_management_name': 'property_management_name',
+        'monthly_rent': 'monthly_rent',
+        'property_type': None,
+        'bedroom_count': 'bedroom_count',
+        'bathroom_count': 'bathroom_count',
+        'utility_water': 'utility_water',
+        'utility_heat': 'utility_heat',
+        'utility_electricity': 'utility_electricity',
+        'utility_laundry': 'utility_laundry',
+        'utility_wifi': 'wifi_included',
+        'included_appliances': 'included_appliances',
+        'parking_availability': 'parking_availability',
+        'parking_rates': -1,
+        'parking_slots': -1,
+        'parking_distance': -1,
+        'parking_restrictions': -1,
+        'parking_availability_status': -1,
+        'pet_friendly': -1,
+        'smoking_allowed': -1,
+        'apartment_size': 'apartment_size',
+        'apartment_size_unit': -1,
+        'is_furnished': 'is_furnished',
+        'lease_duration': -1,
+        'availability_status': -1,
+        'dist_hospital': -1,
+        'dist_school': -1,
+        'dist_restaurant': -1,
+        'dist_downtown': -1,
+        'dist_busstop': -1,
+        'source': 'source',
+        'website': 'website',
+        'image': 'image',
+        'description': 'description',
+        # 'load_datetime' will be handled separately
+        'property_image': None
+    }
+
+    # Create a new dataframe with the required structure
+    new_df = pd.DataFrame(columns=column_mapping.keys())
+
+    # Map existing columns or fill with default values
+    for new_col, mapping in column_mapping.items():
+        if isinstance(mapping, str):  # If the mapping is a column name from the old dataframe
+            new_df[new_col] = df[mapping] if mapping in df.columns else None
+        else:  # If the mapping is a default value
+            new_df[new_col] = mapping
+
+    # Extract the first image from the 'image' list for each row, or None if not applicable
+    if 'image' in df.columns:
+        new_df['property_image'] = df['image'].apply(lambda x: x[0] if isinstance(x, list) and len(x) > 0 else None)
+
+    # Set 'load_datetime' to the current time
+    new_df['load_datetime'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
     return new_df
