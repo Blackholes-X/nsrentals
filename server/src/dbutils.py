@@ -342,8 +342,10 @@ def get_last_listings(table_name: str, limit: int):
         conn = get_db_connection()
         cur = conn.cursor()
 
+        # Updated query to filter out listings based on property_image and source
         query = f"""
             SELECT * FROM {table_name}
+            WHERE property_image != '-1' AND source != 'Kijiji User'
             ORDER BY load_datetime DESC
             LIMIT %s
         """
@@ -353,7 +355,8 @@ def get_last_listings(table_name: str, limit: int):
         if listings:
             # Assuming you know the columns or dynamically fetch if necessary
             columns = [desc[0] for desc in cur.description]
-            return [dict(zip(columns, listing)) for listing in listings]
+            filtered_listings = [dict(zip(columns, listing)) for listing in listings]
+            return filtered_listings
         return []
     except Exception as e:
         print(f"An error occurred fetching listings from {table_name}: {e}")
@@ -361,6 +364,7 @@ def get_last_listings(table_name: str, limit: int):
     finally:
         if cur: cur.close()
         if conn: conn.close()
+
 
 
 def get_hrm_building_listings(limit: int):
