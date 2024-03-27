@@ -345,7 +345,7 @@ def get_last_listings(table_name: str, limit: int):
         # Updated query to filter out listings based on property_image and source
         query = f"""
             SELECT * FROM {table_name}
-            WHERE property_image != '-1' AND source != 'Kijiji User'
+            WHERE property_image != '-1' AND property_image != 'Kijiji User'
             ORDER BY load_datetime DESC
             LIMIT %s
         """
