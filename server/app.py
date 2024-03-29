@@ -197,9 +197,9 @@ def hrm_building_permits(records_limit: Optional[int] = 10):
 def get_predicted_rent():
     # Assuming these values are placeholders for demonstration
     predicted_rent = {
-        "rent": 1234.0,
-        "rent_for_1bhk": 1222.0,
-        "rent_for_2bhk": 2200.0,
+        "rent": 1630.0,
+        "rent_for_1bhk": 1520.4,
+        "rent_for_2bhk": 1740.0,
     }
     return predicted_rent
 
