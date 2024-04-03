@@ -39,9 +39,7 @@ const BuildingList = () => {
         <div style={styles.propertyInfo}>
           <Link key={index} to={`/propertyList/${property.property_management_name}`}>
             <h2>{property.listing_name}</h2>
-       <p><strong>Address:</strong>             
-          <Typewriter text={property.address} delay={100} />
-      </p>
+       <p><strong>Address:</strong>{property.address}</p>
        <p><strong>permit_value:</strong> {property.permit_value}</p>
        <p><strong>floors:</strong> {property.floors}</p>
        <p><strong>units_or_size:</strong> {property.units_or_size}</p>
@@ -79,7 +77,7 @@ const PermitList = () => {
         
         <div style={styles.propertyInfo}>
           <Link key={index} to={`/propertyList/${property.property_management_name}`}>
-            <h2><Typewriter text={property.civic_address} delay={100} /></h2>
+            <h2>{property.civic_address}</h2>
        <p><strong>permit_value:</strong> {property.permit_value}</p>
        <p><strong>floors:</strong> {property.floors}</p>
        <p><strong>units_or_size:</strong> {property.units_or_size}</p>

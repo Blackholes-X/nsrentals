@@ -2,21 +2,24 @@ import React, { useState, useEffect } from 'react';
 
 const Typewriter = ({ text, delay }) => {
   const [currentText, setCurrentText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Typing logic goes here
+  const [isCompleted, setIsCompleted] = useState(false); // New state to track completion
 
   useEffect(() => {
-    if (currentIndex < text.length) {
-      const timeout = setTimeout(() => {
-        setCurrentText(prevText => prevText + text[currentIndex]);
-        setCurrentIndex(prevIndex => prevIndex + 1);
-      }, delay);
-  
-      return () => clearTimeout(timeout);
+    // Check if animation is completed; if so, do nothing.
+    if (isCompleted || currentText.length === text.length) {
+      setIsCompleted(true);
+      return;
     }
-  }, [currentIndex, delay, text]);
-  
+
+    // Typing animation logic
+    const timerId = setTimeout(() => {
+      setCurrentText(prev => prev + text[currentText.length]);
+    }, delay);
+
+    // Cleanup function to clear the timeout
+    return () => clearTimeout(timerId);
+  }, [currentText, delay, text, isCompleted]); // Depend on isCompleted to avoid re-triggering after completion
+
   return <span>{currentText}</span>;
 };
 

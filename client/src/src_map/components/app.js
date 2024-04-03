@@ -1,10 +1,218 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import "./app.css";
 import Mapcraft from "mapcraft";
 import Search from "./search";
 import Tour from "./tour";
 import Page from "./page";
 import im1 from "../icon-apartment.png"
+import Modal from "./Modal";
+import Typewriter from "src/src_side/componant/Typewriter";
+const comparisionDatavar = [
+  
+];
+
+const ComparisionModule = ({property1,property2, id1, id2}) => {
+
+  const [comparisionData, setComparisionData] = useState(comparisionDatavar);
+  useEffect(() => {
+    console.log("===========================id1======================"+id1)
+    console.log("===========================id2======================"+id2)
+
+    fetch('http://54.196.154.157:8070/map/competitor/compare-properties?competitor_id='+id1+'&southwest_id='+id2)
+      .then(response => response.json())
+      .then(data => {
+        let products = [];
+
+        if (data) {
+          products = [
+            {
+              name: "Southwest Property",
+              imageUrl: "https://cdngeneralcf.rentcafe.com/dmslivecafe/3/480429/FortGeorgeExterior.jpg?&quality=85",
+              features: data.southwest
+            },
+            {
+              name: "Competitor's Property",
+              imageUrl: "https://cdngeneralcf.rentcafe.com/dmslivecafe/3/480429/FortGeorgeExterior.jpg?&quality=85",
+              features: data.competitor
+            },
+          ];
+          setComparisionData(products)
+
+        }
+
+
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
+
+  function ProductHeader({ product }) {
+    return (
+      <div style={productHeaderStyle}>
+        <img src={product.imageUrl} alt={product.name} style={productImageStyle} />
+        <h2 style={productNameStyle}>{product.name}</h2>
+      </div>
+    );
+  }
+  function ProductFeatureRow({ featureName, products }) {
+  return (
+    <div style={featureRowStyle}>
+      <div style={featureNameStyle}>Features</div> {/* Static 'Features' column header */}
+      {products.map((product) => (
+        <div key={product.name} style={featureValueStyle}>
+          <ul>
+            {Object.entries(product.features).map(([feature, value]) => (
+              <li key={feature}> <TypewriterForLI text={`${feature}: ${value}`} delay={100} /> </li>
+              
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+  }
+
+const FeatureListWithAnimation = ({ features, delay }) => {
+  const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
+
+  // When the text for a feature completes, move to the next feature
+  const handleAnimationComplete = () => {
+    setCurrentFeatureIndex(index => (index + 1) % features.length);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(handleAnimationComplete, (features[currentFeatureIndex].length * delay) + 1000);
+    return () => clearTimeout(timer);
+  }, [currentFeatureIndex, features, delay]);
+
+  return (
+    <ul>
+      {features.slice(0, currentFeatureIndex + 1).map((feature, index) => (
+        <li key={index}>
+          <Typewriter text={feature} delay={delay} />
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+
+  function ComparisonTable({ products }) {
+    const featureNames = [...new Set(products.flatMap(product => Object.keys(product.features)))];
+  
+    return (
+      <div style={comparisonTableStyle}>
+        <div style={productHeadersStyle}>
+          {products.map(product => (
+            <ProductHeader key={product.name} product={product} />
+          ))}
+        </div>
+       
+          <div style={featureRowStyle}>
+          {products.map((product) => (
+            <div key={product.name} style={featureValueStyle}>
+               <FeatureListWithAnimation
+            features={Object.entries(product.features).map(([key, value]) => `${key}: ${value}`)}
+            delay={50}
+          />
+
+              {/* <ul>
+                {Object.entries(product.features).map(([feature, value]) => (
+                  <li key={feature}><TypewriterForLI text={`${feature}: ${value}`} delay={100} /></li>
+                ))}
+              </ul> */}
+            </div>
+          ))}
+        </div>
+        
+      
+      </div>
+    );
+  }
+  
+  const productHeadersStyle = {
+    display: 'flex',
+    justifyContent: 'space-evenly', // Ensure even spacing
+    alignItems: 'center',
+    textAlign: 'center',
+    width: '100%', // Use the full width of the container
+  };
+  
+  // Ensure the comparisonTableStyle accommodates two columns comfortably
+  const comparisonTableStyle = {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '20px',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    margin: '20px auto',
+    maxWidth: '95%',
+    backgroundColor: '#fff',
+  };
+  
+  // Adjusted styles for the ComparisonModule components
+  const productHeaderStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '20px',
+    backgroundColor: '#f2f2f2',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    margin: '0 auto', // Center align the header within its column
+  };
+
+const productImageStyle = {
+  width: '120px', // Adjusted image size for better visibility
+  height: 'auto',
+  borderRadius: '4px', // Rounded corners for images
+  marginBottom: '10px', // Space between the image and the product name
+};
+
+const productNameStyle = {
+  fontWeight: 'bold', // Bold product names for better readability
+  color: '#333', // Darker text for better readability
+  textAlign: 'center', // Ensure the product name is centered
+};
+
+const featureRowStyle = {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-around',
+  alignItems: 'center',
+  padding: '10px 0',
+  width: '100%', // Ensure the row uses the full width for consistent alignment
+};
+
+const featureNameStyle = {
+  flex: 1,
+  textAlign: 'center', // Center-aligned feature names
+  fontWeight: '500', // Medium font weight for feature names
+  color: '#444',
+};
+
+const featureValueStyle = {
+  flex: 1,
+  textAlign: 'left', // Center-aligned feature values
+  color: '#666', // Slightly lighter text color for values
+};
+
+  
+
+  return (
+  <div style={styles.container}>
+  <div style={styles.cardsContainer}>
+  <p style={{alignContent:'center', alignSelf:'center', width:'100%', textAlign:'center'}}><b>Comparision between {property1} - {property2}</b></p>
+
+  <ComparisonTable products={comparisionData} />
+  </div>
+</div>
+
+  );
+};
+
 
 class App extends Component {
   state = {
@@ -50,12 +258,22 @@ class App extends Component {
     page: {},
     firstPropertySelected: false,
     secondPropertySelected: false,
+    propertyName: null,
+    propertyName2: null,
+    showModal: false,
+    id:null,
+    id2:null
 
   };
 
   componentDidMount() {
     this.fetchData()
   }
+
+  toggleModal = () => {
+    this.setState({showModal: !this.state.showModal });
+  };
+
 
   fetchData = () => {
     fetch('http://54.196.154.157:8070/map/comp-listings?records_limit=20')
@@ -67,7 +285,8 @@ class App extends Component {
         "features": data.map((item, index) => ({
           "type": "Feature",
           "properties": {
-            "id": `item-${index}`,
+            // "id": `item-${index}`,
+            "id": item.id,
             "title": item.property_management_name,
             "excerpt": item.address,
             "description": item.description,
@@ -109,7 +328,7 @@ class App extends Component {
         "features": data.map((item, index) => ({
           "type": "Feature",
           "properties": {
-            "id": `item-${index}`,
+            "id": item.id,
             "title": item.property_management_name,
             "excerpt": item.address,
             "description": item.description,
@@ -171,8 +390,25 @@ class App extends Component {
             firstPropertySelected={this.state.firstPropertySelected}
             secondPropertySelected={this.state.secondPropertySelected}
             dataFilter={this.state.dataFilter}
+            propertyName={this.state.propertyName}
+            propertyName2={this.state.propertyName2}
+            handlePropertyName={this.handlepropertyName}
+            handlePropertyName2={this.handlepropertyName2}
+            toggleModal={this.toggleModal}
           />
         </div>
+
+
+        <Modal isOpen={this.state.showModal} onClose={this.toggleModal}>
+          {/* <h2>Modal Title</h2>
+          <p>Content for the modal goes here...</p> */}
+          {/* Add more content or components inside the modal as needed */}
+          <ComparisionModule
+            property1={this.state.propertyName}
+            property2={this.state.propertyName2}
+            id1={this.state.id}
+            id2={this.state.id2} />
+        </Modal>
 
         <div className={this.getTourControlsClasses()}>
           <Tour
@@ -892,7 +1128,7 @@ class App extends Component {
         "features": data.map((item, index) => ({
           "type": "Feature",
           "properties": {
-            "id": `item-${index}`,
+            "id": item.id,
             "title": item.property_management_name,
             "excerpt": item.address,
             "description": item.description,
@@ -1018,7 +1254,7 @@ class App extends Component {
           "features": data.map((item, index) => ({
             "type": "Feature",
             "properties": {
-              "id": `item-${index}`,
+              "id": item.id,
               "title": item.property_management_name,
               "excerpt": item.address,
               "description": item.description,
@@ -1247,6 +1483,19 @@ class App extends Component {
     this.setState({ secondPropertySelected: !this.state.secondPropertySelected });
   }
 
+  handlepropertyName = (title) => {
+    this.setState({ propertyName: title });
+  }
+  handlepropertyName2 = (title) => {
+    this.setState({ propertyName2: title });
+  }
+  handlepropertyId1 = (id) => {
+    this.setState({ id: id });
+  }
+  handlepropertyId2 = (id) => {
+    this.setState({ id2: id });
+  }
+
   openPopup = (properties, lnglat) => {
     if (typeof properties.images !== "object")
       properties.images = JSON.parse(properties.images);
@@ -1255,7 +1504,10 @@ class App extends Component {
       t => t.slug === properties.type
     )[0].name;
 
+   
+
     let {
+      id,
       title,
       images,
       excerpt,
@@ -1265,6 +1517,17 @@ class App extends Component {
       rent,
       deposit
     } = properties;
+
+    // this.setState({propertyName: title})
+    
+    if(this.state.propertyName == null){
+      this.handlepropertyName(title)
+      this.handlepropertyId1(id)
+    }else{
+      this.handlepropertyName2(title)
+      this.handlepropertyId2(id)
+
+    }
 
     let html = `<div class="sc-card sc-borderless">
       <div class="sc-card-header">
@@ -1333,5 +1596,56 @@ class App extends Component {
   // });
   };
 }
+
+const styles = {
+  container: {
+    margin: '0 auto',
+    padding: '5px', 
+    marginTop: '10px',
+
+  },
+  heading: {
+    textAlign: 'center',
+    marginBottom: '10px',
+    fontSize: '24px',
+  },
+  header: {
+    backgroundColor: '#ffffff',
+    padding: '10px',
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1000,
+    borderRadius: '0 0 25px 25px', 
+  },
+  cardsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  propertyCard: {
+    flexBasis: 'calc(50% - 20px)', // Adjust the width of each card as per your requirement
+    maxWidth: 'calc(50% - 20px)', // Set maximum width to prevent overflow
+    border: '1px solid #ccc',
+    borderRadius: '5px',
+    padding: '15px',
+    marginBottom: '20px',
+    backgroundColor: '#f9f9f9',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    boxSizing: 'border-box',
+    display: 'flex', // Make the card flex container
+  },
+  imageContainer: {
+    marginRight: '20px', // Add some space between the image and text
+  },
+  propertyImage: {
+    width: '150px', // Adjust the width as needed
+    height: 'auto', // Maintain aspect ratio
+    borderRadius: '5px', // Rounded corners
+  },
+  propertyInfo: {
+    flex: 1, // Allow the property info to take up remaining space
+  },
+};
 
 export default App;

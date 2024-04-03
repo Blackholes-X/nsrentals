@@ -7,6 +7,7 @@ import Team from "../assets/social.svg";
 import Calender from "../assets/sceduled.svg";
 import Projects from "../assets/starred.svg";
 import Map from "../assets/map.png"
+import underCon from "../assets/underCon.png"
 import Documents from "../assets/draft.svg";
 import PowerOff from "../assets/power-off-solid.svg";
 import styled from "styled-components";
@@ -296,7 +297,7 @@ const Sidebar = () => {
             activeClassName="active"
             to="/documents"
           >
-            <img src={Documents} alt="Documents" />
+            <img src={underCon} height={50} width={50} alt="Documents" />
             <Text clicked={click}>Under Developement</Text>
           </Item>
           <Item

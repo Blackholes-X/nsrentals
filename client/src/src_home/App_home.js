@@ -72,9 +72,9 @@ function App_home() {
     return(
       <>
       <Sidebar/>
-      <Pages>
+      <PagesForCopititorPage>
       <Home2/>
-      </Pages>
+      </PagesForCopititorPage>
       </>
     )
   }

@@ -84,7 +84,6 @@ const PropertyList = () => {
             <div style={styles.propertyInfo}>
             <Link key={index} to={`/propertyList/${property.property_management_name}`}>
               <h2>{property.property_management_name}</h2>
-              <Typewriter text="My React App My React App My React App My React App My React App My React App" delay={100} />
               <p>Total Listings: {property.total_listings}</p>
               <p>1 Bedroom Avg. Price: {property.average_price_1_bedroom !== -1 ? '$' + property.average_price_1_bedroom.toFixed(2) : 'N/A'}</p>
               <p>2 Bedroom Avg. Price: {property.average_price_2_bedroom !== -1 ? '$' + property.average_price_2_bedroom.toFixed(2) : 'N/A'}</p>

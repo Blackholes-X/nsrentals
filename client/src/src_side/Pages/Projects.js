@@ -37,9 +37,7 @@ const CompetitorList = () => {
         <div style={styles.propertyInfo}>
           <Link key={index} to={`/propertyList/${property.property_management_name}`}>
             <h2>{property.property_management_name}</h2>
-       <p><strong>Address:</strong>             
-          <Typewriter text={property.address} delay={100} />
-      </p>
+       <p><strong>Address:</strong>{property.address}</p>
        <p><strong>Apartment Size:</strong> {property.apartment_size} sqft</p>
        <p><strong>Bedrooms:</strong> {property.bedroom_count}</p>
        <p><strong>Bathrooms:</strong> {property.bathroom_count}</p>
@@ -82,9 +80,7 @@ const PublicList = () => {
         <div style={styles.propertyInfo}>
           <Link key={index} to={`/propertyList/${property.property_management_name}`}>
             <h2>{property.listing_name}</h2>
-       <p><strong>Address:</strong>             
-          <Typewriter text={property.address} delay={100} />
-      </p>
+       <p><strong>Address:</strong>{property.address}</p>
        <p><strong>Apartment Size:</strong> {property.apartment_size} sqft</p>
        <p><strong>Bedrooms:</strong> {property.bedroom_count}</p>
        <p><strong>Bathrooms:</strong> {property.bathroom_count}</p>
@@ -127,9 +123,7 @@ const SouthWestList = () => {
         <div style={styles.propertyInfo}>
           <Link key={index} to={`/propertyList/${property.property_management_name}`}>
             <h2>{property.property_management_name}</h2>
-       <p><strong>Address:</strong>             
-          <Typewriter text={property.address} delay={100} />
-      </p>
+       <p><strong>Address:</strong>{property.address}</p>
        <p><strong>Apartment Size:</strong> {property.apartment_size} sqft</p>
        <p><strong>Bedrooms:</strong> {property.bedroom_count}</p>
        <p><strong>Bathrooms:</strong> {property.bathroom_count}</p>

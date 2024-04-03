@@ -1,14 +1,30 @@
 import React, { Component } from "react";
 import InputRange from "react-input-range";
 import photo1 from "../icon-apartment.png"
+import { color } from "framer-motion";
+import Modal from "./Modal";
 class Sreach extends Component {
   state = {
     firstPropertySelected: false,
-    secondPropertySelected: false
+    secondPropertySelected: false,
+    propertyName:null,
+    propertyName2:null,
+    showModal: false,
+  };
+
+  toggleModal = () => {
+    this.setState({showModal: !this.state.showModal });
   };
 
   handleFirstProperty = () => {
     this.setState({ firstPropertySelected: !firstPropertySelected });
+  };
+
+  handlePropertyName = (propertyName) => {
+    this.setState({ propertyName: propertyName });
+  };
+  handlePropertyName2 = (propertyName2) => {
+    this.setState({ propertyName2: propertyName2 });
   };
 
   handleSecondProperty = () => {
@@ -35,7 +51,12 @@ class Sreach extends Component {
       getPlacesCount,
       disableTour,
       firstPropertySelected,
-      secondPropertySelected
+      secondPropertySelected,
+      propertyName,
+      propertyName2,
+      handlePropertyName,
+      handlePropertyName2,
+      toggleModal
     } = this.props;
     const fileUploadLabelStyle = {
       cursor: 'pointer',
@@ -106,7 +127,14 @@ class Sreach extends Component {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <i className="fas fa-cloud-upload-alt" style={{ marginBottom: '5px' }}></i>
               <img src={photo1} alt="client" />                           
-              First Property
+              {propertyName != null ? propertyName : "First Property"}
+              {propertyName != null ? <p onClick={() =>{
+                console.log("sssssss")
+                handlePropertyName(null)
+                // this.setState({ propertyName: null})
+              }} style={{color:'red'}}><b><u>Remove</u></b></p> : null}
+
+              
             </div>
           </label>
         </div>
@@ -118,10 +146,46 @@ class Sreach extends Component {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <i className="fas fa-cloud-upload-alt" style={{ marginBottom: '5px' }}></i>
               <img src={photo1} alt="client" />                           
-              Second Property
+              {propertyName2 != null ? propertyName2 : "Second Property"}
+
+              {propertyName2 != null ? <p style={{color:'red'}} onClick={() =>{
+                                console.log("wwww")
+                                handlePropertyName2(null)
+
+                // this.setState({ propertyName2: null})
+              }}><b><u>Remove</u></b></p> : null}
+              
+
             </div>
           </label>
         </div>
+        { propertyName != null && propertyName2 != null ?
+
+           <div style={{ textAlign: 'center', margin: '20px 0' }}>
+           <p
+             onClick={() => {
+              // handlePropertyName(null)
+
+              // console.log("dddddddddd")
+              toggleModal()
+              //  console.log("Button Clicked!"); // Define your button click handler function
+             }}
+             style={{
+               padding: '10px 20px',
+               fontSize: '16px',
+               color: '#fff',
+               backgroundColor: '#007bff',
+               border: 'none',
+               borderRadius: '5px',
+               cursor: 'pointer',
+             }}
+           >
+             Compare
+           </p>
+         </div>
+        : null}
+       
+
 
         <header className="sc-slide-header">
           <h5>Filters</h5>
@@ -272,6 +336,8 @@ class Sreach extends Component {
             </div>
           </div>
         </footer>
+        
+
       </React.Fragment>
     );
   }
