@@ -138,22 +138,9 @@ def compare_competitor_properties(property_id: int):
 
 
 @app.get("/map/competitor/compare-properties")
-def compare_properties(competitor_id: int, southwest_id: int):
+def compare_properties(competitor_id: int, southwest_id: int,public_id:int):
     try:
-        # Placeholder for actual function to fetch property details
-        # For now, returning hardcoded comparison texts
-        comparison_texts = {
-            "competitor": [
-                f"Competitor Property {competitor_id} offers unique amenities that cater to a wide range of tenants.",
-                f"However, it might fall short in terms of parking availability when compared to Southwest Property {southwest_id}.",
-                "Future developments and renovations are expected to enhance its value."
-            ],
-            "southwest": [
-                f"Southwest Property {southwest_id} is renowned for its excellent location and community services.",
-                "It boasts superior parking facilities but may have higher rent compared to the competitor.",
-                "It's committed to sustainability, with several eco-friendly initiatives in place."
-            ]
-        }
+        comparison_texts = llm.generate_property_comparison_text(competitor_id, southwest_id, public_id)
         return comparison_texts
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
