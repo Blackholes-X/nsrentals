@@ -140,6 +140,7 @@ def compare_competitor_properties(property_id: int):
 @app.get("/map/competitor/compare-properties")
 def compare_properties(competitor_id: int, southwest_id: int,public_id:int):
     try:
+        print('here')
         comparison_texts = llm.generate_property_comparison_text(competitor_id, southwest_id, public_id)
         return comparison_texts
     except Exception as e:
