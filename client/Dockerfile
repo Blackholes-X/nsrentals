@@ -9,7 +9,7 @@ ARG REACT_APP_BACKEND_URL
 ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
 # Copy the package.json and yarn.lock files
-COPY package.json yarn.lock ./
+COPY package.json ./
 
 # Install your app dependencies using Yarn
 RUN yarn install
