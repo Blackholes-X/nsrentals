@@ -3,9 +3,13 @@ import psycopg2.extras
 from psycopg2.extras import RealDictCursor
 from psycopg2 import sql
 from typing import Optional
-
 import os
-import random
+import pandas as pd
+import psycopg2
+from sqlalchemy import create_engine
+import urllib
+from datetime import datetime
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -451,4 +455,59 @@ def get_competitor_listings_summary():
     finally:
         if conn:
             conn.close()
+
+
+
+def read_data_from_sec_southwest_listings():
+    """Fetch all rows from the sec_southwest_listings table and return as DataFrame."""
+
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_southwest_listings"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_southwest_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
+
+def read_data_from_sec_comp_rental_listings():
+    """Fetch all rows from the sec_comp_rental_listings table and return as DataFrame."""
+
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_comp_rental_listings"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_comp_rental_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
 

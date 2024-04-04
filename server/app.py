@@ -10,6 +10,8 @@ from src import create_tables
 from src import auth
 from src import llm 
 
+from src import nearest_neighbor_inference
+
 from typing import Optional, List, Dict
 
 
@@ -121,10 +123,12 @@ def map_southwest_property_listing(records_limit: int = 20, bedroom_count: Optio
 @app.get("/map/competitor/compare")
 def compare_competitor_properties(property_id: int):
     try:
-        random_properties = DU.get_random_southwest_properties(property_id)
-        if not random_properties:
+        random_properties = nearest_neighbor_inference.find_similar_properties(property_id)
+        random_properties = random_properties.head(3)
+        print(random_properties)
+        if random_properties.empty:
             raise HTTPException(status_code=404, detail="No properties found.")
-        return random_properties
+        return random_properties.to_dict(orient='records')
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
