@@ -12,7 +12,7 @@ class AddressPreprocessor:
     def get_lat_lng(self,address):
         """Convert an address to latitude and longitude."""
         geocode_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={self.api_key}"
-        response = requests.get(geocode_url)
+        response = requests.get(geocode_url,timeout=30)
         if response.status_code == 200:
             data = response.json()
             if data['results']:
@@ -37,7 +37,7 @@ class AddressPreprocessor:
             "type": place_type,
             "key": self.api_key
         }
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params,timeout=30)
         if response.status_code == 200:
             data = response.json()
             # with open(f"response_json_{lat}_{lng}.json", 'w', encoding='utf-8') as f:
@@ -78,8 +78,9 @@ class AddressPreprocessor:
             if col not in df.columns:
                 df[col] = -1.0
         
-        df[['add_lat', 'add_long']] = df.apply(lambda row: self.update_lat_lng(row), axis=1, result_type='expand')
+        # df[['add_lat', 'add_long']] = df.apply(lambda row: self.update_lat_lng(row), axis=1, result_type='expand')
         for place_type in place_types:
+            print('started with',place_type)
             min_rating = 3.5
             for index, row in df.iterrows():
                 if (row['add_lat'] != -1.0 and row['add_lat'] is not None) and (row['add_long'] != -1.0 and row['add_long'] is not None) and row[f'dist_{place_type}'] == -1.0:
@@ -92,7 +93,7 @@ class AddressPreprocessor:
         
     def calculate_distance(self, row, coords,column_name):
         # Check if the row's coordinates are valid and distance needs updating
-        if (row['add_lat'] != -1.0 and row['add_lat'] is not None) and (row['add_long'] != -1.0 and row['add_long'] is not None) and row[column_name]== -1.0:
+        if (row['add_lat'] != -1.0 and row['add_lat'] is not None) and (row['add_long'] != -1.0 and row['add_long'] is not None) and row[column_name]== -1.0 and not (pd.isna(row['add_lat']) or pd.isna(row['add_long'])):
             # Extract the current row's coordinates
             current_coords = (row['add_lat'], row['add_long'])
             # Calculate and return the distance
@@ -113,6 +114,7 @@ class AddressPreprocessor:
         """
         
         for place in place_names:
+            print('started with',place_names)
             # Generate column name dynamically based on place name
             column_name = f'dist_{place.replace(" ", "_").lower()}'
             
@@ -135,13 +137,16 @@ class AddressPreprocessor:
     # main function to get all the address related data
     def get_address_data(self, df, place_types=['hospital', 'school', 'restaurant', 'bus_stop'], min_rating=3.5):
         load_dotenv()
-        df  = self.get_lat_long_dist_data(df,place_types,min_rating)
+        # df  = self.get_lat_long_dist_data(df,place_types,min_rating)
         
         # if 'dist_downtown' not in df.columns:
         #     df['dist_downtown'] = -1.0
         # downtown_lat,downtown_long = self.get_lat_lng("Downtown Halifax")
         # downtown_halifax_coords = (downtown_lat,downtown_long)
         # df['dist_downtown'] = df.apply(lambda row: self.calculate_distance(row, downtown_halifax_coords), axis=1)
+
+
+
         place_names = ['Downtown Halifax','Clayton Park Halifax','Rockingham Halifax','Peakview Way Bedford NS','Halifax Shopping Centre']
         df = self.add_distance_to_places(df,place_names)
         rm_columns = [f'{pt}_lat' for pt in place_types] + [f'{pt}_long' for pt in place_types]

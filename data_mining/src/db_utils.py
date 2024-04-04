@@ -130,8 +130,8 @@ def save_df_to_hrm_building_listings(df: pd.DataFrame):
         insert_query = """
             INSERT INTO hrm_building_listings (
                 listing_name, address, property_management_name, permit_value, floors,
-                units_or_size, building_type, image, url, source_name
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                units_or_size, building_type, image, url, source_name , add_lat ,add_long
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
 
         for index, row in df.iterrows():
@@ -146,7 +146,9 @@ def save_df_to_hrm_building_listings(df: pd.DataFrame):
                 row['building_type'], 
                 row.get('image'), 
                 row.get('url'), 
-                row['source_name']
+                row['source_name'],
+                row['add_lat'],
+                row['add_long']
             ))
         conn.commit()
         print("DataFrame successfully saved to the hrm_building_listings table.")
@@ -228,11 +230,10 @@ def save_df_to_parking_data(df: pd.DataFrame):
         for index, row in df.iterrows():
             cur.execute("""
                 INSERT INTO parking_data (
-                    address, lot, price, type, description
-                ) VALUES (%s, %s, %s, %s, %s);
+                    address, lot, price
+                ) VALUES (%s, %s, %s);
             """, (
-                row['address'], row['lot'], row['price'], 
-                row['type'], row['description']
+                row['address'], row['lot'], row['price']
             ))
             conn.commit()
 
@@ -278,7 +279,7 @@ def read_data_from_public_rental_data():
     """Fetch all rows from the public_rental_data table and return as DataFrame."""
     # URL-encode the password
     password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
-    
+    print(password)
     # Create the database connection URI, including the URL-encoded password
     database_uri = (
         f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
@@ -298,6 +299,7 @@ def read_data_from_public_rental_data():
     except Exception as e:
         print(f"Error fetching data from public_rental_data table: {e}")
         return pd.DataFrame()  # Return an empty DataFrame in case of erro
+        
     
 def read_data_from_parking_data():
     """Fetch all rows from the parking_data table and return as DataFrame."""
@@ -371,6 +373,62 @@ def save_df_to_sec_public_rental_data(df):
 
     except Exception as e:
         print(f"An error occurred while saving DataFrame to sec_public_rental_data table: {e}")
+
+
+
+def read_data_from_sec_southwest_listings():
+    """Fetch all rows from the sec_southwest_listings table and return as DataFrame."""
+
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_southwest_listings"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_southwest_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
+
+def read_data_from_sec_comp_rental_listings():
+    """Fetch all rows from the sec_comp_rental_listings table and return as DataFrame."""
+
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_comp_rental_listings"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_comp_rental_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
 
 
 
