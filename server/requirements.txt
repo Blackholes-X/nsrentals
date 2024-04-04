@@ -7,4 +7,3 @@ email_validator==2.1.1
 SQLAlchemy==2.0.28
 scikit-learn
 pandas==2.2.1
-python-dotenv==1.0.1
