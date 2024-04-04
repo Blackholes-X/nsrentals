@@ -131,8 +131,6 @@ def generate_property_comparison_text(competitor_id: int, southwest_id: int,publ
     )
     # Extract the response content
     response_content = response.choices[0].message.content
-    with open('gpt_res.json', 'w') as file:
-        json.dump(response_content, file)
 
     # Remove the markdown code block notation and leading/trailing backticks
     cleaned_response = response_content.replace("```json", "").replace("```", "").strip()
