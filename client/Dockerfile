@@ -11,11 +11,11 @@ ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 # Copy the package.json and yarn.lock files
 COPY package.json ./
 
-# Install your app dependencies using Yarn
-RUN yarn install
-
 # Copy the rest of your app's source code from your host to your image filesystem.
 COPY . .
+
+# Install your app dependencies using Yarn
+RUN yarn install
 
 # Build the app for production using Yarn
 RUN yarn build
