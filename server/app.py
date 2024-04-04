@@ -10,7 +10,8 @@ from src import create_tables
 from src import auth
 from src import llm 
 from src import prediction as P
-
+import numpy as np
+import pandas as pd
 from src import nearest_neighbor_inference
 
 from typing import Optional, List, Dict
@@ -126,7 +127,8 @@ def compare_competitor_properties(property_id: int):
     try:
         random_properties = nearest_neighbor_inference.find_similar_properties(property_id)
         random_properties = random_properties.head(3)
-        print(random_properties)
+        random_properties.replace([np.inf, -np.inf, np.nan], None, inplace=True)
+        
         if random_properties.empty:
             raise HTTPException(status_code=404, detail="No properties found.")
         return random_properties.to_dict(orient='records')
