@@ -5,7 +5,7 @@ seaborn
 plotly
 scipy
 scikit-learn
-catboost
+#catboost
 # lightgbm
 xgboost
 tensorflow

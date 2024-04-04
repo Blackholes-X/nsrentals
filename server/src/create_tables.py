@@ -85,7 +85,7 @@ def create_comp_rental_listings_table():
             print("Table 'comp_rental_listings' already exists.")
 
     except Exception as e:
-        print(f"An error occurred in create_comp_rental_listings_table: {e}", exc_info=True)
+        print(f"An error occurred in create_comp_rental_listings_table: {e}")
 
     finally:
         if cur is not None:
@@ -210,7 +210,7 @@ def create_sec_public_rental_data_table():
                     add_lat FLOAT,
                     add_long FLOAT,
                     property_management_name VARCHAR(255),
-                    monthly_rent INTEGER NOT NULL,  -- Changed from VARCHAR(255) to INTEGER
+                    monthly_rent FLOAT NOT NULL,  -- Changed from VARCHAR(255) to INTEGER
                     property_type VARCHAR(255),
                     bedroom_count INTEGER NOT NULL,  -- Changed from VARCHAR(255) to INTEGER
                     bathroom_count INTEGER NOT NULL,  -- Changed from VARCHAR(255) to INTEGER
@@ -291,7 +291,7 @@ def create_sec_comp_rental_listings():
                         add_lat FLOAT,
                         add_long FLOAT,
                         property_management_name VARCHAR(255),
-                        monthly_rent VARCHAR(255),  -- Consider changing this to a numeric type if it stores numerical values
+                        monthly_rent INTEGER, 
                         property_type VARCHAR(255),
                         bedroom_count INTEGER,  -- Changed from VARCHAR(255) to INTEGER
                         bathroom_count INTEGER,  -- Changed from VARCHAR(255) to INTEGER
@@ -307,9 +307,10 @@ def create_sec_comp_rental_listings():
                         parking_distance INTEGER,
                         parking_restrictions INTEGER,
                         parking_availability_status INTEGER,
+                        parking_address TEXT,
                         pet_friendly INTEGER,
                         smoking_allowed INTEGER,
-                        apartment_size VARCHAR(255),  -- Consider changing if this stores numerical values
+                        apartment_size INTEGER
                         apartment_size_unit INTEGER,
                         is_furnished INTEGER,
                         lease_duration VARCHAR(255),
@@ -319,6 +320,10 @@ def create_sec_comp_rental_listings():
                         dist_restaurant FLOAT,
                         dist_downtown FLOAT,
                         dist_busstop FLOAT,
+                        dist_larry_uteck_area FLOAT,
+                        dist_central_halifax FLOAT,
+                        dist_clayton_park FLOAT,
+                        dist_rockingham FLOAT, 
                         source VARCHAR(255),
                         website VARCHAR(255),
                         image TEXT,
@@ -438,7 +443,7 @@ def create_sec_southwest_listings():
                         parking_availability_status INTEGER,
                         pet_friendly INTEGER,
                         smoking_allowed INTEGER,
-                        apartment_size VARCHAR(255),  -- Consider changing if this stores numerical values
+                        apartment_size INTEGER,  -- Consider changing if this stores numerical values
                         apartment_size_unit INTEGER,
                         is_furnished INTEGER,
                         lease_duration VARCHAR(255),
@@ -514,7 +519,9 @@ def create_table_hrm_building_listings():
             building_type VARCHAR(255),
             image TEXT,
             url TEXT,
-            source_name VARCHAR(255)
+            source_name VARCHAR(255),
+            add_lat FLOAT,
+            add_long FLOAT
         );
     """, "hrm_building_listings")
 
@@ -537,9 +544,7 @@ def create_table_parking_data():
             id SERIAL PRIMARY KEY,
             address VARCHAR(255),
             lot INTEGER,
-            price VARCHAR(50),
-            type VARCHAR(50),
-            description TEXT
+            price VARCHAR(50)
         );
     """, "parking_data")
 
@@ -550,8 +555,6 @@ def create_table_sec_parking_data():
             address VARCHAR(255),
             lot INTEGER,
             price FLOAT,
-            type VARCHAR(50),
-            description TEXT,
             add_lat FLOAT,
             add_long FLOAT
         );

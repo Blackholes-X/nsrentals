@@ -9,6 +9,9 @@ from src import models as M
 from src import create_tables
 from src import auth
 from src import llm 
+from src import prediction as P
+
+from src import nearest_neighbor_inference
 
 from typing import Optional, List, Dict
 
@@ -121,10 +124,12 @@ def map_southwest_property_listing(records_limit: int = 20, bedroom_count: Optio
 @app.get("/map/competitor/compare")
 def compare_competitor_properties(property_id: int):
     try:
-        random_properties = DU.get_random_southwest_properties(property_id)
-        if not random_properties:
+        random_properties = nearest_neighbor_inference.find_similar_properties(property_id)
+        random_properties = random_properties.head(3)
+        print(random_properties)
+        if random_properties.empty:
             raise HTTPException(status_code=404, detail="No properties found.")
-        return random_properties
+        return random_properties.to_dict(orient='records')
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
@@ -210,6 +215,14 @@ def get_competitor_listings():
         return competitor_listings
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+### -------------------- ML Stuffs --------------------------------------
+@app.get("/update-and-refresh-predictions")
+def update_and_refresh_predictions():
+    # Call the refresh_predictions function and return its result
+    refreshed_predictions = P.update_new_predictions()
+    return refreshed_predictions
 
 
 if __name__ == '__main__':

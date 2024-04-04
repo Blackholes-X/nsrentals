@@ -11,7 +11,7 @@ class ParkingUtils:
         min_distance = float('inf')
         nearest_parking = None
         for _, parking_row in self.df_sec_parking_data.iterrows():
-            distance = geodesic((row['add_lat'], row['add_long']), (parking_row['add_lat'], parking_row['add_long'])).meters
+            distance = geodesic((row['add_lat'], row['add_long']), (parking_row['add_lat'], parking_row['add_long'])).miles
             if distance < min_distance:
                 min_distance = distance
                 nearest_parking = parking_row
@@ -20,7 +20,7 @@ class ParkingUtils:
     def update_trans_df_with_nearest_parking(self, trans_df):
         
         for index, row in trans_df.iterrows():
-            if row['add_lat'] is not None and row['add_long'] is not None: 
+            if row['add_lat'] is not None and row['add_long'] is not None and not (pd.isna(row['add_lat']) or pd.isna(row['add_long'])): 
                 nearest_parking, distance = self.get_nearest_parking(row)
                 if nearest_parking is not None:
                     if trans_df.at[index, 'parking_availability'] == 0:

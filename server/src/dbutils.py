@@ -3,9 +3,17 @@ import psycopg2.extras
 from psycopg2.extras import RealDictCursor
 from psycopg2 import sql
 from typing import Optional
-
 import os
-import random
+import pandas as pd
+import psycopg2
+from sqlalchemy import create_engine
+import urllib
+from datetime import datetime
+import pandas as pd
+from sqlalchemy import create_engine
+from urllib.parse import quote
+
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,6 +34,74 @@ def get_db_connection():
     )
     return conn
 
+
+def load_data_from_postgres():
+    # Database credentials
+    POSTGRES_DB = os.getenv('POSTGRES_DB')
+    POSTGRES_USER = os.getenv('POSTGRES_USER')
+    POSTGRES_PORT = os.getenv('POSTGRES_PORT')
+    RAW_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+    POSTGRES_SERVER_HOST = os.getenv('POSTGRES_HOST')
+    POSTGRES_PASSWORD = quote(RAW_PASSWORD)
+    
+    # Creating a connection URL
+    connection_string = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    
+    # Create the engine
+    engine = create_engine(connection_string)
+
+    # DataFrames dictionary to store each table's DataFrame
+    dfs = {}
+
+    # List of tables to load
+    tables = [
+        "sec_public_rental_data",
+        "sec_southwest_listings",
+        "sec_comp_rental_listings"
+    ]
+
+    # Load data from each table into a DataFrame and store it in the dictionary
+    for table in tables:
+        query = f"SELECT * FROM {table}"
+        dfs[table] = pd.read_sql(query, engine)
+
+    # Make sure to close the connection
+    engine.dispose()
+    
+    # Return the dictionary containing the DataFrames
+    return dfs
+
+
+
+def write_dataframe_to_postgres(df, table_name):
+    """
+    Writes a DataFrame to a specific table in a PostgreSQL database.
+
+    Parameters:
+    - df: DataFrame to write.
+    - table_name: Name of the table to write the DataFrame to.
+    - db_credentials: A dictionary containing database credentials.
+    """
+
+
+    POSTGRES_DB = os.getenv('POSTGRES_DB')
+    POSTGRES_USER = os.getenv('POSTGRES_USER')
+    POSTGRES_PORT = os.getenv('POSTGRES_PORT')
+    RAW_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+    POSTGRES_SERVER_HOST = os.getenv('POSTGRES_HOST')
+    POSTGRES_PASSWORD = quote(RAW_PASSWORD)
+    
+    # Creating a connection URL
+    connection_string = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    
+    # Create the engine
+    engine = create_engine(connection_string)
+    
+    # Write the DataFrame to the specified table
+    df.to_sql(table_name, engine, if_exists='replace', index=False, method='multi')
+    
+    # Make sure to close the connection
+    engine.dispose()
 
 
 def get_recent_listings_by_management(property_management_name: str, records_limit: int):
@@ -451,4 +527,59 @@ def get_competitor_listings_summary():
     finally:
         if conn:
             conn.close()
+
+
+
+def read_data_from_sec_southwest_listings():
+    """Fetch all rows from the sec_southwest_listings table and return as DataFrame."""
+
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_southwest_listings"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_southwest_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
+
+def read_data_from_sec_comp_rental_listings():
+    """Fetch all rows from the sec_comp_rental_listings table and return as DataFrame."""
+
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_comp_rental_listings"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_comp_rental_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
 
