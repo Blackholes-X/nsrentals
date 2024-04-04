@@ -1,0 +1,49 @@
+name: CI/CD Pipeline for NSR Application
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: SSH and Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: REACT_APP_BACKEND_URL
+          script: |
+            cd /home/ubuntu/nsrentals
+            git pull origin dev
+            echo "REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}" > ./client/.env
+
+            # Navigate to client directory, build, and deploy
+            cd client
+            npm install
+            npm run build
+            sudo scp -r build/* /var/www/html
+
+            # Navigate to server directory, setup venv and install requirements
+            cd ../server
+            if [ ! -d "venv" ]; then
+              python3 -m venv venv
+            fi
+            source venv/bin/activate
+            pip install -r requirements.txt
+
+            sudo systemctl restart nsr.service
+            sudo systemctl restart nginx.service

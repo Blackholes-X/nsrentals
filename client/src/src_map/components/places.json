@@ -1,0 +1,72 @@
+{
+    "type": "FeatureCollection",
+    "features": [{
+            "type": "Feature",
+            "properties": {
+                "id": "item-0",
+                "title": "Praesent ut ipsum nulla.",
+                "excert": "Orci varius natoque penatibus et magnis dis parturient montes.",
+                "description": "Phasellus faucibus scelerisque eleifend donec pretium vulputate sapien nec. Sed euismod nisi porta lorem mollis aliquam ut porttitor leo. Morbi enim nunc faucibus a pellentesque sit amet porttitor. Turpis in eu mi bibendum neque egestas. Nibh praesent tristique magna sit amet purus. Id aliquet risus feugiat in ante metus. Curabitur gravida arcu ac tortor. Vivamus arcu felis bibendum ut tristique et egestas. Nunc non blandit massa enim nec dui nunc mattis. Eu non diam phasellus vestibulum lorem. Risus commodo viverra maecenas accumsan lacus vel.",
+                "images": [{
+                        "original": "/assets/images/original/apartment/2/1.jpg",
+                        "thumbnail": "/assets/images/thumbnail/apartment/2/1.jpg"
+                    },
+                    {
+                        "original": "/assets/images/original/apartment/2/2.jpg",
+                        "thumbnail": "/assets/images/thumbnail/apartment/2/2.jpg"
+                    },
+                    {
+                        "original": "/assets/images/original/apartment/2/3.jpg",
+                        "thumbnail": "/assets/images/thumbnail/apartment/2/3.jpg"
+                    }
+                ],
+                "type": "apartment",
+                "rooms": 1,
+                "area": 97,
+                "rent": 20900,
+                "deposit": 83000
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    5.330600738525391,
+                    60.39651540611492
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "item-1",
+                "title": "Praesent ut ipsum nulla.",
+                "excert": "Praesent ullamcorper dui molestie augue hendrerit finibus. Praesent ut ipsum nulla.",
+                "description": "Erat velit scelerisque in dictum non consectetur a erat nam. Pellentesque pulvinar pellentesque habitant morbi tristique senectus et. Pretium aenean pharetra magna ac placerat vestibulum lectus. Augue mauris augue neque gravida in fermentum et. Eros in cursus turpis massa tincidunt. Leo in vitae turpis massa sed elementum tempus egestas. Blandit aliquam etiam erat velit scelerisque in dictum non consectetur.",
+                "images": [{
+                        "original": "/assets/images/original/apartment/3/1.jpg",
+                        "thumbnail": "/assets/images/thumbnail/apartment/3/1.jpg"
+                    },
+                    {
+                        "original": "/assets/images/original/apartment/3/2.jpg",
+                        "thumbnail": "/assets/images/thumbnail/apartment/3/2.jpg"
+                    },
+                    {
+                        "original": "/assets/images/original/apartment/3/3.jpg",
+                        "thumbnail": "/assets/images/thumbnail/apartment/3/3.jpg"
+                    }
+                ],
+                "type": "apartment",
+                "rooms": 1,
+                "area": 52,
+                "rent": 10900,
+                "deposit": 32000
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    5.324549674987793,
+                    60.39210551689358
+                ]
+            }
+        }
+    ]
+}
