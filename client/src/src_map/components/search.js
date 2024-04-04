@@ -1,35 +1,37 @@
-import React, { Component } from "react";
-import InputRange from "react-input-range";
-import photo1 from "../icon-apartment.png"
-import { color } from "framer-motion";
-import Modal from "./Modal";
+import React, { Component } from 'react'
+import InputRange from 'react-input-range'
+import photo1 from '../icon-apartment.png'
+// import { color } from 'framer-motion'
+// import Modal from './Modal'
 class Sreach extends Component {
   state = {
     firstPropertySelected: false,
     secondPropertySelected: false,
-    propertyName:null,
-    propertyName2:null,
+    propertyName: null,
+    propertyName2: null,
     showModal: false,
-  };
+  }
 
   toggleModal = () => {
-    this.setState({showModal: !this.state.showModal });
-  };
+    this.setState({ showModal: !this.state.showModal })
+  }
 
   handleFirstProperty = () => {
-    this.setState({ firstPropertySelected: !firstPropertySelected });
-  };
-
-  handlePropertyName = (propertyName) => {
-    this.setState({ propertyName: propertyName });
-  };
-  handlePropertyName2 = (propertyName2) => {
-    this.setState({ propertyName2: propertyName2 });
-  };
+    // Correctly access firstPropertySelected from state
+    this.setState({ firstPropertySelected: !this.state.firstPropertySelected })
+  }
 
   handleSecondProperty = () => {
-    this.setState({ secondPropertySelected: !secondPropertySelected });
-  };
+    // Correctly access secondPropertySelected from state
+    this.setState({ secondPropertySelected: !this.state.secondPropertySelected })
+  }
+
+  handlePropertyName = (propertyName) => {
+    this.setState({ propertyName: propertyName })
+  }
+  handlePropertyName2 = (propertyName2) => {
+    this.setState({ propertyName2: propertyName2 })
+  }
 
   render() {
     let {
@@ -56,8 +58,8 @@ class Sreach extends Component {
       propertyName2,
       handlePropertyName,
       handlePropertyName2,
-      toggleModal
-    } = this.props;
+      toggleModal,
+    } = this.props
     const fileUploadLabelStyle = {
       cursor: 'pointer',
       display: 'inline-block',
@@ -67,16 +69,16 @@ class Sreach extends Component {
       color: '#555',
       transition: 'background-color 0.3s ease',
       ':hover': {
-        backgroundColor: '#f0f0f0'
+        backgroundColor: '#f0f0f0',
       },
-      'i': {
-        marginRight: '5px'
+      i: {
+        marginRight: '5px',
       },
       width: '95%', // Set width to match height
       height: '100px', // Set height
       textAlign: 'center',
-      lineHeight: '100px' // Center content vertically
-    };
+      lineHeight: '100px', // Center content vertically
+    }
 
     const fileUploadSelectedLabelStyle = {
       cursor: 'pointer',
@@ -87,21 +89,20 @@ class Sreach extends Component {
       color: '#555',
       transition: 'background-color 0.3s ease',
       ':hover': {
-        backgroundColor: '#f0f0f0'
+        backgroundColor: '#f0f0f0',
       },
-      'i': {
-        marginRight: '5px'
+      i: {
+        marginRight: '5px',
       },
       width: '95%', // Set width to match height
       height: '100px', // Set height
       textAlign: 'center',
-      lineHeight: '100px' // Center content vertically
-    };
-    
+      lineHeight: '100px', // Center content vertically
+    }
 
-    const fileUploadInputStyle = {
-      display: 'none'
-    };
+    // const fileUploadInputStyle = {
+    //   display: 'none',
+    // }
 
     return (
       <React.Fragment>
@@ -111,114 +112,141 @@ class Sreach extends Component {
           <i
             className="sc-icon-menu sc-slide-toggle"
             onClick={() => {
-              onChangeSlide(!slideOpen);
+              onChangeSlide(!slideOpen)
             }}
           ></i>
         </header>
 
         <div className="sc-slide-body">
           <form className="sc-form">
-          
-
-          <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {/* Applying inline style */}
-          <h6>Select Southwest property</h6>
-          <label htmlFor="file-upload" style={firstPropertySelected ? fileUploadSelectedLabelStyle : fileUploadLabelStyle}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <i className="fas fa-cloud-upload-alt" style={{ marginBottom: '5px' }}></i>
-              <img src={photo1} alt="client" />                           
-              {propertyName != null ? propertyName : "First Property"}
-              {propertyName != null ? <p onClick={() =>{
-                console.log("sssssss")
-                handlePropertyName(null)
-                // this.setState({ propertyName: null})
-              }} style={{color:'red'}}><b><u>Remove</u></b></p> : null}
-
-              
+            <div
+              style={{
+                marginBottom: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              {/* Applying inline style */}
+              <h6>Select Southwest property</h6>
+              <label
+                htmlFor="file-upload"
+                style={firstPropertySelected ? fileUploadSelectedLabelStyle : fileUploadLabelStyle}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <i className="fas fa-cloud-upload-alt" style={{ marginBottom: '5px' }}></i>
+                  <img src={photo1} alt="client" />
+                  {propertyName != null ? propertyName : 'First Property'}
+                  {propertyName != null ? (
+                    <p
+                      onClick={() => {
+                        console.log('sssssss')
+                        handlePropertyName(null)
+                        // this.setState({ propertyName: null})
+                      }}
+                      style={{ color: 'red' }}
+                    >
+                      <b>
+                        <u>Remove</u>
+                      </b>
+                    </p>
+                  ) : null}
+                </div>
+              </label>
             </div>
-          </label>
-        </div>
 
-        <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {/* Applying inline style */}
-          <h6>Select any other property</h6>
-          <label htmlFor="file-upload" style={secondPropertySelected ? fileUploadSelectedLabelStyle : fileUploadLabelStyle}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <i className="fas fa-cloud-upload-alt" style={{ marginBottom: '5px' }}></i>
-              <img src={photo1} alt="client" />                           
-              {propertyName2 != null ? propertyName2 : "Second Property"}
+            <div
+              style={{
+                marginBottom: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              {/* Applying inline style */}
+              <h6>Select any other property</h6>
+              <label
+                htmlFor="file-upload"
+                style={secondPropertySelected ? fileUploadSelectedLabelStyle : fileUploadLabelStyle}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <i className="fas fa-cloud-upload-alt" style={{ marginBottom: '5px' }}></i>
+                  <img src={photo1} alt="client" />
+                  {propertyName2 != null ? propertyName2 : 'Second Property'}
 
-              {propertyName2 != null ? <p style={{color:'red'}} onClick={() =>{
-                                console.log("wwww")
-                                handlePropertyName2(null)
+                  {propertyName2 != null ? (
+                    <p
+                      style={{ color: 'red' }}
+                      onClick={() => {
+                        console.log('wwww')
+                        handlePropertyName2(null)
 
-                // this.setState({ propertyName2: null})
-              }}><b><u>Remove</u></b></p> : null}
-              
-
+                        // this.setState({ propertyName2: null})
+                      }}
+                    >
+                      <b>
+                        <u>Remove</u>
+                      </b>
+                    </p>
+                  ) : null}
+                </div>
+              </label>
             </div>
-          </label>
-        </div>
-        { propertyName != null && propertyName2 != null ?
+            {propertyName != null && propertyName2 != null ? (
+              <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                <p
+                  onClick={() => {
+                    // handlePropertyName(null)
 
-           <div style={{ textAlign: 'center', margin: '20px 0' }}>
-           <p
-             onClick={() => {
-              // handlePropertyName(null)
-
-              // console.log("dddddddddd")
-              toggleModal()
-              //  console.log("Button Clicked!"); // Define your button click handler function
-             }}
-             style={{
-               padding: '10px 20px',
-               fontSize: '16px',
-               color: '#fff',
-               backgroundColor: '#007bff',
-               border: 'none',
-               borderRadius: '5px',
-               cursor: 'pointer',
-             }}
-           >
-             Compare
-           </p>
-         </div>
-        : null}
-       
-
-
-        <header className="sc-slide-header">
-          <h5>Filters</h5>
-
-         
-        </header>
-
-        <h6>Data filter</h6>
-
-        <div className="sc-form-group sc-grid-2">
-          { dataFilter.map((dataFilter, index) => {
-            return (
-              <div className="sc-form-radio" key={index}>
-                <input
-                  type="radio"
-                  name="dataFilter"
-                  id={dataFilter.slug}
-                  data-datafilter={dataFilter.slug}
-                  checked={dataFilter.checked}
-                  onChange={event => {
-                    onChangeDataFilter(event);
+                    // console.log("dddddddddd")
+                    toggleModal()
+                    //  console.log("Button Clicked!"); // Define your button click handler function
                   }}
-                />
-
-                <label htmlFor={dataFilter.slug}>
-                  <i className="sc-icon-radio"></i>
-
-                  <span>{dataFilter.name}</span>
-                </label>
+                  style={{
+                    padding: '10px 20px',
+                    fontSize: '16px',
+                    color: '#fff',
+                    backgroundColor: '#007bff',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Compare
+                </p>
               </div>
-            );
-          })}
-        </div>
+            ) : null}
+
+            <header className="sc-slide-header">
+              <h5>Filters</h5>
+            </header>
+
+            <h6>Data filter</h6>
+
+            <div className="sc-form-group sc-grid-2">
+              {dataFilter.map((dataFilter, index) => {
+                return (
+                  <div className="sc-form-radio" key={index}>
+                    <input
+                      type="radio"
+                      name="dataFilter"
+                      id={dataFilter.slug}
+                      data-datafilter={dataFilter.slug}
+                      checked={dataFilter.checked}
+                      onChange={(event) => {
+                        onChangeDataFilter(event)
+                      }}
+                    />
+
+                    <label htmlFor={dataFilter.slug}>
+                      <i className="sc-icon-radio"></i>
+
+                      <span>{dataFilter.name}</span>
+                    </label>
+                  </div>
+                )
+              })}
+            </div>
 
             <h6>Type</h6>
 
@@ -232,8 +260,8 @@ class Sreach extends Component {
                       id={type.slug}
                       data-type={type.slug}
                       checked={type.checked}
-                      onChange={event => {
-                        onChangeType(event);
+                      onChange={(event) => {
+                        onChangeType(event)
                       }}
                     />
 
@@ -243,7 +271,7 @@ class Sreach extends Component {
                       <span>{type.name}</span>
                     </label>
                   </div>
-                );
+                )
               })}
             </div>
 
@@ -259,8 +287,8 @@ class Sreach extends Component {
                       id={room.slug}
                       data-room={room.slug}
                       checked={room.checked}
-                      onChange={event => {
-                        onChangeRoom(event);
+                      onChange={(event) => {
+                        onChangeRoom(event)
                       }}
                     />
 
@@ -270,7 +298,7 @@ class Sreach extends Component {
                       <span>{room.name}</span>
                     </label>
                   </div>
-                );
+                )
               })}
             </div>
 
@@ -282,8 +310,8 @@ class Sreach extends Component {
                 minValue={20}
                 step={5}
                 value={{ min: areas.from, max: areas.to }}
-                onChange={value => {
-                  onChangeArea(value);
+                onChange={(value) => {
+                  onChangeArea(value)
                 }}
               />
             </div>
@@ -296,8 +324,8 @@ class Sreach extends Component {
                 minValue={3000}
                 step={1000}
                 value={{ min: rents.from, max: rents.to }}
-                onChange={value => {
-                  onChangeRent(value);
+                onChange={(value) => {
+                  onChangeRent(value)
                 }}
               />
             </div>
@@ -310,8 +338,8 @@ class Sreach extends Component {
                 minValue={10000}
                 step={1000}
                 value={{ min: deposits.from, max: deposits.to }}
-                onChange={value => {
-                  onChangeDeposit(value);
+                onChange={(value) => {
+                  onChangeDeposit(value)
                 }}
               />
             </div>
@@ -326,7 +354,7 @@ class Sreach extends Component {
               <button
                 disabled={disableTour}
                 onClick={() => {
-                  onChangeTour("start-tour");
+                  onChangeTour('start-tour')
                 }}
               >
                 <i className="sc-icon-route"></i>
@@ -336,11 +364,9 @@ class Sreach extends Component {
             </div>
           </div>
         </footer>
-        
-
       </React.Fragment>
-    );
+    )
   }
 }
 
-export default Sreach;
+export default Sreach

@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 
 //All the svg files
-import logo from "../assets/logo.svg";
-import Home from "../assets/home-solid.svg";
-import Team from "../assets/social.svg";
-import Calender from "../assets/sceduled.svg";
-import Projects from "../assets/starred.svg";
-import Map from "../assets/map.png"
-import underCon from "../assets/underCon.png"
-import Documents from "../assets/draft.svg";
-import PowerOff from "../assets/power-off-solid.svg";
-import styled from "styled-components";
-import { NavLink } from "react-router-dom";
-import { googleLogout, useGoogleLogin } from '@react-oauth/google';
-import { useNavigate } from "react-router-dom";
+import logo from '../assets/logo.svg'
+import Home from '../assets/home-solid.svg'
+import Team from '../assets/social.svg'
+import Calender from '../assets/sceduled.svg'
+import Projects from '../assets/starred.svg'
+import Map from '../assets/map.png'
+import underCon from '../assets/underCon.png'
+import Documents from '../assets/draft.svg'
+import PowerOff from '../assets/power-off-solid.svg'
+import styled from 'styled-components'
+import { NavLink } from 'react-router-dom'
+import { googleLogout, useGoogleLogin } from '@react-oauth/google'
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
   position: fixed;
@@ -22,11 +22,10 @@ const Container = styled.div`
     border-right: 4px solid var(--white);
 
     img {
-      filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg)
-        brightness(103%) contrast(103%);
+      filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
     }
   }
-`;
+`
 
 const Button = styled.button`
   background-color: var(--black);
@@ -45,7 +44,7 @@ const Button = styled.button`
 
   &::before,
   &::after {
-    content: "";
+    content: '';
     background-color: var(--white);
     height: 2px;
     width: 1rem;
@@ -54,15 +53,15 @@ const Button = styled.button`
   }
 
   &::before {
-    top: ${(props) => (props.clicked ? "1.5" : "1rem")};
-    transform: ${(props) => (props.clicked ? "rotate(135deg)" : "rotate(0)")};
+    top: ${(props) => (props.clicked ? '1.5' : '1rem')};
+    transform: ${(props) => (props.clicked ? 'rotate(135deg)' : 'rotate(0)')};
   }
 
   &::after {
-    top: ${(props) => (props.clicked ? "1.2" : "1.5rem")};
-    transform: ${(props) => (props.clicked ? "rotate(-135deg)" : "rotate(0)")};
+    top: ${(props) => (props.clicked ? '1.2' : '1.5rem')};
+    transform: ${(props) => (props.clicked ? 'rotate(-135deg)' : 'rotate(0)')};
   }
-`;
+`
 
 const SidebarContainer = styled.div`
   background-color: var(--black);
@@ -78,7 +77,7 @@ const SidebarContainer = styled.div`
   justify-content: space-between;
 
   position: relative;
-`;
+`
 
 const Logo = styled.div`
   width: 2rem;
@@ -87,7 +86,7 @@ const Logo = styled.div`
     width: 100%;
     height: auto;
   }
-`;
+`
 
 const SlickBar = styled.ul`
   color: var(--white);
@@ -103,10 +102,10 @@ const SlickBar = styled.ul`
   top: 6rem;
   left: 0;
 
-  width: ${(props) => (props.clicked ? "12rem" : "3.5rem")};
+  width: ${(props) => (props.clicked ? '12rem' : '3.5rem')};
   transition: all 0.5s ease;
   border-radius: 0 30px 30px 0;
-`;
+`
 
 const Item = styled(NavLink)`
   text-decoration: none;
@@ -122,28 +121,26 @@ const Item = styled(NavLink)`
     border-right: 4px solid var(--white);
 
     img {
-      filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg)
-        brightness(103%) contrast(103%);
+      filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
     }
   }
 
   img {
     width: 1.2rem;
     height: auto;
-    filter: invert(92%) sepia(4%) saturate(1033%) hue-rotate(169deg)
-      brightness(78%) contrast(85%);
+    filter: invert(92%) sepia(4%) saturate(1033%) hue-rotate(169deg) brightness(78%) contrast(85%);
   }
-`;
+`
 
 const Text = styled.span`
-  width: ${(props) => (props.clicked ? "100%" : "0")};
+  width: ${(props) => (props.clicked ? '100%' : '0')};
   overflow: hidden;
-  margin-left: ${(props) => (props.clicked ? "1.5rem" : "0")};
+  margin-left: ${(props) => (props.clicked ? '1.5rem' : '0')};
   transition: all 0.3s ease;
-`;
+`
 
 const Profile = styled.div`
-  width: ${(props) => (props.clicked ? "14rem" : "3rem")};
+  width: ${(props) => (props.clicked ? '14rem' : '3rem')};
   height: 3rem;
 
   padding: 0.5rem 1rem;
@@ -153,7 +150,7 @@ const Profile = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: ${(props) => (props.clicked ? "9rem" : "0")};
+  margin-left: ${(props) => (props.clicked ? '9rem' : '0')};
 
   background-color: var(--black);
   color: var(--white);
@@ -171,13 +168,13 @@ const Profile = styled.div`
       padding: 2px;
     }
   }
-`;
+`
 
 const Details = styled.div`
-  display: ${(props) => (props.clicked ? "flex" : "none")};
+  display: ${(props) => (props.clicked ? 'flex' : 'none')};
   justify-content: space-between;
   align-items: center;
-`;
+`
 
 const Name = styled.div`
   padding: 0 1.5rem;
@@ -200,7 +197,7 @@ const Name = styled.div`
       text-decoration: underline;
     }
   }
-`;
+`
 
 const Logout = styled.button`
   border: none;
@@ -211,8 +208,7 @@ const Logout = styled.button`
   img {
     width: 100%;
     height: auto;
-    filter: invert(15%) sepia(70%) saturate(6573%) hue-rotate(2deg)
-      brightness(100%) contrast(126%);
+    filter: invert(15%) sepia(70%) saturate(6573%) hue-rotate(2deg) brightness(100%) contrast(126%);
     transition: all 0.3s ease;
     &:hover {
       border: none;
@@ -220,41 +216,40 @@ const Logout = styled.button`
       opacity: 0.5;
     }
   }
-`;
+`
 
 const Sidebar = () => {
-  const [click, setClick] = useState(false);
-  const handleClick = () => setClick(!click);
+  const [click, setClick] = useState(false)
+  const handleClick = () => setClick(!click)
 
-  const [profileClick, setprofileClick] = useState(false);
-  const handleProfileClick = () => setprofileClick(!profileClick);
-  const navigate = useNavigate();
+  const [profileClick, setprofileClick] = useState(false)
+  const handleProfileClick = () => setprofileClick(!profileClick)
+  const navigate = useNavigate()
 
-  const [userProfile, setUserProfile] = useState(null);
+  const [userProfile, setUserProfile] = useState(null)
   const [name, setname] = useState(null)
 
-  const storedUserProfile = localStorage.getItem('userProfile');
+  const storedUserProfile = localStorage.getItem('userProfile')
 
   const logOut = () => {
-    console.log("sssssssssssss")
-    googleLogout();
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('userProfile');
-    navigate("/login"); // Navigate to the login route
-
-};
+    console.log('sssssssssssss')
+    googleLogout()
+    localStorage.removeItem('isAuthenticated')
+    localStorage.removeItem('userProfile')
+    navigate('/login') // Navigate to the login route
+  }
 
   // If userProfile exists in localStorage, parse it and set the state
   useEffect(() => {
-    const storedUserProfile = localStorage.getItem('userProfile');
+    const storedUserProfile = localStorage.getItem('userProfile')
     if (storedUserProfile) {
-      const parsedUserProfile = JSON.parse(storedUserProfile);
-      console.log("--------------0")
+      const parsedUserProfile = JSON.parse(storedUserProfile)
+      console.log('--------------0')
       console.log(JSON.stringify(parsedUserProfile))
-      setUserProfile(parsedUserProfile);
-      setname(parsedUserProfile.given_name); // Set the 'name' state
+      setUserProfile(parsedUserProfile)
+      setname(parsedUserProfile.given_name) // Set the 'name' state
     }
-  }, []);
+  }, [])
 
   return (
     <Container>
@@ -266,20 +261,11 @@ const Sidebar = () => {
           <img src={logo} alt="logo" />
         </Logo>
         <SlickBar clicked={click}>
-          <Item
-            onClick={() => setClick(false)}
-            exact
-            activeClassName="active"
-            to="/home"
-          >
+          <Item onClick={() => setClick(false)} exact activeClassName="active" to="/home">
             <img src={Home} alt="Home" />
             <Text clicked={click}>Home</Text>
           </Item>
-          <Item
-            onClick={() => setClick(false)}
-            activeClassName="active"
-            to="/competitors"
-          >
+          <Item onClick={() => setClick(false)} activeClassName="active" to="/competitors">
             <img src={Team} alt="Team" />
             <Text clicked={click}>Competitors</Text>
           </Item>
@@ -292,49 +278,39 @@ const Sidebar = () => {
             <img src={Map} alt="Calender" />
             <Text clicked={click}>Map</Text>
           </Item>
-          <Item
-            onClick={() => setClick(false)}
-            activeClassName="active"
-            to="/documents"
-          >
+          <Item onClick={() => setClick(false)} activeClassName="active" to="/documents">
             <img src={underCon} height={50} width={50} alt="Documents" />
             <Text clicked={click}>Under Developement</Text>
           </Item>
-          <Item
-            onClick={() => setClick(false)}
-            activeClassName="active"
-            to="/projects"
-          >
+          <Item onClick={() => setClick(false)} activeClassName="active" to="/projects">
             <img src={Projects} alt="Projects" />
             <Text clicked={click}>All Listings</Text>
           </Item>
         </SlickBar>
 
         <Profile clicked={profileClick}>
-          <img
-            onClick={() => handleProfileClick()}
-            src="https://picsum.photos/200"
-            alt="Profile"
-          />
+          <img onClick={() => handleProfileClick()} src="https://picsum.photos/200" alt="Profile" />
           <Details clicked={profileClick}>
             <Name>
-            
-                              <h4>{name}</h4>
-           
+              <h4>{name}</h4>
 
               <a href="/#">view&nbsp;profile</a>
             </Name>
 
             <Logout>
-              <img src={PowerOff} alt="logout" onClick={() => {
-                logOut()
-              }} />
+              <img
+                src={PowerOff}
+                alt="logout"
+                onClick={() => {
+                  logOut()
+                }}
+              />
             </Logout>
           </Details>
         </Profile>
       </SidebarContainer>
     </Container>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

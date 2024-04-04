@@ -1,20 +1,25 @@
-import MotionHoc from "./MotionHoc";
-import React, { useState, useEffect } from 'react';
-import PropetyDetailPage from "./PropetyDetailPage";
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-import Typewriter from "../componant/Typewriter";
+import MotionHoc from './MotionHoc'
+import React, { useState, useEffect } from 'react'
+import PropetyDetailPage from './PropetyDetailPage'
+import { Link } from 'react-router-dom' // Import Link from react-router-dom
+import Typewriter from '../componant/Typewriter'
 
 const Dashboard = () => {
-
   return (
     <div style={styles.container}>
       <div style={styles.cardsContainer}>
-      <iframe title="MCDA_Datamining_Hackathon" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=bf6b3425-045a-4387-86d6-2c73e598e2b7&autoAuth=true&ctid=4711194d-93f6-4861-9472-a801087b4888" frameborder="0" allowFullScreen="true"></iframe>
+        <iframe
+          title="MCDA_Datamining_Hackathon"
+          width="1140"
+          height="541.25"
+          src="https://app.powerbi.com/reportEmbed?reportId=bf6b3425-045a-4387-86d6-2c73e598e2b7&autoAuth=true&ctid=4711194d-93f6-4861-9472-a801087b4888"
+          frameBorder="0"
+          allowFullScreen="true"
+        ></iframe>
       </div>
     </div>
-  );
-};
-
+  )
+}
 
 const Home2 = () => {
   return (
@@ -22,24 +27,23 @@ const Home2 = () => {
       <Header />
       <Dashboard />
     </div>
-  );
-};
+  )
+}
 
 const Header = () => {
   return (
     <div style={styles.header}>
-      <h1 style={{ margin: 0, fontSize: '15px',  textAlign: 'center' }}>Dashboard</h1>
+      <h1 style={{ margin: 0, fontSize: '15px', textAlign: 'center' }}>Dashboard</h1>
     </div>
-  );
-};
+  )
+}
 
 const styles = {
   container: {
     maxWidth: '90%',
     margin: '0 auto',
-    padding: '5px', 
+    padding: '5px',
     marginTop: '50px',
-
   },
   heading: {
     textAlign: 'center',
@@ -53,7 +57,7 @@ const styles = {
     position: 'sticky',
     top: 0,
     zIndex: 1000,
-    borderRadius: '0 0 25px 25px', 
+    borderRadius: '0 0 25px 25px',
   },
   cardsContainer: {
     display: 'flex',
@@ -83,5 +87,5 @@ const styles = {
   propertyInfo: {
     flex: 1, // Allow the property info to take up remaining space
   },
-};
-export default Home2;
+}
+export default Home2

@@ -1,21 +1,37 @@
-import React from 'react';
+import React from 'react'
 
 const ListingDetailPage = ({ item }) => {
   return (
     <div style={styles.container}>
       <img src={item.image} alt={item.listing_name} style={styles.image} />
       <h2 style={styles.heading}>{item.listing_name}</h2>
-      <p><strong>Address:</strong> {item.address}</p>
-      <p><strong>Property Management Name:</strong> {item.property_management_name}</p>
-      <p><strong>Monthly Rent:</strong> {item.monthly_rent}</p>
-      <p><strong>Bedroom Count:</strong> {item.bedroom_count}</p>
-      <p><strong>Bathroom Count:</strong> {item.bathroom_count}</p>
-      <p><strong>Description:</strong> {item.description}</p>
-      <p><strong>Availability Status:</strong> {item.availability_status}</p>
-      <a href={item.source} target="_blank" rel="noopener noreferrer" style={styles.link}>View Source</a>
+      <p>
+        <strong>Address:</strong> {item.address}
+      </p>
+      <p>
+        <strong>Property Management Name:</strong> {item.property_management_name}
+      </p>
+      <p>
+        <strong>Monthly Rent:</strong> {item.monthly_rent}
+      </p>
+      <p>
+        <strong>Bedroom Count:</strong> {item.bedroom_count}
+      </p>
+      <p>
+        <strong>Bathroom Count:</strong> {item.bathroom_count}
+      </p>
+      <p>
+        <strong>Description:</strong> {item.description}
+      </p>
+      <p>
+        <strong>Availability Status:</strong> {item.availability_status}
+      </p>
+      <a href={item.source} target="_blank" rel="noopener noreferrer" style={styles.link}>
+        View Source
+      </a>
     </div>
-  );
-};
+  )
+}
 
 const styles = {
   container: {
@@ -42,7 +58,7 @@ const styles = {
     marginTop: '20px',
     textDecoration: 'none',
     color: 'blue',
-  }
-};
+  },
+}
 
-export default ListingDetailPage;
+export default ListingDetailPage

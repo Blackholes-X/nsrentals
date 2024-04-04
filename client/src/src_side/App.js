@@ -1,18 +1,15 @@
+import React from 'react'
+
 // import { useLocation } from "react-router";
-import Sidebar from "./Sidebar";
-import Home from "./Pages/Home";
-import Team from "./Pages/Team";
-import Calender from "./Pages/Calender";
-import Documents from "./Pages/Documents";
-import Projects from "./Pages/Projects";
-import styled from "styled-components";
-import { AnimatePresence } from "framer-motion";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation
-} from 'react-router-dom';
+import Sidebar from './Sidebar'
+import Home from './Pages/Home'
+import Team from './Pages/Team'
+import Calender from './Pages/Calender'
+import Documents from './Pages/Documents'
+import Projects from './Pages/Projects'
+import styled from 'styled-components'
+import { AnimatePresence } from 'framer-motion'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 const Pages = styled.div`
   width: 100vw;
   height: 100vh;
@@ -26,29 +23,29 @@ const Pages = styled.div`
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-`;
+`
 
 function App() {
-  const location = useLocation();
+  const location = useLocation()
   return (
     <>
       <Sidebar />
       <Pages>
         {/* <AnimatePresence mode="wait"> */}
-          {/* <Router> */}
-            <Routes location={location} key={location.pathname}>
-            <Route exact path="/home" element={<Home />} />
-            <Route path="/team" element={<Team />} />
-            <Route path="/calender" element={<Calender />} />
-            <Route path="/documents" element={<Documents />} />
-            <Route path="/projects" element={<Projects />} />
-          </Routes>
-          {/* </Router> */}
+        {/* <Router> */}
+        <Routes location={location} key={location.pathname}>
+          <Route exact path="/home" element={<Home />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/calender" element={<Calender />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/projects" element={<Projects />} />
+        </Routes>
+        {/* </Router> */}
 
         {/* </AnimatePresence> */}
       </Pages>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
