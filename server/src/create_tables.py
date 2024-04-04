@@ -291,7 +291,7 @@ def create_sec_comp_rental_listings():
                         add_lat FLOAT,
                         add_long FLOAT,
                         property_management_name VARCHAR(255),
-                        monthly_rent VARCHAR(255),  -- Consider changing this to a numeric type if it stores numerical values
+                        monthly_rent INTEGER, 
                         property_type VARCHAR(255),
                         bedroom_count INTEGER,  -- Changed from VARCHAR(255) to INTEGER
                         bathroom_count INTEGER,  -- Changed from VARCHAR(255) to INTEGER
@@ -310,7 +310,7 @@ def create_sec_comp_rental_listings():
                         parking_address TEXT,
                         pet_friendly INTEGER,
                         smoking_allowed INTEGER,
-                        apartment_size VARCHAR(255),  -- Consider changing if this stores numerical values
+                        apartment_size INTEGER
                         apartment_size_unit INTEGER,
                         is_furnished INTEGER,
                         lease_duration VARCHAR(255),
@@ -443,7 +443,7 @@ def create_sec_southwest_listings():
                         parking_availability_status INTEGER,
                         pet_friendly INTEGER,
                         smoking_allowed INTEGER,
-                        apartment_size VARCHAR(255),  -- Consider changing if this stores numerical values
+                        apartment_size INTEGER,  -- Consider changing if this stores numerical values
                         apartment_size_unit INTEGER,
                         is_furnished INTEGER,
                         lease_duration VARCHAR(255),

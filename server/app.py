@@ -9,6 +9,7 @@ from src import models as M
 from src import create_tables
 from src import auth
 from src import llm 
+from src import prediction as P
 
 from src import nearest_neighbor_inference
 
@@ -214,6 +215,14 @@ def get_competitor_listings():
         return competitor_listings
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+### -------------------- ML Stuffs --------------------------------------
+@app.get("/update-and-refresh-predictions")
+def update_and_refresh_predictions():
+    # Call the refresh_predictions function and return its result
+    refreshed_predictions = P.update_new_predictions()
+    return refreshed_predictions
 
 
 if __name__ == '__main__':
