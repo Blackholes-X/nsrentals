@@ -1,9 +1,11 @@
-import MotionHoc from "./MotionHoc";
+import React from 'react'
+
+import MotionHoc from './MotionHoc'
 
 const HomeComponent = () => {
-  return <h1>Home</h1>;
-};
+  return <h1>Home</h1>
+}
 
-const Home = MotionHoc(HomeComponent);
+const Home = MotionHoc(HomeComponent)
 
-export default Home;
+export default Home

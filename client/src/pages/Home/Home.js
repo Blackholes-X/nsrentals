@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./Home.css";
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import './Home.css'
 
 function Home() {
-  const navigate = useNavigate(); // Hook to navigate programmatically
+  const navigate = useNavigate() // Hook to navigate programmatically
 
   // Function to navigate to Competitors page
   const goToCompetitors = () => {
-    navigate("/Competitors");
-  };
+    navigate('/Competitors')
+  }
 
   return (
     <div className="home-container">
@@ -18,7 +18,7 @@ function Home() {
         Go to Competitors Analysis
       </button>
     </div>
-  );
+  )
 }
 
-export default Home;
+export default Home

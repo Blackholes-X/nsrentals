@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import React from 'react'
+import styled from 'styled-components'
+import { NavLink } from 'react-router-dom'
 
 const Container = styled.div`
   background-color: var(--black);
@@ -8,7 +8,7 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-`;
+`
 
 const Logo = styled.div`
   width: 2rem;
@@ -17,12 +17,12 @@ const Logo = styled.div`
     width: 100%;
     height: auto;
   }
-`;
+`
 
 const NavLinks = styled.ul`
   list-style: none;
   display: flex;
-`;
+`
 
 const Item = styled(NavLink)`
   text-decoration: none;
@@ -33,14 +33,12 @@ const Item = styled(NavLink)`
   &:hover {
     border-bottom: 2px solid var(--white);
   }
-`;
+`
 
 const Header = () => {
   return (
     <Container>
-      <Logo>
-        {/* <img src={logo} alt="logo" /> */}
-      </Logo>
+      <Logo>{/* <img src={logo} alt="logo" /> */}</Logo>
       <NavLinks>
         <Item exact activeClassName="active" to="/home">
           Home
@@ -59,7 +57,7 @@ const Header = () => {
         </Item>
       </NavLinks>
     </Container>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

@@ -1,18 +1,18 @@
-import React, { Component } from "react";
-import "./page.css";
-import ImageGallery from "react-image-gallery";
-import "react-image-gallery/styles/css/image-gallery.css";
+import React, { Component } from 'react'
+import './page.css'
+import ImageGallery from 'react-image-gallery'
+import 'react-image-gallery/styles/css/image-gallery.css'
 
 class Page extends Component {
-  state = {};
+  state = {}
   render() {
-    let { page, onChangePage } = this.props;
+    let { page, onChangePage } = this.props
 
     return (
       <div
         className="app-page"
-        onClick={event => {
-          event.stopPropagation();
+        onClick={(event) => {
+          event.stopPropagation()
         }}
       >
         <header className="app-page-header">
@@ -22,7 +22,7 @@ class Page extends Component {
             <i
               className="sc-icon-cross sc-lg app-page-close"
               onClick={() => {
-                onChangePage(false);
+                onChangePage(false)
               }}
             ></i>
           </h5>
@@ -60,8 +60,8 @@ class Page extends Component {
           <p>{page.description}</p>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default Page;
+export default Page

@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import "./tour.css";
+import React, { Component } from 'react'
+import './tour.css'
 
 class Tour extends Component {
-  state = {};
+  state = {}
   render() {
-    let { disableRestart, disableNext, disablePrev, onChangeTour } = this.props;
+    let { disableRestart, disableNext, disablePrev, onChangeTour } = this.props
 
     return (
       <React.Fragment>
@@ -12,7 +12,7 @@ class Tour extends Component {
           <button
             disabled={disablePrev}
             onClick={() => {
-              onChangeTour("prev");
+              onChangeTour('prev')
             }}
           >
             Prev
@@ -23,7 +23,7 @@ class Tour extends Component {
           <button
             disabled={disableRestart}
             onClick={() => {
-              onChangeTour("restart");
+              onChangeTour('restart')
             }}
           >
             Restart
@@ -33,7 +33,7 @@ class Tour extends Component {
         <div className="sc-form-button sc-stretched">
           <button
             onClick={() => {
-              onChangeTour("end-tour");
+              onChangeTour('end-tour')
             }}
           >
             End
@@ -44,15 +44,15 @@ class Tour extends Component {
           <button
             disabled={disableNext}
             onClick={() => {
-              onChangeTour("next");
+              onChangeTour('next')
             }}
           >
             Next
           </button>
         </div>
       </React.Fragment>
-    );
+    )
   }
 }
 
-export default Tour;
+export default Tour
