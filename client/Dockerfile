@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as the base image
-FROM node:14-alpine as build
+FROM node:16-alpine as build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -9,13 +9,13 @@ ARG REACT_APP_BACKEND_URL
 ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
 # Copy the package.json and yarn.lock files
-COPY package.json ./
-
-# Copy the rest of your app's source code from your host to your image filesystem.
-COPY . .
+COPY package.json yarn.lock ./
 
 # Install your app dependencies using Yarn
 RUN yarn install
+
+# Copy the rest of your app's source code from your host to your image filesystem.
+COPY . .
 
 # Build the app for production using Yarn
 RUN yarn build
