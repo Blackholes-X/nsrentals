@@ -27,12 +27,14 @@ def generate_comp_comparison_text(property_management_name: str) -> List[str]:
 def generate_property_comparison_text(competitor_id: int, southwest_id: int,public_id : int):
     # Example logic to generate comparison texts based on the property management name
     sw_df = DU.read_data_from_sec_southwest_listings()
+    print('sw_df',sw_df)
     if competitor_id != 0:
         comp_df = DU.read_data_from_sec_comp_rental_listings()
         comp_property = comp_df.loc[comp_df['id'] == competitor_id]
         comp_property_details = comp_property.to_json(orient='records')
         data = json.loads(comp_property_details)
         comp_property_firm = data[0]['property_management_name'] if 'property_management_name' in data[0] else None
+        print('comp_property_firm',comp_property_firm)
     else:
         comp_df = DU.read_data_from_sec_public_rental_data()
         comp_property = comp_df.loc[comp_df['id'] == public_id]
@@ -44,12 +46,13 @@ def generate_property_comparison_text(competitor_id: int, southwest_id: int,publ
     # Fetch rows by ID
     sw_property = sw_df.loc[sw_df['id'] == southwest_id]
     
-
+    print('sw_property',sw_property)
     # Convert rows to a human-readable format for the prompt
     sw_property_details = sw_property.to_json(orient='records')
     comp_property_details = comp_property.to_json(orient='records')
     data = json.loads(comp_property_details)
-    
+    print('sw_property_details',sw_property_details)
+    print('comp_property_details',comp_property_details)
 
 
     # Constructing the prompt
@@ -134,7 +137,7 @@ def generate_property_comparison_text(competitor_id: int, southwest_id: int,publ
 
     # Remove the markdown code block notation and leading/trailing backticks
     cleaned_response = response_content.replace("```json", "").replace("```", "").strip()
-
+    print('cleaned_res',cleaned_response)
     # Attempt to parse the cleaned response as JSON
     try:
         response_json = json.loads(cleaned_response)
