@@ -645,3 +645,29 @@ def save_to_database(scraped_data, company_name):
             cur.close()
         if conn is not None:
             conn.close()
+
+
+def read_data_from_sec_parking_data():
+    """Fetch all rows from the sec_parking_data table and return as DataFrame."""
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_parking_data"  # Updated to 'sec_parking_data'
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_parking_data table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
