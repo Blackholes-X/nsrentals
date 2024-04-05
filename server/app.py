@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-
 from src import utils as U
 from src import config as C
 from src import dbutils as DU
@@ -121,6 +120,14 @@ def map_southwest_property_listing(records_limit: int = 20, bedroom_count: Optio
     if listings is None:
         raise HTTPException(status_code=500, detail="An error occurred while fetching the southwest listings.")
     return listings
+
+@app.get("/map/parkings")
+def map_parking_data():
+    listings = DU.read_data_from_sec_parking_data()
+    listing_json = listings.to_json(orient='records')
+    if listings.empty:
+        raise HTTPException(status_code=500, detail="An error occurred while fetching parking data.")
+    return listing_json
 
 
 @app.get("/map/competitor/compare")
