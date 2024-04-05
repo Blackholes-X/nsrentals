@@ -187,6 +187,44 @@ def create_nsrentalsusers_table():
 
 
 
+def create_company_details_table():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Assuming get_db_connection() is a function that returns a database connection
+        cur = conn.cursor()
+
+        # Execute a query to check if the company_details table exists
+        cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'company_details');")
+        exists = cur.fetchone()[0]
+
+        if not exists:
+            # Create the company_details table with the specified columns, including company_name
+            cur.execute("""
+                CREATE TABLE company_details (
+                    company_id SERIAL PRIMARY KEY,
+                    company_name VARCHAR(255) NOT NULL UNIQUE,
+                    description TEXT NOT NULL,
+                    createddate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    modifieddate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            conn.commit()
+            print("Table 'company_details' created successfully.")
+        else:
+            print("Table 'company_details' already exists.")
+
+    except Exception as e:
+        print(f"An error occurred in create_company_details_table: {e}", exc_info=True)
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+
+
 def create_sec_public_rental_data_table():
     conn = None
     cur = None
@@ -575,3 +613,4 @@ create_table_parking_data()
 create_table_sec_parking_data()
 create_south_west_listings_table()
 create_sec_southwest_listings()
+create_company_details_table()

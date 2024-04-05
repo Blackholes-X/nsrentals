@@ -609,3 +609,39 @@ def read_data_from_sec_public_rental_data():
         print(f"Error fetching data from sec_public_rental_data table: {e}")
         return pd.DataFrame()  # Return an empty DataFrame in case of error
 
+
+
+
+def save_to_database(scraped_data, company_name):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Assuming get_db_connection() is a function that returns a database connection
+        cur = conn.cursor()
+        
+        # SQL query to insert data
+        insert_query = """
+        INSERT INTO company_details (company_name, description) VALUES (%s, %s)
+        ON CONFLICT (company_name) DO UPDATE 
+        SET description = EXCLUDED.description,
+            modifieddate = CURRENT_TIMESTAMP;
+        """
+        
+        # Execute the query
+        cur.execute(insert_query, (company_name, scraped_data))
+        
+        # Commit the changes
+        conn.commit()
+        print(f"Data for {company_name} saved/updated successfully.")
+
+    except Exception as e:
+        print(f"An error occurred in save_to_database: {e}", exc_info=True)
+        # Optionally, you can roll back the transaction if something goes wrong
+        if conn is not None:
+            conn.rollback()
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
