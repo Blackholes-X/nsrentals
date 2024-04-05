@@ -7,6 +7,7 @@ from src import config as C
 from src import dbutils as DU
 from src import models as M
 from src import create_tables
+from src import company_scraper as CS
 from src import auth
 from src import llm 
 from src import prediction as P
@@ -213,6 +214,33 @@ def update_and_refresh_predictions():
     # Call the refresh_predictions function and return its result
     refreshed_predictions = P.update_new_predictions()
     return refreshed_predictions
+
+### ---------------------- LLMs ---------------------------------------------
+
+@app.post("/add-competitor-details")
+async def add_competitor_details(url: str, company_name: str):
+    """
+    Adds competitor details to the database by scraping and extracting information
+    from the provided URL and company name.
+    """
+    try:
+        # Call the CS.scrape_and_extract method and store its response
+        scraped_data = CS.scrape_and_extract(url, company_name)
+        
+        # Assume we have a function to save the scraped data to the database
+        id = DU.save_to_database(scraped_data, company_name)
+
+        # For demonstration, returning the scraped data as the response
+        response = {
+            "message" : "Happy!!",
+            "content" : scraped_data,
+            "id" : id
+        }
+        return scraped_data
+    except Exception as e:
+        # If anything goes wrong, return an error message
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 if __name__ == '__main__':
