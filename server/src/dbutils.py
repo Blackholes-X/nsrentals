@@ -421,13 +421,14 @@ def get_last_listings(table_name: str, limit: int):
         # Updated query to filter out listings based on property_image and source
         query = f"""
             SELECT * FROM {table_name}
-            WHERE property_image != '-1' AND property_image != 'Kijiji User'
+            WHERE image != '-1' AND image != 'Kijiji User'
             ORDER BY load_datetime DESC
             LIMIT %s
         """
         cur.execute(query, (limit,))
         
         listings = cur.fetchall()
+        print('listings',listings)
         if listings:
             # Assuming you know the columns or dynamically fetch if necessary
             columns = [desc[0] for desc in cur.description]
