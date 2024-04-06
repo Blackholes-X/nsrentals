@@ -1,0 +1,54 @@
+from datetime import datetime
+from typing import Optional
+from pydantic import BaseModel
+
+class ListingDataResponse(BaseModel):
+    id: int  # Not nullable
+    listing_name: Optional[str] = None
+    building_name: Optional[str] = None
+    apartment_number: Optional[str] = None
+    address: Optional[str] = None
+    add_lat: Optional[float] = None
+    add_long: Optional[float] = None
+    property_management_name: Optional[str] = None
+    monthly_rent: Optional[int] = None
+    property_type: Optional[str] = None
+    bedroom_count: Optional[int] = None
+    bathroom_count: Optional[int] = None
+    utility_water: Optional[int] = None
+    utility_heat: Optional[int] = None
+    utility_electricity: Optional[int] = None
+    utility_laundry: Optional[int] = None
+    utility_wifi: Optional[int] = None
+    included_appliances: Optional[str] = None
+    parking_availability: Optional[int] = None
+    parking_rates: Optional[int] = None
+    parking_slots: Optional[int] = None
+    parking_distance: Optional[int] = None
+    parking_restrictions: Optional[int] = None
+    parking_availability_status: Optional[int] = None
+    parking_address: Optional[str] = None
+    pet_friendly: Optional[int] = None
+    smoking_allowed: Optional[int] = None
+    apartment_size: Optional[int] = None
+    apartment_size_unit: Optional[int] = None
+    is_furnished: Optional[int] = None
+    lease_duration: Optional[str] = None
+    availability_status: Optional[int] = None
+    dist_hospital: Optional[float] = None
+    dist_school: Optional[float] = None
+    dist_restaurant: Optional[float] = None
+    dist_downtown: Optional[float] = None
+    dist_busstop: Optional[float] = None
+    dist_larry_uteck_area: Optional[float] = None
+    dist_central_halifax: Optional[float] = None
+    dist_clayton_park: Optional[float] = None
+    dist_rockingham: Optional[float] = None
+    source: Optional[str] = None
+    website: Optional[str] = None
+    image: Optional[str] = None
+    description: Optional[str] = None
+    property_image: Optional[str] = None
+    load_datetime: Optional[datetime] = None
+    predicted_rent: Optional[float] = None
+    rent_difference: Optional[float] = None
