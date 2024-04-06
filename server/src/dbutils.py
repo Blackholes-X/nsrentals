@@ -13,6 +13,9 @@ from datetime import datetime
 import pandas as pd
 from sqlalchemy import create_engine
 from urllib.parse import quote
+import os
+import shutil
+import psycopg2
 
 from data_model import ListingDataResponse as LDR
 from dotenv import load_dotenv
@@ -677,7 +680,124 @@ def read_data_from_sec_parking_data():
     
 
 
+def get_latest_model_number():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Using the get_db_connection function to establish a database connection
+        cur = conn.cursor()
 
+        # SQL query to fetch the highest model_number from model_versioning table
+        cur.execute("SELECT model_number FROM model_versioning ORDER BY id DESC LIMIT 1;")
+        # Fetch the result
+        result = cur.fetchone()
+        if result:
+            print("Latest model number retrieved successfully.")
+            return result[0]  # Return the latest model number
+        else:
+            print("No data found in model_versioning table.")
+            return None
+
+    except Exception as e:
+        print(f"An error occurred while fetching the latest model number: {e}")
+        return None  # Return None in case of an error
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+
+
+def insert_model_version(model_number, model_version, r2_score):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # SQL query to insert new model version data into the model_versioning table
+        insert_query = """
+        INSERT INTO model_versioning (model_number, model_version, r2_score) 
+        VALUES (%s, %s, %s);
+        """
+        
+        # Execute the query with provided parameters
+        cur.execute(insert_query, (model_number, model_version, r2_score))
+        conn.commit()  # Commit the transaction to the database
+        print(f"Model version {model_version} with number {model_number} inserted successfully with R2 Score {r2_score}.")
+
+    except Exception as e:
+        print(f"An error occurred when inserting into model_versioning: {e}")
+        if conn is not None:
+            conn.rollback()  # Roll back the transaction in case of error
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+
+def fetch_all_model_versions():
+    conn = None
+    try:
+        conn = get_db_connection()
+        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute("SELECT * FROM model_versioning;")
+            model_versions = cursor.fetchall()
+            return model_versions
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return []
+    finally:
+        if conn:
+            conn.close()
+
+
+def redeploy(model_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Fetch the model number based on the provided ID
+            cursor.execute("SELECT model_number FROM model_versioning WHERE id = %s;", (model_id,))
+            result = cursor.fetchone()
+            if not result:
+                print("Model ID not found.")
+                return False
+            
+            model_number = result[0]
+            source_path = f"./models/model_v{model_number}"
+            target_path = "./models/running_model"
+            
+            # Clear the target directory
+            if os.path.exists(target_path):
+                shutil.rmtree(target_path)
+            os.makedirs(target_path)
+            
+            # Copy files from the source directory to the target directory
+            if os.path.exists(source_path):
+                for item in os.listdir(source_path):
+                    s = os.path.join(source_path, item)
+                    d = os.path.join(target_path, item)
+                    if os.path.isdir(s):
+                        shutil.copytree(s, d)
+                    else:
+                        shutil.copy2(s, d)
+                print(f"Model redeployed successfully from {source_path} to {target_path}.")
+                return True
+            else:
+                print("Source model directory does not exist.")
+                return False
+    except Exception as e:
+        print(f"An error occurred during redeployment: {e}")
+        return False
+    finally:
+        if conn:
+            conn.close()
+
+            
 def update_listing_in_db(listing_data) -> dict:
     password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
     database_uri = f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
