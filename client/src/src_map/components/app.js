@@ -5,42 +5,82 @@ import Search from './search'
 import Tour from './tour'
 import Page from './page'
 import im1 from '../icon-apartment.png'
+import public_building from '../public_building.png'
+import competitor from '../competitor.png'
+import southwesticon from '../southwesticon.png'
+import parking from '../parking.png'
+
 import Modal from './Modal'
 import Typewriter from 'src/src_side/componant/Typewriter'
 import TypewriterForLI from 'src/src_side/componant/TypewriterForLI'
+// import bl
+import blackByLogo from '../../src_side/assets/blackByLogo.png'
+import tedLogo from '../../src_side/assets/tedLogo.png'
+import southwestlogo from '../../src_side/assets/southwestlogo.png'
+
+
 const comparisionDatavar = []
 
-const ComparisionModule = ({ property1, property2, id1, id2 }) => {
+const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => {
   const [comparisionData, setComparisionData] = useState(comparisionDatavar)
   useEffect(() => {
-    console.log('===========================id1======================' + id1)
-    console.log('===========================id2======================' + id2)
+    var competitor_id = 0
+    var southwest_id = id1
+    var public_id = 0
+    if(propertyType == "public"){
+      public_id= id2
+    }
+    if(propertyType == "competitor"){
+      competitor_id = id2
+    }
 
+    var url ='http://54.196.154.157:8070/map/competitor/compare-properties?competitor_id='+competitor_id+'&southwest_id='+id1+'&public_id='+public_id
+    console.log("first pro"+property1)
+    console.log("propertyType-------"+property2)
+    console.log(url)
     fetch(
-      'http://54.196.154.157:8070/map/competitor/compare-properties?competitor_id=' +
-        id1 +
-        '&southwest_id=' +
-        id2,
+      url,
     )
       .then((response) => response.json())
       .then((data) => {
         let products = []
 
+        console.log("***********************************")
+        console.log(JSON.stringify(data))
+        console.log("***********************************")
+
+        console.log(JSON.stringify(data.sw_property_details))
+        console.log("----------------------------------888888888888888888")
+
         if (data) {
-          products = [
-            {
-              name: 'Southwest Property',
-              imageUrl:
-                'https://cdngeneralcf.rentcafe.com/dmslivecafe/3/480429/FortGeorgeExterior.jpg?&quality=85',
-              features: data.southwest,
-            },
-            {
-              name: "Competitor's Property",
-              imageUrl:
-                'https://cdngeneralcf.rentcafe.com/dmslivecafe/3/480429/FortGeorgeExterior.jpg?&quality=85',
-              features: data.competitor,
-            },
-          ]
+          const entries = Object.entries(data);
+
+          // Now entries is an array of [key, value] pairs
+          // For example: [['Southwest Property', [...]], ['FACADE investments - NAhas', [...]]]
+    
+          const products = entries.map((entry, index) => ({
+            name: entry[0],  // The key as name
+            imageUrl: index === 0 ? southwestlogo : 'https://cdngeneralcf.rentcafe.com/dmslivecafe/3/480429/FortGeorgeExterior.jpg?&quality=85',
+            features: entry[1],  // The value array as features
+          }));
+
+          // products = [
+          //   {
+          //     name: 'Southwest Property',
+          //     imageUrl:southwestlogo,
+          //     features: data.sw_property_details,
+          //   },
+          //   {
+          //     name: "Competitor's Property",
+          //     imageUrl:
+          //       'https://cdngeneralcf.rentcafe.com/dmslivecafe/3/480429/FortGeorgeExterior.jpg?&quality=85',
+          //     features: data.sw_property_details,
+          //   },
+          // ]
+          console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=")
+          console.log(JSON.stringify(products))
+          console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=")
+
           setComparisionData(products)
         }
       })
@@ -241,9 +281,10 @@ class App extends Component {
       { slug: 'any', name: 'Any', checked: true },
     ],
     dataFilter: [
+      { slug: 'southwest', name: 'southwest', checked: true },
       { slug: 'public', name: 'public', checked: false },
-      { slug: 'southwest', name: 'southwest', checked: false },
-      { slug: 'competitor', name: 'competitor', checked: true },
+      { slug: 'competitor', name: 'competitor', checked: false },
+      { slug: 'parking', name: 'parking', checked: false },
     ],
     areas: {
       from: 30,
@@ -273,6 +314,7 @@ class App extends Component {
     showModal: false,
     id: null,
     id2: null,
+    secondPropertyType: null
   }
 
   componentDidMount() {
@@ -280,48 +322,104 @@ class App extends Component {
   }
 
   toggleModal = () => {
+      // this.handlepropertyName(null)
+      // this.handlepropertyId1(null)
+      // this.handlepropertyName2(null)
+      // this.setsecondPropertyType(null)
+      // this.handlepropertyId2(null)
+
     this.setState({ showModal: !this.state.showModal })
   }
 
-  fetchData = () => {
-    fetch('http://54.196.154.157:8070/map/comp-listings?records_limit=20')
-      .then((response) => response.json())
-      .then((data) => {
-        const geoJsonData = {
-          type: 'FeatureCollection',
-          features: data.map((item, index) => ({
-            type: 'Feature',
-            properties: {
-              // "id": `item-${index}`,
-              id: item.id,
-              title: item.property_management_name,
-              excerpt: item.address,
-              description: item.description,
-              images: [
-                {
-                  original: item.property_image,
-                  thumbnail: item.property_image, // Assuming the same image for both
-                },
-              ],
-              // Add or adjust properties as necessary
-              type: item.property_type || 'apartment',
-              rooms: item.bedroom_count,
-              area: parseInt(item.apartment_size, 10),
-              rent: parseInt(item.monthly_rent, 10),
-              deposit: 0, // Adjust as needed
-            },
-            geometry: {
-              type: 'Point',
-              coordinates: [parseFloat(item.add_long), parseFloat(item.add_lat)],
-            },
-          })),
-        }
 
-        this.setState({ places: geoJsonData })
-        this.InitializeMap(geoJsonData)
-        // setPropertyData2(data)
-      })
-      .catch((error) => console.error('Error fetching data:', error))
+  fetchData = () => {
+    // fetch('http://54.196.154.157:8070/map/comp-listings?records_limit=20')
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     const geoJsonData = {
+    //       type: 'FeatureCollection',
+    //       features: data.map((item, index) => ({
+    //         type: 'Feature',
+    //         properties: {
+    //           // "id": `item-${index}`,
+    //           id: item.id,
+    //           title: item.listing_name,
+    //           excerpt: item.address,
+    //           description: item.description,
+    //           images: [
+    //             {
+    //               original: item.property_image,
+    //               thumbnail: item.property_image, // Assuming the same image for both
+    //             },
+    //           ],
+    //           // Add or adjust properties as necessary
+    //           type: item.property_type || 'apartment',
+    //           rooms: item.bedroom_count,
+    //           area: parseInt(item.apartment_size, 10),
+    //           rent: parseInt(item.monthly_rent, 10),
+    //           deposit: 0, // Adjust as needed
+    //         },
+    //         geometry: {
+    //           type: 'Point',
+    //           coordinates: [parseFloat(item.add_long), parseFloat(item.add_lat)],
+    //         },
+    //       })),
+    //     }
+
+    //     this.setState({ places: geoJsonData })
+    //     this.InitializeMap(geoJsonData, "competitor")
+    //     // setPropertyData2(data)
+    //   })
+    //   .catch((error) => console.error('Error fetching data:', error))
+
+     fetch('http://54.196.154.157:8070/map/southwest-listings?records_limit=20')
+        .then((response) => response.json())
+        .then((data) => {
+          const geoJsonData = {
+            type: 'FeatureCollection',
+            features: data.map((item, index) => ({
+              type: 'Feature',
+              properties: {
+                id: item.id,
+                title: item.listing_name,
+                excerpt: item.address,
+                description: item.description,
+                images: [
+                  {
+                    original: item.property_image,
+                    thumbnail: item.property_image, // Assuming the same image for both
+                  },
+                ],
+                // Add or adjust properties as necessary
+                type: 'apartment',
+                rooms: item.bedroom_count,
+                area: parseInt(item.bathroom_count) < 0 ? "n/a" : item.bathroom_count,
+                rent: parseInt(item.monthly_rent, 10),
+                deposit: 0, // Adjust as needed
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: [parseFloat(item.add_long), parseFloat(item.add_lat)],
+              },
+            })),
+          }
+
+          this.setState({ places: geoJsonData })
+          // this.mapcraft.map.getSource('places-data').setData(publicData)
+          // if (publicData.features.length)
+          //   this.mapcraft.fitBounds({
+          //     geoJson: publicData,
+          //   })
+
+          this.InitializeMap(geoJsonData,'southwest')
+          // this.setState({ dataFilter })
+          console.log('slugggggggggggggggg' + slug)
+          // this.InitializeMap(this.state.places)
+          // this.handleChangeTour('end-tour')
+
+          // setPropertyData2(data)
+        })
+        .catch((error) => console.error('Error fetching data:', error))
   }
 
   fetchDataFilter = (url, slug) => {
@@ -334,7 +432,7 @@ class App extends Component {
             type: 'Feature',
             properties: {
               id: item.id,
-              title: item.property_management_name,
+              title: item.listing_name,
               excerpt: item.address,
               description: item.description,
               images: [
@@ -344,9 +442,9 @@ class App extends Component {
                 },
               ],
               // Add or adjust properties as necessary
-              type: item.property_type || 'apartment',
+              type: 'apartment',
               rooms: item.bedroom_count,
-              area: parseInt(item.apartment_size, 10),
+              area: parseInt(item.bathroom_count) < 0 ? "n/a" : item.bathroom_count,
               rent: parseInt(item.monthly_rent, 10),
               deposit: 0, // Adjust as needed
             },
@@ -358,7 +456,7 @@ class App extends Component {
         }
 
         this.setState({ places: geoJsonData })
-        this.InitializeMap(geoJsonData)
+        this.InitializeMap(geoJsonData,'competitor')
         // setPropertyData2(data)
       })
       .catch((error) => console.error('Error fetching data:', error))
@@ -401,7 +499,14 @@ class App extends Component {
           />
         </div>
 
-        <Modal isOpen={this.state.showModal} onClose={this.toggleModal}>
+        <Modal isOpen={this.state.showModal} onClose={() => {
+          this.handlepropertyName(null)
+          this.handlepropertyId1(null)
+          this.handlepropertyName2(null)
+          this.setsecondPropertyType(null)
+          this.handlepropertyId2(null)
+          this.toggleModal()
+          }}>
           {/* <h2>Modal Title</h2>
           <p>Content for the modal goes here...</p> */}
           {/* Add more content or components inside the modal as needed */}
@@ -410,6 +515,7 @@ class App extends Component {
             property2={this.state.propertyName2}
             id1={this.state.id}
             id2={this.state.id2}
+            propertyType={this.state.secondPropertyType}
           />
         </Modal>
 
@@ -1128,7 +1234,7 @@ class App extends Component {
               type: 'Feature',
               properties: {
                 id: item.id,
-                title: item.property_management_name,
+                title: item.listing_name,
                 excerpt: item.address,
                 description: item.description,
                 images: [
@@ -1138,9 +1244,9 @@ class App extends Component {
                   },
                 ],
                 // Add or adjust properties as necessary
-                type: item.property_type || 'apartment',
+                type: 'apartment',
                 rooms: item.bedroom_count,
-                area: parseInt(item.apartment_size, 10),
+                area: parseInt(item.bathroom_count) < 0 ? "n/a" : item.bathroom_count,
                 rent: parseInt(item.monthly_rent, 10),
                 deposit: 0, // Adjust as needed
               },
@@ -1158,7 +1264,7 @@ class App extends Component {
               geoJson: publicData,
             })
 
-          this.InitializeMap(geoJsonData)
+          this.InitializeMap(geoJsonData, 'public')
           this.setState({ dataFilter })
           console.log('slugggggggggggggggg' + slug)
           // this.InitializeMap(this.state.places)
@@ -1191,8 +1297,8 @@ class App extends Component {
             features: data.map((item, index) => ({
               type: 'Feature',
               properties: {
-                id: `item-${index}`,
-                title: item.property_management_name,
+                id: item.id,
+                title: item.listing_name,
                 excerpt: item.address,
                 description: item.description,
                 images: [
@@ -1202,9 +1308,9 @@ class App extends Component {
                   },
                 ],
                 // Add or adjust properties as necessary
-                type: item.property_type || 'apartment',
+                type: 'apartment',
                 rooms: item.bedroom_count,
-                area: parseInt(item.apartment_size, 10),
+                area: parseInt(item.bathroom_count) < 0 ? "n/a" : item.bathroom_count,
                 rent: parseInt(item.monthly_rent, 10),
                 deposit: 0, // Adjust as needed
               },
@@ -1222,7 +1328,7 @@ class App extends Component {
               geoJson: publicData,
             })
 
-          this.InitializeMap(geoJsonData)
+          this.InitializeMap(geoJsonData,'southwest')
           this.setState({ dataFilter })
           console.log('slugggggggggggggggg' + slug)
           // this.InitializeMap(this.state.places)
@@ -1231,6 +1337,59 @@ class App extends Component {
           // setPropertyData2(data)
         })
         .catch((error) => console.error('Error fetching data:', error))
+    }else if(slug == 'parking'){
+      fetch('http://54.196.154.157:8070/map/parkings')
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("9999999999999999999999999999999999999999999999")
+        console.log(JSON.parse(data))
+        console.log("9999999999999999999999999999999999999999999999")
+         data = JSON.parse(data)
+        const geoJsonData = {
+          type: 'FeatureCollection',
+          features: data.map((item, index) => ({
+            type: 'Feature',
+            properties: {
+              id: item.id,
+              title: item.address,
+              excerpt: item.address,
+              description: item.address,
+              images: [
+                {
+                  original: null,
+                  thumbnail: null, // Assuming the same image for both
+                },
+              ],
+              // Add or adjust properties as necessary
+              type: 'apartment',
+              rooms: item.lot,
+              area: "n/a",
+              rent: parseInt(item.price, 10),
+              deposit: 0, // Adjust as needed
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [parseFloat(item.add_long), parseFloat(item.add_lat)],
+            },
+          })),
+        }
+
+        this.setState({ places: geoJsonData })
+        this.mapcraft.map.getSource('places-data').setData(publicData)
+        if (publicData.features.length)
+          this.mapcraft.fitBounds({
+            geoJson: publicData,
+          })
+
+        this.InitializeMap(geoJsonData,'parking')
+        this.setState({ dataFilter })
+        console.log('slugggggggggggggggg' + slug)
+        // this.InitializeMap(this.state.places)
+        this.handleChangeTour('end-tour')
+
+        // setPropertyData2(data)
+      })
+      .catch((error) => console.error('Error fetching data:', error))
     } else {
       // this.setState({ places: compeData });
       // this.mapcraft.map.getSource('places-data').setData(compeData);
@@ -1249,7 +1408,7 @@ class App extends Component {
               type: 'Feature',
               properties: {
                 id: item.id,
-                title: item.property_management_name,
+                title: item.listing_name,
                 excerpt: item.address,
                 description: item.description,
                 images: [
@@ -1259,9 +1418,9 @@ class App extends Component {
                   },
                 ],
                 // Add or adjust properties as necessary
-                type: item.property_type || 'apartment',
+                type: 'apartment',
                 rooms: item.bedroom_count,
-                area: parseInt(item.apartment_size, 10),
+                area: parseInt(item.bathroom_count) < 0 ? "n/a" : item.bathroom_count,
                 rent: parseInt(item.monthly_rent, 10),
                 deposit: 0, // Adjust as needed
               },
@@ -1279,7 +1438,7 @@ class App extends Component {
               geoJson: publicData,
             })
 
-          this.InitializeMap(geoJsonData)
+          this.InitializeMap(geoJsonData,'competitor')
           this.setState({ dataFilter })
           // this.InitializeMap(this.state.places)
           this.handleChangeTour('end-tour')
@@ -1381,7 +1540,7 @@ class App extends Component {
     this.setState({ tourActive, tourIndex })
   }
 
-  InitializeMap = (placevar) => {
+  InitializeMap = (placevar, iconName) => {
     this.mapcraft = new Mapcraft({
       env: {
         mapbox: {
@@ -1443,6 +1602,15 @@ class App extends Component {
         throw err
       }
       img.src = im1
+      if(iconName == "competitor"){
+        img.src = competitor
+      }else if(iconName == "public"){
+        img.src = public_building
+      }else if(iconName == "parking"){
+        img.src = parking
+      }else{
+        img.src = southwesticon
+      }
 
       this.handleFilter()
 
@@ -1487,23 +1655,47 @@ class App extends Component {
   handlepropertyId2 = (id) => {
     this.setState({ id2: id })
   }
+  setsecondPropertyType = (secondPropertyType) => {
+    this.setState({secondPropertyType: secondPropertyType})
+  }
 
   openPopup = (properties, lnglat) => {
     if (typeof properties.images !== 'object') properties.images = JSON.parse(properties.images)
+
+    // console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    // console.log("Datafilter:"+JSON.stringify(this.state.dataFilter))
+    // console.log(properties.type)
+    // console.log(JSON.stringify(this.state.types.filter((t) => t.slug === properties.type)[0].name))
+    // console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
     properties.typeName = this.state.types.filter((t) => t.slug === properties.type)[0].name
 
     let { id, title, images, excerpt, typeName, rooms, area, rent, deposit } = properties
 
+    const checkedItem = this.state.dataFilter.find(item => item.checked === true);
+
+    var propertyType = checkedItem.slug
+    console.log("$$$$$$$$$$$$$id"+id)
+    console.log(JSON.stringify(checkedItem.slug))
     // this.setState({propertyName: title})
 
-    if (this.state.propertyName == null) {
+    if(propertyType == "southwest"){
       this.handlepropertyName(title)
       this.handlepropertyId1(id)
-    } else {
+    }else if(propertyType == "parking"){
+
+    }else{
       this.handlepropertyName2(title)
+      this.setsecondPropertyType(propertyType)
       this.handlepropertyId2(id)
     }
+    // if (this.state.propertyName == null) {
+    //   this.handlepropertyName(title)
+    //   this.handlepropertyId1(id)
+    // } else {
+    //   this.handlepropertyName2(title)
+    //   this.handlepropertyId2(id)
+    // }
 
     let html = `<div class="sc-card sc-borderless">
       <div class="sc-card-header">
@@ -1526,11 +1718,11 @@ class App extends Component {
 
               <tr>
                 <td>Rooms</td>
-                <td>${rooms}</td>
+                <td>${rooms == "-1" || rooms == "0" ? "1" : rooms}</td>
               </tr>
 
               <tr>
-                <td>Area</td>
+                <td>Bathroom count</td>
                 <td>${area}</td>
               </tr>
 
@@ -1550,9 +1742,47 @@ class App extends Component {
       <div class="sc-card-footer">${excerpt}</div>
     </div>`
 
+    let htmlParking = `<div class="sc-card sc-borderless">
+    <div class="sc-card-header">
+      <h5 class="app-page-trigger"> ${title} </h5>
+    </div>
+    <h5 class="app-page-trigger">${title}</h5> 
+
+    <div class="sc-card-body">
+      <div>
+        <img src="${parking}" class="app-page-trigger" />
+      </div>
+
+      <div>
+        <table class="sc-table">
+          <tbody>
+            <tr>
+              <td>Type</td>
+              <td>Parking</td>
+            </tr>
+
+
+            <tr>
+              <td>Rent</td>
+              <td>${rent}</td>
+            </tr>
+
+            <tr>
+              <td>Lot</td>
+              <td>${rooms}</td>
+            </tr>
+
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="sc-card-footer">${excerpt}</div>
+  </div>`
+
     this.mapcraft.openPopup({
       lnglat: lnglat,
-      html: html,
+      html: propertyType == "parking" ? htmlParking : html,
     })
 
     document.querySelectorAll('.app-page-trigger').forEach((element) => {

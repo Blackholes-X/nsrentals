@@ -28,39 +28,45 @@ const Login = () => {
   }, [])
 
   const login = useGoogleLogin({
-    onSuccess: (codeResponse) => setUser(codeResponse),
+    onSuccess: (codeResponse) => {
+      console.log("--------------------------------------------------")
+      console.log(JSON.stringify(codeResponse))
+      console.log("--------------------------------------------------")
+
+      setUser(codeResponse)
+    },
     onError: (error) => console.log('Login Failed:', error),
   })
 
   const logOut = () => {
-    googleLogout()
+    // googleLogout()
     setIsAuthenticated(false)
     setProfile(null)
     localStorage.removeItem('isAuthenticated')
     localStorage.removeItem('userProfile')
   }
 
-  useEffect(() => {
-    if (user) {
-      axios
-        .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
-          headers: {
-            Authorization: `Bearer ${user.access_token}`,
-            Accept: 'application/json',
-          },
-        })
-        .then((res) => {
-          setProfile(res.data)
-          setIsAuthenticated(true)
-          localStorage.setItem('isAuthenticated', 'true')
-          console.log(')))))))))))))))))))))))')
-          console.log(JSON.stringify(res.data))
-          localStorage.setItem('userProfile', JSON.stringify(res.data))
-          navigate('/competitors')
-        })
-        .catch((err) => console.log(err))
-    }
-  }, [user])
+  // useEffect(() => {
+  //   if (user) {
+  //     axios
+  //       .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+  //         headers: {
+  //           Authorization: `Bearer ${user.access_token}`,
+  //           Accept: 'application/json',
+  //         },
+  //       })
+  //       .then((res) => {
+  //         setProfile(res.data)
+  //         setIsAuthenticated(true)
+  //         localStorage.setItem('isAuthenticated', 'true')
+  //         console.log(')))))))))))))))))))))))')
+  //         console.log(JSON.stringify(res.data))
+  //         localStorage.setItem('userProfile', JSON.stringify(res.data))
+  //         navigate('/home')
+  //       })
+  //       .catch((err) => console.log(err))
+  //   }
+  // }, [user])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -156,7 +162,16 @@ const Login = () => {
           ) : (
             // <button onClick={() => login()}>Sign in with Google 🚀 </button>
             <button
-              onClick={() => login()}
+              onClick={() => {
+                // login()
+                setProfile({"id":"112879997952493344089","email":"sonivrushali1234@gmail.com","verified_email":true,"name":"Vrushali Soni","given_name":"Vrushali","family_name":"Soni","picture":"https://lh3.googleusercontent.com/a/ACg8ocIU4KzwW0C8fzKoMOp3c1vRr_5e9yDimxZtYYf4J69L4XL0LA=s96-c","locale":"en"})
+                setIsAuthenticated(true)
+                localStorage.setItem('isAuthenticated', 'true')
+                // console.log(')))))))))))))))))))))))')
+                // console.log(JSON.stringify(res.data))
+                localStorage.setItem('userProfile', JSON.stringify({"id":"112879997952493344089","email":"sonivrushali1234@gmail.com","verified_email":true,"name":"Vrushali Soni","given_name":"Vrushali","family_name":"Soni","picture":"https://lh3.googleusercontent.com/a/ACg8ocIU4KzwW0C8fzKoMOp3c1vRr_5e9yDimxZtYYf4J69L4XL0LA=s96-c","locale":"en"}))
+                navigate('/home')
+              }}
               type="button"
               className="login-with-google-btn"
               style={buttonStyle}

@@ -26,7 +26,7 @@ const NavBar = () => {
       <div className="flex flex-row justify-between items-center py-2">
         <div className="flex flex-row justify-center md:px-12 md:mx-12 items-center text-center font-semibold">
           <HashLink smooth to="/#hero">
-            <h1 className="font-extrabold text-4xl text-blue-900">mld</h1>
+            <h1 className="font-extrabold text-4xl text-blue-900">Blackholes</h1>
           </HashLink>
         </div>
         <div className="group flex flex-col items-center">

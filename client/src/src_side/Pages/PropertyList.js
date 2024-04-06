@@ -7,7 +7,16 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import 'react-tabs/style/react-tabs.css'
 import TypewriterForLI from '../componant/TypewriterForLI'
 import Typewriter from '../componant/Typewriter'
-
+import southwestlogo from '../../src_side/assets/southwestlogo.png'
+import blackByLogo from '../../src_side/assets/blackByLogo.png'
+import tedLogo from '../../src_side/assets/tedLogo.png'
+import uparrow from '../../src_side/assets/uparrow.png'
+import downarrow from '../../src_side/assets/downarrow.png'
+import ExpandableText from '../componant/ExpandableText'
+import Modal from 'src/src_map/components/Modal'
+import editicon from '../assets/editicon.png'
+import EditPropertyModal from './EditPropertyModal'
+import DetailPropertyModal from './DetailPropertyModal'
 const PropertyData = [
   {
     property_management_name: 'FACADE investments - NAhas',
@@ -63,6 +72,11 @@ const PropertyData = [
 const comparisionDatavar = []
 
 const PropertyListView = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
+
+  const [selectedProperty, setSelectedProperty] = useState(null);
+
   // useEffect(() => {
   //   document.body.style.overflowX = "hidden"; // Disable vertical scrolling
   //   return () => {
@@ -82,28 +96,162 @@ const PropertyListView = () => {
       .catch((error) => console.error('Error fetching data:', error))
   }, [])
 
+  const openModal = (property) => {
+    setSelectedProperty(property);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    // setSelectedProperty();
+    setModalOpen(false);
+  };
+
+  const openDetailModal = (property) => {
+    setSelectedProperty(property);
+    setDetailModalOpen(true);
+};
+
+const closeDetailModal = () => {
+    setDetailModalOpen(false);
+};
+
+
+
+  const savePropertyChanges = (propertyId, updatedData) => {
+    // Here you would send the updated data to the server
+    console.log('Saving data for property ID:', propertyId, updatedData);
+    // Assuming successful update, update the local state
+    const updatedProperties = propertyData2.map(p => 
+      p.id === propertyId ? { ...p, ...updatedData } : p
+    );
+    setPropertyData2(updatedProperties);
+  };
+
+
+  const rentInfoStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px', // Adjust the gap as needed
+  };
   return (
+    // <div style={styles.container}>
+    //   <div style={styles.cardsContainer}>
+    //     {propertyData2.map((property, index) => (
+    //       <div key={index} style={styles.propertyCard}>
+    //         <div style={styles.imageContainer}>
+    //           <img src={property.image} alt="Property" style={styles.propertyImage} />
+    //           <p><b>Distance from (in miles):  </b> </p>
+    //           <p><b>Hospital: </b>{parseFloat(property.dist_hospital).toFixed(2)}</p>
+    //           <p><b>School:</b> {parseFloat(property.dist_school).toFixed(2)}</p>
+    //           <p><b>Restaurant: </b>{parseFloat(property.dist_restaurant).toFixed(2)}</p>
+    //           <p><b>Downtown:</b> {parseFloat(property.dist_downtown).toFixed(2)}</p>
+    //           <p><b>Bustop:</b> {parseFloat(property.dist_busstop).toFixed(2)}</p>
+    //           <p><b>larry uteck area: </b>{parseFloat(property.dist_larry_uteck_area).toFixed(2)}</p>
+    //           <p><b>Central Halifax: </b>{parseFloat(property.dist_central_halifax).toFixed(2)} </p>
+    //           <p><b>Clayton Park: </b>{parseFloat(property.dist_clayton_park).toFixed(2)} </p>
+    //           <p><b>rockingham:</b> {parseFloat(property.dist_rockingham).toFixed(2)}</p>
+    //           {/* <button onClick={() => openModal(property)}>View Details</button>
+    //           <Modal isOpen={isModalOpen} closeModal={closeModal()}>
+    //             <h2>{selectedProperty?.listing_name}</h2>
+    //           </Modal> */}
+    //         </div>
+    //         <div style={styles.propertyInfo}>
+    //           <h2>{property.listing_name}</h2>
+    //           <p><b>Address:</b> {property.address}</p>
+    //           <p><b>Bedrooms: </b>{property.bedroom_count}</p>
+    //           <p><b>Bathrooms:</b> {property.bathroom_count}</p>
+    //           <p>
+    //           <b>Monthly Rent: </b>{property.monthly_rent !== -1 ? `$${property.monthly_rent}` : 'N/A'}
+    //           </p>
+    //           <p><b>parking availability: </b>{property.parking_availability}</p>
+    //           <p><b>source: </b><a target='_blank' href={property.source}><u>{property.source}</u></a></p>
+    //           <p><b>website:</b> <a target='_blank' href={property.website}><u>{property.website}</u></a></p>
+    //           <p><b>description:</b> {property.description ? <ExpandableText text={property.description} /> : null }  </p>
+    //           <p style={rentInfoStyle}>
+    //             <b>Predicted Rent:</b> {property.predicted_rent} $
+    //             {property.rent_difference != null ? 
+    //               parseFloat(property.rent_difference) < 0 ? 
+    //               <img src={uparrow} alt="Up" height="15" width="15"/> : 
+    //               <img src={downarrow} alt="Down" height="15" width="15"/>
+    //               : null
+    //             }
+    //           </p>
+              
+              
+
+    //           {/* Add more details as needed */}
+    //         </div>
+    //         <button style={styles.editButton} onClick={() => {
+
+    //         }}>
+    //           {/* <EditIcon style={styles.editIcon} /> */}
+    //           <img src={editicon} alt="Property" height={50} width={50} />
+    //         </button>
+    //       </div>
+    //     ))}
+    //   </div>
+    // </div>
     <div style={styles.container}>
-      <div style={styles.cardsContainer}>
-        {propertyData2.map((property, index) => (
-          <div key={index} style={styles.propertyCard}>
+    <div style={styles.cardsContainer}>
+    {/* {selectedProperty && (
+          <EditPropertyModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            property={selectedProperty}
+            onSave={savePropertyChanges}
+          />
+        )} */}
+
+{isModalOpen && <EditPropertyModal isOpen={isModalOpen} onClose={closeModal} property={selectedProperty} onSave={savePropertyChanges}/>}
+            {isDetailModalOpen && <DetailPropertyModal isOpen={isDetailModalOpen} onClose={closeDetailModal} property={selectedProperty} />}
+
+      {propertyData2.map((property, index) => (
+        <div key={index} style={styles.propertyCard}>
+          <div style={styles.cardContent}>
             <div style={styles.imageContainer}>
               <img src={property.image} alt="Property" style={styles.propertyImage} />
+             
+  
+                   <p style={rentInfoStyle}>
+                 <b>Predicted Rent:</b> {property.predicted_rent} $
+                 
+                 {property.rent_difference != null ? 
+                    parseFloat(property.rent_difference) < 0 ? 
+                    <img src={uparrow} alt="Up" height="15" width="15"/> : 
+                    <img src={downarrow} alt="Down" height="15" width="15"/>
+                    : null
+                  }
+                </p>
+              <p><b>Monthly Rent: </b>{property.monthly_rent !== -1 ? `$${property.monthly_rent}` : 'N/A'}</p>
+               <p><b>source: </b><a target='_blank' href={property.source}><u>{property.source}</u></a></p>
+               <p><b>website:</b> <a target='_blank' href={property.website}><u>{property.website}</u></a></p>
+              
+               {/* <p><b>description:</b> {property.description ? <ExpandableText text={property.description} /> : null }  </p> */}
             </div>
             <div style={styles.propertyInfo}>
               <h2>{property.listing_name}</h2>
-              <p>Address: {property.address}</p>
-              <p>Bedrooms: {property.bedroom_count}</p>
-              <p>Bathrooms: {property.bathroom_count}</p>
-              <p>
-                Monthly Rent: {property.monthly_rent !== -1 ? `$${property.monthly_rent}` : 'N/A'}
-              </p>
-              {/* Add more details as needed */}
+              <p><b>Address:</b> {property.address}</p>
+               <p><b>Bedrooms: </b>{property.bedroom_count}</p>
+               <p><b>Bathrooms:</b> {property.bathroom_count}</p>
+              
+               <p><b>parking availability: </b>{property.parking_availability}</p>
+               <button type="button" onClick={() => {
+                openDetailModal(property)
+              }} style={{ background: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', padding: '10px 15px', cursor: 'pointer', fontWeight: 'bold'}}>View More Detail</button>
+
+           
+              {/* Other details */}
             </div>
           </div>
-        ))}
-      </div>
+          <img src={editicon} alt="Edit" style={styles.editIcon} onClick={() => openModal(property)} />
+        </div>
+      ))}
     </div>
+    {/* {isModalOpen && <EditPropertyModal isOpen={isModalOpen} onClose={closeModal}>
+
+    </EditPropertyModal>} */}
+   
+  </div>
   )
 }
 
@@ -131,19 +279,26 @@ const ComparisionModule = () => {
       .then((response) => response.json())
       .then((data) => {
         let products = []
+        var imgVar = null
+        if(propertyName == "Blackbay Group Inc."){
+          imgVar = blackByLogo
+        }else if(propertyName == "FACADE investments - NAhas"){
+          imgVar = tedLogo
+        }else{
+          imgVar = 'https://cdngeneralcf.rentcafe.com/dmslivecafe/3/480429/FortGeorgeExterior.jpg?&quality=85'
+        }
 
         if (data) {
           products = [
             {
               name: 'Southwest Property',
               imageUrl:
-                'https://cdngeneralcf.rentcafe.com/dmslivecafe/3/480429/FortGeorgeExterior.jpg?&quality=85',
+              southwestlogo,
               features: data.southwest,
             },
             {
               name: "Competitor's Property",
-              imageUrl:
-                'https://cdngeneralcf.rentcafe.com/dmslivecafe/3/480429/FortGeorgeExterior.jpg?&quality=85',
+              imageUrl: imgVar,
               features: data.competitor,
             },
           ]
@@ -380,16 +535,36 @@ const styles = {
     justifyContent: 'space-between',
   },
   propertyCard: {
-    flexBasis: 'calc(50% - 20px)', // Adjust the width of each card as per your requirement
-    maxWidth: 'calc(50% - 20px)', // Set maximum width to prevent overflow
+    position: 'relative', // Needed to position the edit icon absolutely
+    flexBasis: 'calc(50% - 20px)',
+    maxWidth: 'calc(50% - 20px)',
     border: '1px solid #ccc',
-    borderRadius: '5px',
+    borderRadius: '10px',
     padding: '15px',
     marginBottom: '20px',
-    backgroundColor: '#f9f9f9',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    boxSizing: 'border-box',
-    display: 'flex', // Make the card flex container
+    backgroundColor: '#ffffff',
+    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.15)',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    transition: 'transform 0.3s, box-shadow 0.3s',
+    '&:hover': {
+      transform: 'translateY(-5px)',
+      boxShadow: '0 10px 20px rgba(0, 0, 0, 0.25)'
+    }
+  },
+  cardContent: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexGrow: 1,
+  },
+  editIcon: {
+    position: 'absolute',
+    top: '10px', // Adjust as needed
+    right: '10px', // Adjust as needed
+    width: '30px',
+    height: '30px',
+    cursor: 'pointer'
   },
   imageContainer: {
     marginRight: '20px', // Add some space between the image and text
