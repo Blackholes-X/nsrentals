@@ -444,31 +444,32 @@ def get_last_listings(table_name: str, limit: int):
 
 
 
-def get_hrm_building_listings(limit: int):
-    conn = None
-    cur = None
+
+def get_hrm_building_listings():
+
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
     try:
-        conn = get_db_connection()  # Ensure this function returns a DB connection
-        cur = conn.cursor()
-
-        query = """
-            SELECT * FROM hrm_building_listings
-            LIMIT %s;
-        """
-        cur.execute(query, (limit,))
-
-        listings = cur.fetchall()
-        if listings:
-            columns = [desc[0] for desc in cur.description]  # Fetch column names
-            return [dict(zip(columns, listing)) for listing in listings]
-        else:
-            return []
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = " SELECT * FROM hrm_building_listings;"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
     except Exception as e:
-        print(f"An error occurred while fetching HRM building listings: {e}")
-        return []
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
+        print(f"Error fetching data from sec_southwest_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
 
 
 def get_hrm_building_permits(limit: int):
