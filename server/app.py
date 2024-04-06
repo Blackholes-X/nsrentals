@@ -176,10 +176,11 @@ def all_listings(competitor: Optional[bool] = False, public: Optional[bool] = Fa
 ### ---------------- HRM Screen -----------------------------
     
 @app.get("/hrm/building-listings")
-def hrm_building_listings(records_limit: Optional[int] = 10):
+def hrm_building_listings():
     try:
-        listings = DU.get_hrm_building_listings(records_limit)
-        return listings
+        listings = DU.get_hrm_building_listings()
+        listings.replace([np.inf, -np.inf, np.nan], None, inplace=True)
+        return  listings.to_dict(orient='records')
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
     
