@@ -97,7 +97,7 @@ def llm_comparison(property_management_name: str):
         # Generic error handling, adjust as needed
         raise HTTPException(status_code=500, detail=f"An error occurred while generating the comparison: {str(e)}")
     
-@app.post("/update-listing/")
+@app.post("/competitors/update-listing/")
 def update_listing(listing_data: ListingDataResponse):
     update_response = DU.update_listing_in_db(listing_data)
     
