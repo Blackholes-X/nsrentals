@@ -6,8 +6,9 @@ from typing import Optional
 import os
 import pandas as pd
 import psycopg2
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 import urllib
+from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 import pandas as pd
 from sqlalchemy import create_engine
@@ -16,7 +17,7 @@ import os
 import shutil
 import psycopg2
 
-
+from data_model import ListingDataResponse as LDR
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -679,7 +680,6 @@ def read_data_from_sec_parking_data():
     
 
 
-
 def get_latest_model_number():
     conn = None
     cur = None
@@ -796,3 +796,42 @@ def redeploy(model_id):
     finally:
         if conn:
             conn.close()
+
+            
+def update_listing_in_db(listing_data) -> dict:
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    database_uri = f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+
+    try:
+        engine = create_engine(database_uri)
+        SessionLocal = sessionmaker(bind=engine)
+        db_session = SessionLocal()
+
+        # Check if the listing exists
+        listing_exist_query = text(f"SELECT EXISTS(SELECT 1 FROM sec_comp_rental_listings WHERE id = :id)")
+        listing_exists = db_session.execute(listing_exist_query, {'id': listing_data.id}).scalar()
+
+        if not listing_exists:
+            return {"error": "Listing not found", "status": 404}
+
+        # Constructing an SQL update statement dynamically
+        update_statement = "UPDATE sec_comp_rental_listings SET "
+        update_parts = []
+        params = {}
+        for var, value in vars(listing_data).items():
+            if var != "id" and value is not None:  # Skip id since it's used in WHERE clause, and skip None values
+                update_parts.append(f"{var} = :{var}")
+                params[var] = value
+        update_statement += ", ".join(update_parts)
+        update_statement += " WHERE id = :id"
+        params["id"] = listing_data.id
+
+        # Execute the update statement
+        db_session.execute(text(update_statement), params)
+        db_session.commit()
+
+        return {"message": "Listing updated successfully", "status": 200}
+    except Exception as e:
+        return {"error": f"Database error: {e}", "status": 500}
+    finally:
+        db_session.close()

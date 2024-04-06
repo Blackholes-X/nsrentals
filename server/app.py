@@ -16,7 +16,7 @@ from src import nearest_neighbor_inference
 from src import training as T
 
 from typing import Optional, List, Dict
-
+from data_model import ListingDataResponse
 
 app = FastAPI()
 
@@ -97,6 +97,15 @@ def llm_comparison(property_management_name: str):
     except Exception as e:
         # Generic error handling, adjust as needed
         raise HTTPException(status_code=500, detail=f"An error occurred while generating the comparison: {str(e)}")
+    
+@app.post("/competitors/update-listing/")
+def update_listing(listing_data: ListingDataResponse):
+    update_response = DU.update_listing_in_db(listing_data)
+    
+    if "error" in update_response:
+        raise HTTPException(status_code=update_response["status"], detail=update_response["error"])
+    
+    return {"message": update_response.get("message", "Success")}
 
 
 ### ---------------- Map Screen -----------------------------

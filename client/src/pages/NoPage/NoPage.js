@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react'
 
-import "./NoPage.css";
+import './NoPage.css'
 
 const NoPage = () => {
   return (
@@ -13,7 +13,7 @@ const NoPage = () => {
         </div>
       </header>
     </div>
-  );
-};
+  )
+}
 
-export default NoPage;
+export default NoPage
