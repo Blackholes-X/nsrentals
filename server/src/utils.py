@@ -102,3 +102,6 @@ def read_debug_file(filepath):
     except Exception as e:
         print(f"An error occurred while reading the file: {e}")
         return None
+    
+
+

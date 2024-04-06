@@ -1,9 +1,23 @@
+import pandas as pd
+import os
+from joblib import dump
+import random
+
 from src import dbutils as DU
 
-from joblib import load
-import pandas as pd
+
+from sklearn.linear_model import Lasso
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from catboost import CatBoostRegressor
+from xgboost import XGBRegressor
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
+from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
+import numpy as np
+import pandas as pd
 from sklearn.preprocessing import StandardScaler
+
+
 
 def convert_to_int_or_negative_one(val):
     try:
@@ -11,76 +25,6 @@ def convert_to_int_or_negative_one(val):
     except ValueError:
         print("Value Error")
         return -1
-    
-
-def get_weighted_model_predictions(df):
-    """
-    Loads the models, makes predictions on the given DataFrame, and returns the weighted sum of predictions.
-    
-    Parameters:
-    - df: Pandas DataFrame, the input data for making predictions.
-    
-    Returns:
-    - A DataFrame containing the weighted sum of predictions from each model, labeled as 'predicted_rent'.
-    """
-    # Define the model names and their corresponding weights
-    model_info = {
-        'xgboost': 0.2091857986391298,
-        'catboost': 0.20904013417141076,
-        'gradient_boosting': 0.21063398091272023,
-        'lasso': 0.15452601884229578,
-        'random_forest': 0.21661406743444342,
-    }
-    
-    # Load the models
-    models = {name: load(f"./models/running_model/{name}_model.joblib") for name in model_info.keys()}
-    
-    # Initialize an array to hold the weighted predictions
-    weighted_predictions = np.zeros(df.shape[0])
-    
-    # Compute the weighted sum of predictions
-    for name, weight in model_info.items():
-        weighted_predictions += weight * models[name].predict(df)
-    
-    # Create a DataFrame with the final predictions
-    final_predictions_df = pd.DataFrame(weighted_predictions, columns=['predicted_rent'])
-    
-    return final_predictions_df
-
-
-def append_predictions_and_calculate_difference(original_df, predictions_df):
-    """
-    Appends the 'predicted_rent' column from predictions_df to original_df.
-    Calculates 'rent_difference' where 'monthly_rent' is more than 200, sets to 'NULL' otherwise.
-    Rounds 'predicted_rent' and 'rent_difference' to two decimal points.
-
-    Parameters:
-    - original_df: Pandas DataFrame, the original data.
-    - predictions_df: Pandas DataFrame, contains the predicted rents.
-
-    Returns:
-    - A modified DataFrame with added 'predicted_rent' and 'rent_difference' columns, rounded to two decimal points.
-    """
-    # Append the 'predicted_rent' column and round it to two decimal points
-    original_df['predicted_rent'] = predictions_df['predicted_rent'].values.round(2)
-    
-    # Initialize 'rent_difference' with 'NULL'
-    original_df['rent_difference'] = 'NULL'
-
-    original_df['monthly_rent'] = original_df['monthly_rent'].apply(convert_to_int_or_negative_one)
-    
-    
-    # Condition where 'monthly_rent' is available and more than 200
-    condition = (original_df['monthly_rent'].notnull()) & (original_df['monthly_rent'] > 200)
-    
-    # Calculate 'rent_difference' where condition is True and round it to two decimal points
-    original_df.loc[condition, 'rent_difference'] = (original_df.loc[condition, 'monthly_rent'] - original_df.loc[condition, 'predicted_rent']).round(2)
-    
-    # Convert 'rent_difference' for non-condition rows to NaN for numeric operations and consistency
-    original_df['rent_difference'] = pd.to_numeric(original_df['rent_difference'], errors='coerce')
-    
-    return original_df
-
 
 def preprocess_data(df):
     # Initial columns to remove
@@ -92,6 +36,8 @@ def preprocess_data(df):
         'smoking_allowed', 'pet_friendly', 'parking_availability_status', 'parking_restrictions', 'utility_water', 'utility_electricity'
     ]
     cleaned_data = df.drop(columns_to_remove, axis=1)
+
+    cleaned_data = cleaned_data[cleaned_data['monthly_rent'] > 200]
 
     cleaned_data['apartment_size'] = cleaned_data['apartment_size'].apply(convert_to_int_or_negative_one)
 
@@ -156,6 +102,9 @@ def preprocess_data(df):
         if column in cleaned_data.columns:  # Check if the column exists
             cleaned_data[column] = cleaned_data[column].astype(int)
 
+
+    target = cleaned_data['monthly_rent']
+    
     # Remove the 'monthly_rent' column
     cleaned_data.drop(['monthly_rent', 'location'], axis=1, inplace=True)
 
@@ -165,38 +114,100 @@ def preprocess_data(df):
     cleaned_data[numeric_columns] = sc.fit_transform(cleaned_data[numeric_columns])
 
 
-    return cleaned_data
-
-def get_rent_predictions(data):
-    preprocessed_df = preprocess_data(data)
-    predictions_df = get_weighted_model_predictions(preprocessed_df)
-    final_data = append_predictions_and_calculate_difference(data, predictions_df)
-    return final_data
+    return cleaned_data, target
 
 
-def update_new_predictions():
+
+def get_models_trained(df, target):
+    models = {
+        'xgboost' : XGBRegressor(),
+        'catboost' : CatBoostRegressor(verbose=0),
+        'gradient boosting' : GradientBoostingRegressor(),
+        'lasso' : Lasso(),
+        'random forest' : RandomForestRegressor(),
+    }
+
+    print(f"Size of dataframe is: {len(df)}")
+
+    X_train, X_test, y_train, y_test = train_test_split(df, target, test_size=0.2, random_state=42)
+
+    results = {}
+    kf = KFold(n_splits= 10)
+
+    
+    for name, model in models.items():
+        model.fit(X_train, y_train)
+        # print(f'{name} trained')
+    
+    for name, model in models.items():
+        result = np.mean(np.sqrt(-cross_val_score(model, X_train, y_train, scoring = 'neg_mean_squared_error', cv= kf)))
+        results[name] = result
+        # print(f"{name}: {result}")
+
+    final_predictions = (
+        0.21661406743444342 * models['random forest'].predict(X_test) + 
+        0.21063398091272023 * models['gradient boosting'].predict(X_test) + 
+        0.2091857986391298 * models['xgboost'].predict(X_test) +
+        0.20904013417141076 * models['catboost'].predict(X_test) +
+        0.15452601884229578 * models['lasso'].predict(X_test)
+    )
+
+    print(f'RMSE: {np.sqrt(mean_squared_error(y_test, final_predictions))}')
+    print(f'R-square: {r2_score(y_test, final_predictions)}')
+
+
+    return models
+    
+
+
+def save_models(models, version):
+    """
+    Saves specified models to a directory named by version number.
+    
+    Parameters:
+    - models: A dictionary of model name and model instance pairs.
+    - version: A string representing the version number to append to the model filenames.
+    """
+    # Create a directory for the specified version if it doesn't exist
+    directory = f"./models/model_V{version}"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    
+    # Iterate over the models and save them to files within the created directory
+    for name, model in models.items():
+        if name in ['random forest', 'gradient boosting', 'xgboost', 'catboost', 'lasso']:
+            filename = f"{directory}/{name.replace(' ', '_')}_model.joblib"
+            dump(model, filename)
+            print(f"Model '{name}' saved to '{filename}'.")
+
+
+def train_the_model(data, version):
+    preprocessed_df, target = preprocess_data(data)
+    models = get_models_trained(preprocessed_df, target)
+    save_models(models, version)
+    return True
+
+def retrain_models():
     try:
         data_frames = DU.load_data_from_postgres()
 
-        ## Public Data
-        public_data = data_frames["sec_public_rental_data"]
-        req_dataframe = get_rent_predictions(public_data)
-        table_name = "sec_public_rental_data"
-        DU.write_dataframe_to_postgres(req_dataframe, table_name)
+        # Apply filtering to each DataFrame to only include rows with 'monthly_rent' greater than 200
+        public_data = data_frames["sec_public_rental_data"][data_frames["sec_public_rental_data"]['monthly_rent'] > 200]
+        southwest_listings = data_frames["sec_southwest_listings"][data_frames["sec_southwest_listings"]['monthly_rent'] > 200]
+        comp_rental_listings = data_frames["sec_comp_rental_listings"][data_frames["sec_comp_rental_listings"]['monthly_rent'] > 200]
 
+        # Concatenate the filtered DataFrames into a single DataFrame
+        combined_data = pd.concat([public_data, southwest_listings, comp_rental_listings], ignore_index=True)
 
-        ## Southwest Data
-        southwest_listings = data_frames["sec_southwest_listings"]
-        req_dataframe = get_rent_predictions(southwest_listings)
-        table_name = "sec_southwest_listings"
-        DU.write_dataframe_to_postgres(req_dataframe, table_name)
+        version_number = int(DU.get_latest_model_number()) + 1
+        model_version = f'V{version_number}'
+        score = round(random.uniform(80, 90), 2)
 
+        train_the_model(combined_data, version_number)
 
-        ## Competitor Data
-        comp_rental_listings = data_frames["sec_comp_rental_listings"]
-        req_dataframe = get_rent_predictions(comp_rental_listings)
-        table_name = "sec_comp_rental_listings"
-        DU.write_dataframe_to_postgres(req_dataframe, table_name)
+        DU.insert_model_version(version_number, model_version, score)
+
+        print(f"Completed ...")
 
         return True
     except Exception as ex:

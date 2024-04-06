@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from src import utils as U
@@ -13,6 +13,7 @@ from src import prediction as P
 import numpy as np
 import pandas as pd
 from src import nearest_neighbor_inference
+from src import training as T
 
 from typing import Optional, List, Dict
 
@@ -216,11 +217,37 @@ def get_competitor_listings():
     
 
 ### -------------------- ML Stuffs --------------------------------------
+
+@app.get("/model-versions")
+def get_model_versions():
+    model_versions = DU.fetch_all_model_versions()
+    return model_versions
+
+@app.get("/retrain-predictive-models")
+async def retrain_predictive_models(background_tasks: BackgroundTasks):
+    """
+    Endpoint to retrain predictive models asynchronously.
+    """
+    # Add the retrain_models function to be executed in the background
+    background_tasks.add_task(T.retrain_models)
+    
+    # Return a response immediately to the client while the task runs in the background
+    return {"message": "Model retraining has been initiated. Please check the system logs for completion status."}
+
+@app.post("/model-redeploy/{model_id}")
+def model_redeploy(model_id: int):
+    success = DU.redeploy(model_id)
+    if success:
+        return {"message": "Model redeployment successful."}
+    else:
+        raise HTTPException(status_code=404, detail="Model redeployment failed. Check logs for details.")
+    
 @app.get("/update-and-refresh-predictions")
 def update_and_refresh_predictions():
     # Call the refresh_predictions function and return its result
     refreshed_predictions = P.update_new_predictions()
     return refreshed_predictions
+
 
 ### ---------------------- LLMs ---------------------------------------------
 
