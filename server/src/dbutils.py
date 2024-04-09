@@ -835,3 +835,44 @@ def update_listing_in_db(listing_data) -> dict:
         return {"error": f"Database error: {e}", "status": 500}
     finally:
         db_session.close()
+
+
+def get_scraper_comp_listing(competitor_name = 'Blackbay Group Inc.'):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  
+        cur = conn.cursor()
+
+        query = """
+            SELECT id,listing_name, building_name, property_management_name, address, 
+                   monthly_rent, property_type, bedroom_count, bathroom_count, 
+                   utility_water, utility_heat, utility_electricity, utility_laundry, 
+                   utility_wifi, included_appliances, parking_availability, pet_friendly, 
+                   smoking_allowed, apartment_size, apartment_size_unit, is_furnished, 
+                   lease_duration, availability_status, source, website, image, description, 
+                   property_image
+            FROM sec_comp_rental_listings
+            WHERE
+        """
+
+        params = []
+
+        if competitor_name is not None:
+            query += " property_management_name = %s"  
+            params.append(competitor_name)
+
+        cur.execute(query, tuple(params))
+
+        listings = cur.fetchall()
+        if listings:
+            columns = [desc[0] for desc in cur.description]  # This gets the column names of the fetched data
+            return [dict(zip(columns, listing)) for listing in listings]  # Creates a list of dictionaries for each row
+        else:
+            return []
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()

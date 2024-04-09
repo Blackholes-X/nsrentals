@@ -286,5 +286,17 @@ async def add_competitor_details(url: str, company_name: str):
 
 
 
+### ---------------------- General Scraper ---------------------------------------------
+
+@app.get("/scraper/competitor-listing")
+def scraper_competitor_listing(competitor_name : Optional [str] = 'Blackbay Group Inc.'):
+    listings = DU.get_scraper_comp_listing(competitor_name)
+    if listings is None:
+        raise HTTPException(status_code=500, detail="An error occurred while processing your request.")
+    return listings
+
+
+
+
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8070)
