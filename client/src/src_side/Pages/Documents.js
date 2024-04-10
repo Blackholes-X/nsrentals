@@ -44,22 +44,22 @@ const BuildingList = () => {
                   {property.address}
                 </p>
                 <p>
-                  <strong>permit_value:</strong> {property.permit_value}
+                  <strong><b>Permit value:</b></strong> {property.permit_value}
                 </p>
                 <p>
-                  <strong>floors:</strong> {property.floors}
+                  <strong><b>Floors:</b></strong> {property.floors}
                 </p>
                 <p>
-                  <strong>units_or_size:</strong> {property.units_or_size}
+                  <strong><b>units/size:</b></strong> {property.units_or_size}
                 </p>
                 <p>
-                  <strong>building_type:</strong> {property.building_type}
+                  <strong><b>Building Type:</b></strong> {property.building_type}
                 </p>
                 <p>
-                  <strong>url:</strong> {property.url}
+                  <strong><b>Url:</b></strong> {property.url}
                 </p>
                 <p>
-                  <strong>source_name:</strong> {property.source_name}
+                  <strong><b>Source Name:</b></strong> {property.source_name}
                 </p>
               </Link>
             </div>
@@ -95,19 +95,19 @@ const PermitList = () => {
               <Link key={index} to={`/propertyList/${property.property_management_name}`}>
                 <h2>{property.civic_address}</h2>
                 <p>
-                  <strong>permit_value:</strong> {property.permit_value}
+                  <strong><b>Permit Value:</b></strong> {property.permit_value}
                 </p>
                 <p>
-                  <strong>floors:</strong> {property.floors}
+                  <strong><b>Floors:</b></strong> {property.floors}
                 </p>
                 <p>
-                  <strong>units_or_size:</strong> {property.units_or_size}
+                  <strong><b>Units/Size:</b></strong> {property.units_or_size}
                 </p>
                 <p>
-                  <strong>building_type:</strong> {property.building_type}
+                  <strong><b>Building Type:</b></strong> {property.building_type}
                 </p>
                 <p>
-                  <strong>latest_update:</strong> {property.latest_update}
+                  <strong><b>Latest Update:</b></strong> {property.latest_update}
                 </p>
               </Link>
             </div>

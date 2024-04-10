@@ -10,6 +10,8 @@ import Map from '../assets/map.png'
 import underCon from '../assets/underCon.png'
 import Documents from '../assets/draft.svg'
 import PowerOff from '../assets/power-off-solid.svg'
+import web from '../assets/web.png'
+
 import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
 import { googleLogout, useGoogleLogin } from '@react-oauth/google'
@@ -257,7 +259,9 @@ const Sidebar = () => {
         Click
       </Button>
       <SidebarContainer>
-        <Logo>
+        <Logo onClick={() => {
+          handleClick()
+        }}>
           <img src={logo} alt="logo" />
         </Logo>
         <SlickBar clicked={click}>
@@ -285,6 +289,10 @@ const Sidebar = () => {
           <Item onClick={() => setClick(false)} activeClassName="active" to="/projects">
             <img src={Projects} alt="Projects" />
             <Text clicked={click}>All Listings</Text>
+          </Item>
+          <Item onClick={() => setClick(false)} activeClassName="active" to="/WebScrapping">
+            <img src={web} alt="Projects"/>
+            <Text clicked={click}>Web Scrapping</Text>
           </Item>
         </SlickBar>
 

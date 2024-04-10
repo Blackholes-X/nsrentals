@@ -47,9 +47,8 @@ const Services = () => {
                   <Link to="/Login">Scraping</Link>
                 </h2>
                 <p className="text-md font-medium">
-                  We specialize in creating and optimizing high-quality, custom websites for
-                  businesses and organizations of all sizes. Building mobile-friendly and
-                  easy-to-use websites and applications for clients.
+                Develop a robust web scraping tool that automatically collects real-time rental data from various online listings, classified ads, and property management websites. This tool will gather detailed information such as rent prices, parking rates, suite types, square footage, and building amenities, segmented by key areas within the Halifax Regional Municipality.
+
                 </p>
               </div>
             </div>
@@ -65,8 +64,8 @@ const Services = () => {
                   <Link to="/Login">Solution By Blackholes</Link>
                 </h2>
                 <p className="text-md font-medium">
-                  We develop high-quality, custom cross-platform mobile applications that are robust
-                  and optimized for performance, scalability, and accessibility.
+                Develop a predictive analytics model integrated with a comprehensive dashboard. This model will analyze historical data and current market trends to forecast future rental rates. The dashboard will offer insights into competitor rates and aid in strategizing for new development projects.
+
                 </p>
               </div>
             </div>
@@ -80,8 +79,8 @@ const Services = () => {
                 />
                 <h2 className="font-semibold my-4 text-2xl text-center ">Dashboard</h2>
                 <p className="text-md font-medium">
-                  We provide domain registration and web hosting services to individuals and
-                  organizations to enable them gain visibility in the digital space.
+                Create an interactive platform dedicated to visualizing rental market data in a user-friendly format. This tool will allow for easy comparison of current market rates, amenity offerings, and location desirability, with the ability to drill down into specific data sets.
+
                 </p>
               </div>
             </div>
@@ -116,10 +115,7 @@ const Services = () => {
               </h3>
               <div>
                 <p className="my-3 text-xl text-gray-600 font-semibold">
-                  With over 10 years experience in software analysis and design and a deep
-                  understanding of the latest IT trends and solutions, we provide customized
-                  recommendations and strategies to help you improve your operations, reduce costs,
-                  and increase efficiency.
+                  -----------------------------------------------------------------------------
                 </p>
               </div>
             </div>
@@ -140,9 +136,7 @@ const Services = () => {
               </h3>
               <div>
                 <p className="my-3 text-xl text-gray-600 font-semibold">
-                  We can collaborate with your existing tech team to scale existing software
-                  applications or design customized software applications that suits your everyday
-                  need and simplifies various processes.
+                  --------------------------------------------------------------------------
                 </p>
               </div>
             </div>
