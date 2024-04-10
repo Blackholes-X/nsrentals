@@ -17,12 +17,14 @@ import TypewriterForLI from 'src/src_side/componant/TypewriterForLI'
 import blackByLogo from '../../src_side/assets/blackByLogo.png'
 import tedLogo from '../../src_side/assets/tedLogo.png'
 import southwestlogo from '../../src_side/assets/southwestlogo.png'
-
-
+import PropertyDialogComponent from './PropertyDialogComponent'
+import { auto } from '@popperjs/core'
+import Loader_cmparison from './Loader_cmparison'
 const comparisionDatavar = []
 
 const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => {
   const [comparisionData, setComparisionData] = useState(comparisionDatavar)
+  const [loading, setloading] = useState(false)
   useEffect(() => {
     var competitor_id = 0
     var southwest_id = id1
@@ -38,6 +40,7 @@ const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => 
     console.log("first pro"+property1)
     console.log("propertyType-------"+property2)
     console.log(url)
+    setloading(true)
     fetch(
       url,
     )
@@ -80,7 +83,7 @@ const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => 
           console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=")
           console.log(JSON.stringify(products))
           console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=")
-
+          setloading(false)
           setComparisionData(products)
         }
       })
@@ -142,9 +145,21 @@ const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => 
     )
   }
 
+  function loadView(){
+    return(
+      <div style={comparisonTableStyle}>
+        <Loader_cmparison/>
+      </div>
+    )
+  }
   function ComparisonTable({ products }) {
     const featureNames = [...new Set(products.flatMap((product) => Object.keys(product.features)))]
 
+    // if(loading){
+
+    // }else{
+      
+    // }
     return (
       <div style={comparisonTableStyle}>
         <div style={productHeadersStyle}>
@@ -152,13 +167,13 @@ const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => 
             <ProductHeader key={product.name} product={product} />
           ))}
         </div>
-
+          {loading ? <Loader_cmparison/> : null}
         <div style={featureRowStyle}>
           {products.map((product) => (
             <div key={product.name} style={featureValueStyle}>
               <FeatureListWithAnimation
                 features={Object.entries(product.features).map(
-                  ([key, value]) => `${key}: ${value}`,
+                  ([key, value]) => `- ${value}`,
                 )}
                 delay={50}
               />
@@ -260,6 +275,12 @@ const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => 
           </b>
         </p>
 
+
+        {/* {true ? (
+      <Loader_cmparison />
+    ) : (
+      <ComparisonTable products={comparisionData} />
+    )} */}
         <ComparisonTable products={comparisionData} />
       </div>
     </div>
@@ -314,8 +335,43 @@ class App extends Component {
     showModal: false,
     id: null,
     id2: null,
-    secondPropertyType: null
+    secondPropertyType: null,
+    propertySuggestionData:[],
+    activeProperty: null,
+    showDialogModal: false,
+    propertyDetails: {}
   }
+
+  setActiveProperty = (property) => {
+    const images = property.image;
+    // alert("1111")
+    console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQqqqq")
+    console.log(JSON.stringify(property))
+    console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQqqqq")
+
+    this.setState({
+      activeProperty: property,
+      propertyDetails: {
+        title: property.listing_name,
+        typeName: "Apartment",
+        rooms: property.bedroom_count === "-1" || property.bedroom_count === "0" ? "1" : property.bedroom_count,
+        area: property.area,
+        rent: property.monthly_rent,
+        deposit: property.deposit,
+        images: images,
+        excerpt: property.excerpt,
+      },
+      showDialogModal: true, // Open the modal when a property is active
+    });
+  };
+
+  setcloseActiveProperty = () => {
+    this.setState({ showDialogModal: false });
+  }
+
+  closeModal = () => {
+    this.setState({ showDialogModal: false });
+  };
 
   componentDidMount() {
     this.fetchData()
@@ -466,9 +522,11 @@ class App extends Component {
     let numberOFPlaces = this.state.places.features.length
     let lastIndex = numberOFPlaces - 1
 
+
     return (
       <div className="app">
         <div id="app-map"></div>
+        {/* <PropertyDialogComponent activeProperty={this.state.activeProperty} /> */}
 
         <div className={this.getSlideClasses()}>
           <Search
@@ -496,9 +554,41 @@ class App extends Component {
             handlePropertyName={this.handlepropertyName}
             handlePropertyName2={this.handlepropertyName2}
             toggleModal={this.toggleModal}
+            propertySuggestionData={this.state.propertySuggestionData}
+            setActiveProperty={this.setActiveProperty}
+            setcloseActiveProperty={this.setcloseActiveProperty}
+            setsecondPropertyType={this.setsecondPropertyType}
+            handlepropertyId2={this.handlepropertyId2}
           />
         </div>
 
+        {this.state.showDialogModal && (
+         <Modal isOpen={this.state.showDialogModal} onClose={this.closeModal}>
+         <div className="sc-card sc-borderless">
+           <div className="sc-card-header">
+           <h5>{this.state.propertyDetails.title}</h5>
+           </div>
+           <div className="sc-card-body" style={styles2.modalBody}>
+             <div style={styles2.imageContainer}>
+               <img src={this.state.propertyDetails.images} alt={"Property View"} style={styles2.modalImage} />
+             </div>
+             <div style={styles2.infoContainer}>
+               <table className="sc-table">
+               <tbody>
+                  <tr><td>Type</td><td>Appartment</td></tr>
+                  <tr><td>Rooms</td><td>{this.state.propertyDetails.rooms}</td></tr>
+                  <tr><td>Bed Rooms</td><td>{this.state.propertyDetails.rooms}</td></tr>
+                  <tr><td>Rent</td><td>${this.state.propertyDetails.rent}</td></tr>
+                  <tr><td>description</td><td>{this.state.propertyDetails.excerp}</td></tr>
+                </tbody>
+               </table>
+             </div>
+           </div>
+           <div className="sc-card-footer">{this.state.propertyDetails.excerpt}</div>
+         </div>
+       </Modal>
+       
+        )}
         <Modal isOpen={this.state.showModal} onClose={() => {
           this.handlepropertyName(null)
           this.handlepropertyId1(null)
@@ -1553,7 +1643,7 @@ class App extends Component {
       },
       map: {
         container: 'app-map',
-        center: [5, 60],
+        center: [44.6542783, -63.58312599999999],
         zoom: 5,
         pitch: 50,
         bearing: 0,
@@ -1643,6 +1733,29 @@ class App extends Component {
     this.setState({ secondPropertySelected: !this.state.secondPropertySelected })
   }
 
+  handlePropertySuggestionData = (id) => {    
+      // Fetch data from API
+      fetch(`http://54.196.154.157:8070/map/competitor/compare?property_id=`+id)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+          console.log(JSON.stringify(data))
+  
+          console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+  
+          this.setState({propertySuggestionData: data })
+          // Process your data here
+          // this.setState({
+            
+          // });
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+          // this.setState({ loading: false }); // Stop loading even if there is an error
+        });
+    
+  }
+
   handlepropertyName = (title) => {
     this.setState({ propertyName: title })
   }
@@ -1650,6 +1763,7 @@ class App extends Component {
     this.setState({ propertyName2: title })
   }
   handlepropertyId1 = (id) => {
+    this.handlePropertySuggestionData(id)
     this.setState({ id: id })
   }
   handlepropertyId2 = (id) => {
@@ -1802,6 +1916,28 @@ class App extends Component {
     // });
   }
 }
+
+const styles2 = {
+  modalBody: {
+    display: 'flex',           // Enables flexbox layout
+    justifyContent: 'space-between', // Spaces out children evenly
+    alignItems: 'flex-start',  // Aligns children at the start of the cross axis
+  },
+  imageContainer: {
+    flex: 1,                  // Takes up half of the flex container
+    marginRight: '20px'       // Adds space between the image and the table
+  },
+  modalImage: {
+    width: '100%',            // Makes the image fully occupy its container
+    height: 'auto',           // Keeps the aspect ratio of the image
+    borderRadius: '5px',      // Rounded corners for aesthetics
+  },
+  infoContainer: {
+    flex: 1,                  // Takes up the remaining half of the flex container
+    maxWidth: '400px'         // Maximum width of the table
+  }
+};
+
 
 const styles = {
   container: {

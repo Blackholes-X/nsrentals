@@ -20,6 +20,7 @@ import Home2 from 'src/src_side/Pages/Home2'
 import Calender from 'src/src_side/Pages/Calender'
 import Documents from 'src/src_side/Pages/Documents'
 import Projects from 'src/src_side/Pages/Projects'
+import WebScrapping from 'src/src_side/Pages/WebScrapping'
 import styled from 'styled-components'
 import Sidebar from 'src/src_side/Sidebar'
 import { GoogleOAuthProvider } from '@react-oauth/google'
@@ -90,6 +91,17 @@ function App_home() {
         <Sidebar />
         <PagesForCopititorPage>
           <Documents />
+        </PagesForCopititorPage>
+      </>
+    )
+  }
+
+  function loadWebScrapping() {
+    return (
+      <>
+        <Sidebar />
+        <PagesForCopititorPage>
+          <WebScrapping />
         </PagesForCopititorPage>
       </>
     )
@@ -177,6 +189,7 @@ function App_home() {
           <Route path="/projects" element={loadProjectsElement()} />
           <Route path="/property/:propertName" element={loadPropertyDetailElement()} />
           <Route path="/propertyList/:propertyName" element={loadPropertyListElement()} />
+          <Route path="/WebScrapping" element={loadWebScrapping()} />
         </Routes>
         {/* </GoogleOAuthProvider> */}
       </ScrollToTop>

@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import InputRange from 'react-input-range'
 import photo1 from '../icon-apartment.png'
 // import { color } from 'framer-motion'
-// import Modal from './Modal'
+import propertyIcon from '../icon-apartment.png'
+// import 
+import Loader from 'src/src_home/components/Loader'
 class Sreach extends Component {
   state = {
     firstPropertySelected: false,
@@ -10,7 +12,104 @@ class Sreach extends Component {
     propertyName: null,
     propertyName2: null,
     showModal: false,
+    loading: true, 
+    suggestionData: [],
+    activeProperty: null,
+    // setsecondPropertyType={this.setsecondPropertyType}
+    // handlepropertyId2={this.handlepropertyId2}
   }
+
+  handleMouseEnter = (property) => {
+    setActiveProperty(property)
+    this.setState({ activeProperty: property });
+  }
+
+  handleMouseLeave = () => {
+    this.setState({ activeProperty: null });
+  }
+
+  renderPopup = () => {
+    const { activeProperty } = this.state;
+    if (!activeProperty) return null;
+
+    const { title, images, typeName, rooms, area, rent, deposit, excerpt } = activeProperty;
+    return (
+      <div className="popup">
+        <div className="sc-card sc-borderless">
+          <div className="sc-card-header">
+            <h5>{title}</h5>
+          </div>
+          <div className="sc-card-body">
+            {/* <img src={images[0].thumbnail} alt={title} /> */}
+            <table className="sc-table">
+              <tbody>
+                <tr><td>Type</td><td>Hello</td></tr>
+                <tr><td>Rooms</td><td>-1</td></tr>
+                <tr><td>Area</td><td>area</td></tr>
+                <tr><td>Rent</td><td>$ 10</td></tr>
+                <tr><td>Deposit</td><td>$ 15</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="sc-card-footer">excerpt</div>
+        </div>
+      </div>
+    );
+  }
+
+  callApi = () => {
+    this.setState({ loading: true }); // Start loading
+  
+    // Fetch data from API
+    fetch(`http://54.196.154.157:8070/map/competitor/compare?property_id=2`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+        console.log(JSON.stringify(data))
+
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+
+        // Process your data here
+        this.setState({
+          // Update state with the fetched data
+          loading: false, // Stop loading
+          suggestionData: data
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        this.setState({ loading: false }); // Stop loading even if there is an error
+      });
+  }
+
+  loaderStyles = {
+    container: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 9999,
+    },
+    loader: {
+      border: '16px solid #f3f3f3',
+      borderTop: '16px solid #3498db',
+      borderRadius: '50%',
+      width: '120px',
+      height: '120px',
+      animation: 'spin 2s linear infinite',
+    },
+  }
+
+  // Loader = ({ styles }) => (
+  //   <div style={styles.container}>
+  //     <div style={styles.loader}></div>
+  //   </div>
+  // );
 
   toggleModal = () => {
     this.setState({ showModal: !this.state.showModal })
@@ -33,6 +132,17 @@ class Sreach extends Component {
     this.setState({ propertyName2: propertyName2 })
   }
 
+  handlepropertyId2 = (id) => {
+    // this.setState({ id2: id })
+  }
+
+  setsecondPropertyType = (secondPropertyType) => {
+    // this.setState({secondPropertyType: secondPropertyType})
+  }
+
+
+ 
+  
   render() {
     let {
       types,
@@ -59,7 +169,103 @@ class Sreach extends Component {
       handlePropertyName,
       handlePropertyName2,
       toggleModal,
+      propertySuggestionData,
+      setActiveProperty,
+      setcloseActiveProperty,
+      setsecondPropertyType,
+      handlepropertyId2
     } = this.props
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^11111111111111111111")
+    console.log(JSON.stringify(propertySuggestionData))
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^11111111111111111111")
+
+    
+  const handleMouseEnter = (property) => {
+    setActiveProperty(property)
+    this.setState({ activeProperty: property });
+    
+  }
+
+  const handleMouseLeave = () => {
+    setcloseActiveProperty()
+    this.setState({ activeProperty: null });
+  }
+
+    const loadSuggestionView = (suggestionData) => {
+      const fileUploadSelectedLabelStyle = {
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '10px 15px',
+        border: '2px solid green',
+        borderRadius: '5px',
+        color: '#555',
+        transition: 'background-color 0.3s ease',
+        width: '95%',
+        height: '100px',
+        marginBottom: '20px',
+        ':hover': {
+          backgroundColor: '#f0f0f0',
+        },
+      };
+    
+      const imageStyle = {
+        width: '80px', // Set a fixed width for the image
+        height: '80px', // Set a fixed height to align with the text
+        marginRight: '20px', // Add space between the image and the text
+        borderRadius: '5px', // Optionally, round the corners
+      };
+    
+      const contentStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        flexGrow: 1, // Take up remaining space
+      };
+    
+      console.log("Suggestion Data:::::::::::::::::::::::::::::", JSON.stringify(suggestionData));
+    
+      if (suggestionData.length > 0) {
+        return (
+          <div>
+            <header>
+              <h5>Suggested Properties</h5>
+            </header>
+            {suggestionData.map((property, index) => (
+              // console.log("")
+              <div key={index}
+              onClick={()=>{
+                // this.handlePropertyName2
+                handlePropertyName2(property.listing_name)
+                // handlepropertyName2(property.listing_name)
+                setsecondPropertyType("competitor")
+                handlepropertyId2(property.id)
+                console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@")
+              }}
+              onMouseEnter={() => {
+                setActiveProperty(property)
+                handleMouseEnter(property)
+              }}
+              onMouseLeave={handleMouseLeave}
+              >
+                <label htmlFor={`file-upload-${property.id}`} style={fileUploadSelectedLabelStyle}>
+                  <img src={property.property_image || 'default-image-url'} alt={property.listing_name} style={imageStyle} />
+                  <div style={contentStyle}>
+                    <div>{property.address}</div>
+                    <p style={{ color: 'red', marginTop: '10px', cursor: 'pointer' }} onClick={() => this.handlePropertyName2(property.listing_name)}>
+                      <b><u>Select</u></b>
+                    </p>
+                  </div>
+                </label>
+              </div>
+            ))}
+          </div>
+        );
+      } else {
+        return <div>No suggestions available.</div>; // Placeholder for no data
+      }
+    }
     const fileUploadLabelStyle = {
       cursor: 'pointer',
       display: 'inline-block',
@@ -104,6 +310,8 @@ class Sreach extends Component {
     //   display: 'none',
     // }
 
+   
+    
     return (
       <React.Fragment>
         <header className="sc-slide-header">
@@ -164,6 +372,7 @@ class Sreach extends Component {
               }}
             >
               {/* Applying inline style */}
+              
               <h6>Select any other property</h6>
               <label
                 htmlFor="file-upload"
@@ -216,6 +425,12 @@ class Sreach extends Component {
                 </p>
               </div>
             ) : null}
+
+            {propertyName != null ? 
+              loadSuggestionView(propertySuggestionData)
+              : null }
+           
+           {this.state.loading && <Loader styles={this.loaderStyles} />}
 
             <header className="sc-slide-header">
               <h5>Filters</h5>

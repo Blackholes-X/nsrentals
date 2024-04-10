@@ -379,7 +379,7 @@ const ComparisionModule = () => {
             <div key={product.name} style={featureValueStyle}>
               <FeatureListWithAnimation
                 features={Object.entries(product.features).map(
-                  ([key, value]) => `${key}: ${value}`,
+                  ([key, value]) => `- ${value}`,
                 )}
                 delay={50}
               />
