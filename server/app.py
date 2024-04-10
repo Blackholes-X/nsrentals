@@ -297,10 +297,6 @@ def scraper_competitor_listing(competitor_name : Optional [str] = 'Blackbay Grou
 
 
 
-
-if __name__ == '__main__':
-    uvicorn.run(app, host="0.0.0.0", port=8070)
-
 ###------------------------AI-Scrapping--------------------------------------------------------------
 
 @app.get("/scraper/company-details")
@@ -314,3 +310,8 @@ def company_details(company_name : Optional [str] = 'Blackbay Group Inc.', url: 
     
     
     return extracted_data
+
+
+
+if __name__ == '__main__':
+    uvicorn.run(app, host="0.0.0.0", port=8070)
