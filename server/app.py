@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from src import nearest_neighbor_inference
 from src import training as T
-
+from ai_scrapping import main
 from typing import Optional, List, Dict
 from data_model import ListingDataResponse
 
@@ -300,3 +300,17 @@ def scraper_competitor_listing(competitor_name : Optional [str] = 'Blackbay Grou
 
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8070)
+
+###------------------------AI-Scrapping--------------------------------------------------------------
+
+@app.get("/scraper/company-details")
+def company_details(company_name : Optional [str] = 'Blackbay Group Inc.', url: Optional[str] ='https://blackbaygroup.ca/'):
+    
+    main.scrape_and_extract(url, company_name)
+
+    main.run_llm_script(company_name)
+
+    extracted_data = main.run_add_data_to_db(company_name)
+    
+    
+    return extracted_data
