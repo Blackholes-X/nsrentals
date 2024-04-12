@@ -78,10 +78,10 @@ def llm_comparison(property_management_name: str):
     try:
         # comparison_texts = llm.generate_comp_comparison_text(property_management_name)
         southwest_texts = [
-            "Metro Living stands out for its strategic locations and modern urban living solutions.",
-            "Innovative use of technology in property management sets Metro Living apart.",
+            "Southwest stands out for its strategic locations and modern urban living solutions.",
+            "Innovative use of technology in property management sets Southwest apart.",
             "The company is a leader in affordable luxury, offering high-end amenities at competitive prices.",
-            "Tenants praise Metro Living for its community-building events and initiatives."
+            "Tenants praise Southwest for its community-building events and initiatives."
         ]
         comparison_texts = [
             f"{property_management_name} is a recognized name in the property management industry, known for its dedication to excellence.",
