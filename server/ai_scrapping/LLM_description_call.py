@@ -1,8 +1,8 @@
 # llm_description_call.py
 import json
 import os
-from src import utils as U   # Adjust this import based on your project structure.
-from src import llm as LLM  # Adjust this import path as necessary.
+from ai_scrapping.ai_scraper_src  import utils as U   
+from ai_scrapping.ai_scraper_src  import llm as LLM  
 import csv
 
 def read_file_contents(file_path):

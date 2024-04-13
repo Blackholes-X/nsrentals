@@ -643,6 +643,81 @@ def create_model_versioning_table():
         if conn:
             conn.close()
 
+def create_company_description_table():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Assuming get_db_connection is a previously defined function that connects to your database
+        cur = conn.cursor()
+
+        # Execute a query to check if the company_description table exists
+        cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'company_description');")
+        exists = cur.fetchone()[0]
+
+        if not exists:
+            # Create the company_description table
+            cur.execute("""
+                CREATE TABLE company_description (
+                    id SERIAL PRIMARY KEY,
+                    company_name TEXT NOT NULL,
+                    website_url TEXT NOT NULL,
+                    logo_url TEXT,
+                    description TEXT NOT NULL,
+                    domain_name TEXT,
+                    geography_served TEXT[],
+                    contact_email TEXT,
+                    social_media_profiles JSONB,
+                    address TEXT,
+                    notes TEXT
+                );
+            """)
+            conn.commit()
+            print("Table 'company_description' created successfully.")
+        else:
+            print("Table 'company_description' already exists.")
+
+    except Exception as e:
+        print(f"An error occurred in create_company_description_table: {e}")
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+def add_unique_constraint_company_name():
+    conn = None
+    cur = None
+    try:
+        # Assuming get_db_connection is a function that returns a psycopg2 connection object
+        conn = get_db_connection()  
+        cur = conn.cursor()
+        
+        # SQL command to add a unique constraint
+        alter_table_command = """
+        ALTER TABLE company_description
+        ADD CONSTRAINT company_name_unique UNIQUE (company_name);
+        """
+        
+        cur.execute(alter_table_command)
+        conn.commit()  # Commit the changes to the database
+        print("Unique constraint 'company_name_unique' added to 'company_name' column successfully.")
+
+    except Exception as e:
+        print(f"An error occurred when adding unique constraint: {e}")
+        if conn is not None:
+            conn.rollback()  # Roll back the transaction in case of an error
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+# Example usage
+# add_unique_constraint_company_name()
+
+
 
 # Call the function to create the table
 create_model_versioning_table()
@@ -659,3 +734,4 @@ create_table_sec_parking_data()
 create_south_west_listings_table()
 create_sec_southwest_listings()
 create_company_details_table()
+create_company_description_table()

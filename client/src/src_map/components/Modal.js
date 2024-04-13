@@ -9,6 +9,7 @@ class Modal extends Component {
     }
 
     return (
+      <div style={styles.overlay}>
       <div
         style={{
           position: 'fixed',
@@ -18,6 +19,7 @@ class Modal extends Component {
           right: '5%',
           padding: '20px',
           zIndex: 1000,
+        
         }}
       >
         {/* Modal content */}
@@ -25,13 +27,47 @@ class Modal extends Component {
 
         {/* Close button */}
         <button
-          onClick={this.props.onClose}
+          onClick={onClose}
           style={{ position: 'absolute', top: 0, right: 0, padding: '10px', cursor: 'pointer' }}
         >
           X
         </button>
       </div>
+      </div>
     )
   }
+
+  
 }
+
+const styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    // Change the backgroundColor value here for transparent grey
+    backgroundColor: 'rgba(128, 128, 128, 0.7)', // This is a medium grey with 70% opacity
+    backdropFilter: 'blur(5px)',
+    zIndex: 999, // Ensure it's below the modal content
+  },
+  modal: {
+    position: 'fixed',
+    top: '10%',
+    left: '25%',
+    backgroundColor: 'white',
+    padding: '20px',
+    zIndex: 1000, // Ensure it's above the overlay
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: '10px',
+    cursor: 'pointer',
+  }
+};
+
+
 export default Modal

@@ -38,34 +38,34 @@ const CompetitorList = () => {
               <Link key={index} to={`/propertyList/${property.property_management_name}`}>
                 <h2>{property.property_management_name}</h2>
                 <p>
-                  <strong>Address:</strong>
+                  <strong><b>Address:</b></strong>
                   {property.address}
                 </p>
                 <p>
-                  <strong>Apartment Size:</strong> {property.apartment_size} sqft
+                  <strong><b>Apartment Size:</b></strong> {property.apartment_size} sqft
                 </p>
                 <p>
-                  <strong>Bedrooms:</strong> {property.bedroom_count}
+                  <strong><b>Bedrooms:</b></strong> {property.bedroom_count}
                 </p>
                 <p>
-                  <strong>Bathrooms:</strong> {property.bathroom_count}
+                  <strong><b>Bathrooms:</b></strong> {property.bathroom_count}
                 </p>
                 <p>
-                  <strong>Monthly Rent:</strong>{' '}
+                  <strong><b>Monthly Rent:</b></strong>{' '}
                   {property.monthly_rent !== '-1' ? `$${property.monthly_rent}` : 'N/A'}
                 </p>
                 <p>
-                  <strong>Parking Availability:</strong>{' '}
+                  <strong><b>Parking Availability:</b></strong>{' '}
                   {property.parking_availability === 2 ? 'Available' : 'Not Available'}
                 </p>
                 <p>
-                  <strong>Utility Laundry:</strong> {property.utility_laundry}
+                  <strong><b>Utility Laundry:</b></strong> {property.utility_laundry}
                 </p>
                 <p>
-                  <strong>Furnished:</strong> {property.is_furnished === -1 ? 'No' : 'Yes'}
+                  <strong><b>Furnished: </b></strong> {property.is_furnished === -1 ? 'No' : 'Yes'}
                 </p>
                 <p>
-                  <strong>Website:</strong>{' '}
+                  <strong><b>Website:</b></strong>{' '}
                   <a href={property.website} target="_blank" rel="noopener noreferrer">
                     {property.website}
                   </a>
@@ -110,34 +110,34 @@ const PublicList = () => {
               <Link key={index} to={`/propertyList/${property.property_management_name}`}>
                 <h2>{property.listing_name}</h2>
                 <p>
-                  <strong>Address:</strong>
+                  <strong><b>Address:</b></strong>
                   {property.address}
                 </p>
                 <p>
-                  <strong>Apartment Size:</strong> {property.apartment_size} sqft
+                  <strong><b>Apartment Size:</b></strong> {property.apartment_size} sqft
                 </p>
                 <p>
-                  <strong>Bedrooms:</strong> {property.bedroom_count}
+                  <strong><b>Bedrooms:</b></strong> {property.bedroom_count}
                 </p>
                 <p>
-                  <strong>Bathrooms:</strong> {property.bathroom_count}
+                  <strong><b>Bathrooms:</b></strong> {property.bathroom_count}
                 </p>
                 <p>
-                  <strong>Monthly Rent:</strong>{' '}
+                  <strong><b>Monthly Rent:</b></strong>{' '}
                   {property.monthly_rent !== '-1' ? `$${property.monthly_rent}` : 'N/A'}
                 </p>
                 <p>
-                  <strong>Parking Availability:</strong>{' '}
+                  <strong><b>Parking Availability:</b></strong>{' '}
                   {property.parking_availability === 2 ? 'Available' : 'Not Available'}
                 </p>
                 <p>
-                  <strong>Utility Laundry:</strong> {property.utility_laundry}
+                  <strong><b>Utility Laundry:</b></strong> {property.utility_laundry}
                 </p>
                 <p>
-                  <strong>Furnished:</strong> {property.is_furnished === -1 ? 'No' : 'Yes'}
+                  <strong><b>Furnished:</b></strong> {property.is_furnished === -1 ? 'No' : 'Yes'}
                 </p>
                 <p>
-                  <strong>Website:</strong>{' '}
+                  <strong><b>Website:</b></strong>{' '}
                   <a href={property.website} target="_blank" rel="noopener noreferrer">
                     {property.website}
                   </a>
@@ -182,34 +182,34 @@ const SouthWestList = () => {
               <Link key={index} to={`/propertyList/${property.property_management_name}`}>
                 <h2>{property.property_management_name}</h2>
                 <p>
-                  <strong>Address:</strong>
+                  <strong><b>Address:</b></strong>
                   {property.address}
                 </p>
                 <p>
-                  <strong>Apartment Size:</strong> {property.apartment_size} sqft
+                  <strong><b>Apartment Size:</b></strong> {property.apartment_size} sqft
                 </p>
                 <p>
-                  <strong>Bedrooms:</strong> {property.bedroom_count}
+                  <strong><b>Bedrooms:</b></strong> {property.bedroom_count}
                 </p>
                 <p>
-                  <strong>Bathrooms:</strong> {property.bathroom_count}
+                  <strong><b>Bathrooms:</b></strong> {property.bathroom_count}
                 </p>
                 <p>
-                  <strong>Monthly Rent:</strong>{' '}
+                  <strong><b>Monthly Rent:</b></strong>{' '}
                   {property.monthly_rent !== '-1' ? `$${property.monthly_rent}` : 'N/A'}
                 </p>
                 <p>
-                  <strong>Parking Availability:</strong>{' '}
+                  <strong><b>Parking Availability:</b></strong>{' '}
                   {property.parking_availability === 2 ? 'Available' : 'Not Available'}
                 </p>
                 <p>
-                  <strong>Utility Laundry:</strong> {property.utility_laundry}
+                  <strong><b>Utility Laundry:</b></strong> {property.utility_laundry}
                 </p>
                 <p>
-                  <strong>Furnished:</strong> {property.is_furnished === -1 ? 'No' : 'Yes'}
+                  <strong><b>Furnished:</b></strong> {property.is_furnished === -1 ? 'No' : 'Yes'}
                 </p>
                 <p>
-                  <strong>Website:</strong>{' '}
+                  <strong><b>Website:</b></strong>{' '}
                   <a href={property.website} target="_blank" rel="noopener noreferrer">
                     {property.website}
                   </a>

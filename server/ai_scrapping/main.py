@@ -9,6 +9,7 @@ from ai_scrapping.LLM_description_call import summarize_content, dump_json, read
 from ai_scrapping.add_data_to_db import connect_and_insert_from_json
 
 
+
 def scrape(url):
     
     ## Step 1: Getting all the links from the given url which has the same domain
@@ -24,14 +25,14 @@ def scrape(url):
     merged_content = N.merge_contents(contents_in_md)
     
     # Check if the debug folder exists, if not create it
-    debug_folder_path = './debug'
-    if not os.path.exists(debug_folder_path):
-        os.makedirs(debug_folder_path)
+    # debug_folder_path = './debug'
+    # if not os.path.exists(debug_folder_path):
+    #     os.makedirs(debug_folder_path)
 
-    # Writing merged contents to a Markdown file
-    file_path = os.path.join(debug_folder_path, 'scraped_md.md')
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.write(merged_content)
+    # # Writing merged contents to a Markdown file
+    # file_path = os.path.join(debug_folder_path, 'scraped_md.md')
+    # with open(file_path, 'w', encoding='utf-8') as file:
+    #     file.write(merged_content)
     
     return merged_content
 
@@ -48,24 +49,25 @@ def scrape_and_extract(url, company_name):
 
     return segmented_content[0]
 
-def run_llm_script(company):
-    debug_folder_path = './debug'
-    file_name = 'scraped_md.md'
-    file_path = os.path.join(debug_folder_path, file_name)
+def run_llm_script(content, company):
+    # debug_folder_path = './debug'
+    # file_name = 'scraped_md.md'
+    # file_path = os.path.join(debug_folder_path, file_name)
 
-    output_json_file = f"summarized_content_{company}.json"
-    output_json_file = os.path.join(debug_folder_path, output_json_file)
+    # output_json_file = f"summarized_content_{company}.json"
+    # output_json_file = os.path.join(debug_folder_path, output_json_file)
     
     
     # Ensure the file exists
-    if not os.path.exists(file_path):
-        print(f"Error: The file {file_path} does not exist.")
-        exit(1)
+    # if not os.path.exists(file_path):
+    #     print(f"Error: The file {file_path} does not exist.")
+    #     exit(1)
     
-    content = read_file_contents(file_path)
-    summarized_content = summarize_content(content,company )
-    print("print smmarized content",summarized_content)
-    dump_json(summarized_content, output_json_file)
+    # content = read_file_contents(file_path)
+    summarized_content = summarize_content(content,company)
+    # print("print smmarized content",summarized_content)
+    # dump_json(summarized_content, output_json_file)
+    return summarized_content
     
 def run_add_data_to_db(company):
     debug_folder_path = './debug'

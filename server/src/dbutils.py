@@ -16,6 +16,7 @@ from urllib.parse import quote
 import os
 import shutil
 import psycopg2
+import json
 
 from data_model import ListingDataResponse as LDR
 from dotenv import load_dotenv
@@ -652,6 +653,43 @@ def save_to_database(scraped_data, company_name):
         if conn is not None:
             conn.close()
 
+def get_company_description(company_name):
+    conn = None
+    cur = None
+    description = None  # Initialize description to None
+    
+    try:
+        conn = get_db_connection()  # Use the existing function to get a database connection
+        cur = conn.cursor()
+        
+        # SQL query to retrieve the description
+        select_query = """
+        SELECT description FROM company_details WHERE company_name = %s;
+        """
+        
+        # Execute the query
+        cur.execute(select_query, (company_name,))
+        
+        # Fetch one result
+        result = cur.fetchone()
+        if result is not None:
+            description = result[0]
+            print(f"Description for {company_name}: {description}")
+        else:
+            print(f"No description found for {company_name}.")
+
+    except Exception as e:
+        print(f"An error occurred in get_company_description: {e}", exc_info=True)
+        # No need to rollback since we're not making any changes
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+    
+    return description
+
 
 def read_data_from_sec_parking_data():
     """Fetch all rows from the sec_parking_data table and return as DataFrame."""
@@ -876,3 +914,209 @@ def get_scraper_comp_listing(competitor_name = 'Blackbay Group Inc.'):
     finally:
         if cur: cur.close()
         if conn: conn.close()
+
+
+def save_company_summary(summarized_content):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # SQL query to insert or update data in the company_description table
+        insert_query = """
+        INSERT INTO company_description (
+            company_name, website_url, logo_url, description, domain_name,
+            geography_served, contact_email, social_media_profiles, address, notes
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (company_name) DO UPDATE
+        SET website_url = EXCLUDED.website_url,
+            logo_url = EXCLUDED.logo_url,
+            description = EXCLUDED.description,
+            domain_name = EXCLUDED.domain_name,
+            geography_served = EXCLUDED.geography_served,
+            contact_email = EXCLUDED.contact_email,
+            social_media_profiles = EXCLUDED.social_media_profiles,
+            address = EXCLUDED.address,
+            notes = EXCLUDED.notes;
+        """
+        
+        # Extract the first dictionary from summarized_content list
+        if summarized_content and isinstance(summarized_content, list):
+            data = summarized_content[0]
+            # Convert social_media_profiles dict to string for database insertion
+            social_media_profiles_str = json.dumps(data.get('Social Media Profiles', {}))
+
+            # Execute the query with provided data
+            cur.execute(insert_query, (
+                data.get('Company Name'), 
+                data.get('Website URL'), 
+                data.get('Logo URL'), 
+                data.get('Description'), 
+                data.get('Domain Name'), 
+                data.get('Geography Served'), 
+                data.get('Contact Email'), 
+                social_media_profiles_str, 
+                data.get('Address'), 
+                data.get('Notes')
+            ))
+            conn.commit()
+            print(f"Company summary for '{data.get('Company Name')}' saved/updated successfully.")
+        else:
+            print("Summarized content is empty or not in the expected format.")
+
+    except Exception as e:
+        print(f"An error occurred in save_company_summary: {e}")
+        # Optionally, you can roll back the transaction if something goes wrong
+        if conn is not None:
+            conn.rollback()
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+def check_company_exists(company_name, url):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+       
+        
+        # Query to check if the company_name and url exist
+        check_query = """
+        SELECT EXISTS (
+            SELECT 1 FROM company_description 
+            WHERE trim(upper(company_name)) = trim(upper(%s)) or trim(upper(website_url)) = trim(upper(%s))
+        );
+        """
+        # Execute the query
+        cur.execute(check_query, (company_name, url))
+
+        # Fetch the result
+        exists = cur.fetchone()[0]
+        
+        return exists
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+def get_company_description_by_name_or_url(company_name, website_url):
+    conn = None
+    cur = None
+    company_data = None
+    try:
+        conn = get_db_connection()  # Use the existing function to get a database connection
+        cur = conn.cursor()
+        
+        # SQL query to retrieve all fields where company_name or website_url matches
+        select_query = """
+        SELECT * FROM company_description 
+        WHERE trim(upper(company_name)) = trim(upper(%s)) or trim(upper(website_url)) = trim(upper(%s));
+        """
+        
+        # Execute the query with provided company_name and website_url
+        cur.execute(select_query, (company_name, website_url))
+        
+        # Fetch one result since company_name or website_url is expected to be unique
+        result = cur.fetchone()
+        if result:
+            # Map the result to a dictionary for easier access by field names
+            columns = [desc[0] for desc in cur.description]
+            company_data = dict(zip(columns, result))
+            print(f"Company data retrieved successfully for {company_name} or {website_url}.")
+        else:
+            print(f"No data found for {company_name} or {website_url}.")
+
+    except Exception as e:
+        print(f"An error occurred while retrieving company description: {e}")
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+    
+    return company_data
+
+
+def get_company_scraped_data(company_name):
+    conn = None
+    cur = None
+    company_description = None  # Directly store the description
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # SQL query to retrieve the description where company_name matches
+        select_query = """
+        SELECT description FROM company_details
+        WHERE trim(upper(company_name)) = trim(upper(%s));
+        """
+        
+
+        # Execute the query with the provided company_name
+        cur.execute(select_query, (company_name,)) 
+        
+        # Fetch one result since company_name is expected to be unique
+        result = cur.fetchone()
+
+        if result:
+            company_description = result[0]  # Directly access the description
+            print(f"Company data retrieved successfully for {company_name}.")
+        else:
+            print(f"No data found for {company_name}.")
+
+    except Exception as e:
+        print(f"An error occurred while retrieving company description: {e}")
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+    
+    return company_description  # Return the description directly
+
+
+def check_company_exists_in_company_details(company_name):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        
+        # Query to check if the company_name and url exist
+        check_query = """
+        SELECT EXISTS (
+            SELECT 1 FROM company_description 
+            WHERE trim(upper(company_name)) = trim(upper(%s))
+        );
+        """
+        # Execute the query
+        cur.execute(check_query, (company_name,))
+
+        # Fetch the result
+        exists = cur.fetchone()[0]
+        
+        return exists
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()

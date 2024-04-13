@@ -7,6 +7,7 @@ import Team from './Pages/Team'
 import Calender from './Pages/Calender'
 import Documents from './Pages/Documents'
 import Projects from './Pages/Projects'
+import WebScrapping from './Pages/WebScrapping'
 import styled from 'styled-components'
 import { AnimatePresence } from 'framer-motion'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
@@ -39,6 +40,7 @@ function App() {
           <Route path="/calender" element={<Calender />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/WebScrapping" element={<WebScrapping />} />
         </Routes>
         {/* </Router> */}
 

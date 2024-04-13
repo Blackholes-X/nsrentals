@@ -23,10 +23,10 @@ function CompanyStatusDashboard() {
           {companies.map((company, index) => (
             <div key={index} className="company">
               <h2>{company.property_management_name}</h2>
-              <p>Total Listings: {company.total_listings}</p>
-              <p>Average Price for 0 Bedroom: ${company.average_price_0_bedroom}</p>
-              <p>Average Price for 1 Bedroom: ${company.average_price_1_bedroom}</p>
-              <p>Average Price for 2 Bedrooms: ${company.average_price_2_bedroom}</p>
+              <p><b>Total Listings:</b> {company.total_listings}</p>
+              <p><b>Average Price for 0 Bedroom:</b> ${company.average_price_0_bedroom}</p>
+              <p><b>Average Price for 1 Bedroom:</b> ${company.average_price_1_bedroom}</p>
+              <p><b>Average Price for 2 Bedrooms:</b> ${company.average_price_2_bedroom}</p>
             </div>
           ))}
         </div>

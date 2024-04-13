@@ -300,16 +300,27 @@ def scraper_competitor_listing(competitor_name : Optional [str] = 'Blackbay Grou
 ###------------------------AI-Scrapping--------------------------------------------------------------
 
 @app.get("/scraper/company-details")
-def company_details(company_name : Optional [str] = 'Blackbay Group Inc.', url: Optional[str] ='https://blackbaygroup.ca/'):
+def company_details(company_name : Optional [str] = 'Blackbay Group Inc.', url: Optional[str] ='https://blackbaygroup.ca'):
+    exists  = DU.check_company_exists(company_name, url)
+    print(exists)
+    if exists:
+        result = DU.get_company_description_by_name_or_url(company_name, url)
+        return result
     
-    main.scrape_and_extract(url, company_name)
+    company_scraped_data = DU.check_company_exists_in_company_details(company_name)
+    if company_scraped_data:
+        scraped_data   = DU.get_company_scraped_data(company_name)
+    else:
+        scraped_data = main.scrape_and_extract(url, company_name)
+        id = DU.save_to_database(scraped_data, company_name)
 
-    main.run_llm_script(company_name)
+   
+    summarized_content = main.run_llm_script(content=scraped_data,company=company_name)
+    DU.save_company_summary(summarized_content)
 
-    extracted_data = main.run_add_data_to_db(company_name)
     
-    
-    return extracted_data
+    return summarized_content
+
 
 
 
