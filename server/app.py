@@ -300,7 +300,7 @@ def scraper_competitor_listing(competitor_name : Optional [str] = 'Blackbay Grou
 ###------------------------AI-Scrapping--------------------------------------------------------------
 
 @app.get("/scraper/company-details")
-def company_details(company_name : Optional [str] = 'Blackbay Group Inc.', url: Optional[str] ='https://blackbaygroup.ca'):
+def company_details(company_name : Optional [str] = 'BlackBay Group Inc.', url: Optional[str] ='https://blackbaygroup.ca'):
     if "ted" in company_name.lower():
         normalized_company_name = " ".join(company_name.strip().lower().split())
         if normalized_company_name == 'ted':
