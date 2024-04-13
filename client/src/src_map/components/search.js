@@ -3,6 +3,8 @@ import InputRange from 'react-input-range'
 import photo1 from '../icon-apartment.png'
 // import { color } from 'framer-motion'
 import propertyIcon from '../icon-apartment.png'
+import Vimy from '../vimy.jpg'
+
 // import 
 import Loader from 'src/src_home/components/Loader'
 class Sreach extends Component {
@@ -226,6 +228,9 @@ class Sreach extends Component {
     
       console.log("Suggestion Data:::::::::::::::::::::::::::::", JSON.stringify(suggestionData));
     
+      const handleImageError = (e) => {
+        e.target.src = Vimy; // Set the source to your dummy image
+      };
       if (suggestionData.length > 0) {
         return (
           <div>
@@ -250,11 +255,17 @@ class Sreach extends Component {
               onMouseLeave={handleMouseLeave}
               >
                 <label htmlFor={`file-upload-${property.id}`} style={fileUploadSelectedLabelStyle}>
-                  <img src={property.property_image || 'default-image-url'} alt={property.listing_name} style={imageStyle} />
+                  {/* <img src={property.property_image || dummyImg} alt={property.listing_name} style={imageStyle} /> */}
+                  <img 
+        src={property.property_image || Vimy} 
+        alt={property.listing_name} 
+        style={imageStyle} 
+        onError={handleImageError} // Set the onError handler
+      />
                   <div style={contentStyle}>
                     <div>{property.address}</div>
                     <p style={{ color: 'red', marginTop: '10px', cursor: 'pointer' }} onClick={() => this.handlePropertyName2(property.listing_name)}>
-                      <b><u>Select</u></b>
+                      <b><u>Click to compare</u></b>
                     </p>
                   </div>
                 </label>

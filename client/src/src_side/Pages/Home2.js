@@ -4,21 +4,41 @@ import PropetyDetailPage from './PropetyDetailPage'
 import { Link } from 'react-router-dom' // Import Link from react-router-dom
 import Typewriter from '../componant/Typewriter'
 
+// const Dashboard = () => {
+//   return (
+//     <div style={styles.container}>
+//       <div style={styles.cardsContainer}>
+//         <iframe
+//           title="MCDA_Datamining_Hackathon"
+//           width="100vh"
+//           height="100vh"
+//           src="https://app.powerbi.com/reportEmbed?reportId=b270a969-9708-45d3-bee9-95935c0ff40b&autoAuth=true&ctid=4711194d-93f6-4861-9472-a801087b4888"
+//           frameBorder="0"
+//           allowFullScreen="true"
+//         ></iframe>
+//       </div>
+//     </div>
+
+// // https://app.powerbi.com/groups/me/reports/b270a969-9708-45d3-bee9-95935c0ff40b/ReportSection4325b6cbec59d0acb60c?experience=power-bi
+//   )
+// }
+
 const Dashboard = () => {
   return (
     <div style={styles.container}>
-      <div style={styles.cardsContainer}>
-        <iframe
-          title="MCDA_Datamining_Hackathon"
-          width="1140"
-          height="541.25"
-          src="https://app.powerbi.com/reportEmbed?reportId=bf6b3425-045a-4387-86d6-2c73e598e2b7&autoAuth=true&ctid=4711194d-93f6-4861-9472-a801087b4888"
-          frameBorder="0"
-          allowFullScreen="true"
-        ></iframe>
-      </div>
+       <div style={styles.cardsContainer}>
+    <div style={styles.iframeContainer}>
+      <iframe
+        title="MCDA_Datamining_Hackathon"
+        style={styles.fullScreenIframe}
+        src="https://app.powerbi.com/reportEmbed?reportId=b270a969-9708-45d3-bee9-95935c0ff40b&autoAuth=true&ctid=4711194d-93f6-4861-9472-a801087b4888"
+        frameBorder="0"
+        allowFullScreen={true}
+      ></iframe>
     </div>
-  )
+    </div>
+    </div>
+  );
 }
 
 const Home2 = () => {
@@ -87,5 +107,20 @@ const styles = {
   propertyInfo: {
     flex: 1, // Allow the property info to take up remaining space
   },
+  iframeContainer: {
+    position: 'absolute',
+   
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '95%',
+    height: '90%',
+    padding: 0,
+    margin: 0
+  },
+  fullScreenIframe: {
+    width: '85%',
+    height: '100%'
+  }
 }
 export default Home2
