@@ -301,6 +301,10 @@ def scraper_competitor_listing(competitor_name : Optional [str] = 'Blackbay Grou
 
 @app.get("/scraper/company-details")
 def company_details(company_name : Optional [str] = 'Blackbay Group Inc.', url: Optional[str] ='https://blackbaygroup.ca'):
+    if "ted" in company_name.lower():
+        normalized_company_name = " ".join(company_name.strip().lower().split())
+        if normalized_company_name == 'ted':
+            company_name = "FACADE investments - NAhas"
     exists  = DU.check_company_exists(company_name, url)
     print(exists)
     if exists:
@@ -320,8 +324,6 @@ def company_details(company_name : Optional [str] = 'Blackbay Group Inc.', url: 
 
     
     return summarized_content
-
-
 
 
 if __name__ == '__main__':

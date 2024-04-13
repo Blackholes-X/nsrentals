@@ -34,7 +34,7 @@ def extract_from_single_content(content, propertyManagementFirm):
             }}
 
             Fields Explained:
-            Company Name: The legal name of the company.
+            Company Name: The legal name of the company provided.
             Website URL: The official website URL.
             Logo URL: Direct URL to the company's logo.
             Description: A detailed description of the company's business, places where they have property, number of buildings and available aprtments for rental .
