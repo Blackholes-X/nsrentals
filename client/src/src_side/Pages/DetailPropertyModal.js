@@ -3,6 +3,7 @@ import Modal from 'src/src_map/components/Modal';
 import uparrow from '../../src_side/assets/uparrow.png'
 import downarrow from '../../src_side/assets/downarrow.png'
 import blackByLogo from '../../src_side/assets/blackByLogo.png'
+import dummyImg from '../../src_map/dummyImg.jpg'
 
 const DetailPropertyModal = ({ isOpen, onClose, property }) => {
     const headerStyle = {
@@ -17,14 +18,17 @@ const DetailPropertyModal = ({ isOpen, onClose, property }) => {
         fontSize: '1.2rem', // slightly larger font size for emphasis
         fontWeight: 'bold'
     };
+    const handleImageError = (e) => {
+        e.target.src = dummyImg; // Set the source to your dummy image
+      };
     return (
         <Modal isOpen={isOpen} onClose={onClose} style={modalStyle}>
             <div style={modalContentStyle}>
-                <img src={property.image || blackByLogo} alt="Property" style={imageStyle} />
+                <img src={property.image || dummyImg} alt="Property" style={imageStyle} onError={handleImageError} />
                 <div style={detailsStyle}>
                     <div style={headerStyle}>
                         <h2>{property.listing_name}</h2>
-                        {property.predicted_rent && <span style={highlightStyle}>${property.predicted_rent} / month</span>}
+                        {property.predicted_rent && <span style={highlightStyle}><u>Predicted Rent: ${property.predicted_rent} / month</u></span>}
                         {property.rent_difference != null ? 
                     parseFloat(property.rent_difference) < 0 ? 
                     <img src={uparrow} alt="Up" height="15" width="15"/> : 
@@ -35,20 +39,25 @@ const DetailPropertyModal = ({ isOpen, onClose, property }) => {
                     <div style={detailsGridStyle}>
                         <div><b>Bedrooms:</b> {property.bedroom_count}</div>
                         <div><b>Bathrooms:</b> {property.bathroom_count}</div>
-                        <div><b>Monthly Rent:</b> ${property.monthly_rent}</div>
+                        <div><b>Monthly Rent:</b> {property.monthly_rent == "-1" ? "n/a" : "$"+property.monthly_rent }</div>
                         <div><b>Parking Availability:</b> {property.parking_availability}</div>
-                        <div><b>Distance from Hospital:</b> {property.dist_hospital} miles</div>
-                        <div><b>Distance from School:</b> {property.dist_school} miles</div>
-                        <div><b>Distance from Restaurant:</b> {property.dist_restaurant} miles</div>
-                        <div><b>Distance from Downtown:</b> {property.dist_downtown} miles</div>
-                        <div><b>Distance from Bus Stop:</b> {property.dist_busstop} miles</div>
-                        <div><b>Distance from Larry Uteck Area:</b> {property.dist_larry_uteck_area} miles</div>
-                        <div><b>Distance from Central Halifax:</b> {property.dist_central_halifax} miles</div>
-                        <div><b>Distance from Clayton Park:</b> {property.dist_clayton_park} miles</div>
-                        <div><b>Distance from Rockingham:</b> {property.dist_rockingham} miles</div>
-                        <div><b>Source:</b> <a href={property.source} target="_blank" rel="noopener noreferrer">Source Link</a></div>
-                        <div><b>Website:</b> <a href={property.website} target="_blank" rel="noopener noreferrer">Website Link</a></div>
+                        <div><b>Source:</b> <a href={property.source} target="_blank" rel="noopener noreferrer">{property.source}</a></div>
+                        <div><b>Website:</b> <a href={property.website} target="_blank" rel="noopener noreferrer">{property.website}</a></div>
+                        <div><b><u>Distance from : </u></b></div>
+                        <div></div>
+                        <div><b>Hospital:</b> {parseFloat(property.dist_hospital).toFixed(2)} miles</div>
+                        <div><b>School:</b> {parseFloat(property.dist_school).toFixed(2)} miles</div>
+                        <div><b>Restaurant:</b> {parseFloat(property.dist_restaurant).toFixed(2)} miles</div>
+                        <div><b>Downtown:</b> {parseFloat(property.dist_downtown).toFixed(2)} miles</div>
+                        <div><b>Bus Stop:</b> {parseFloat(property.dist_busstop).toFixed(2)} miles</div>
+                        <div><b>Larry Uteck Area:</b> {parseFloat(property.dist_larry_uteck_area).toFixed(2)} miles</div>
+                        <div><b>Central Halifax:</b> {parseFloat(property.dist_central_halifax).toFixed(2)} miles</div>
+                        <div><b>Clayton Park:</b> {parseFloat(property.dist_clayton_park).toFixed(2)} miles</div>
+                        <div><b>Rockingham:</b> {parseFloat(property.dist_rockingham).toFixed(2)} miles</div>
+                        <div></div>
+
                         <div><b>Description:</b> {property.description}</div>
+
                     </div>
                     <button onClick={onClose} style={buttonStyle}>Close</button>
                 </div>
@@ -75,6 +84,7 @@ const modalContentStyle = {
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
+    overflow: 'auto', 
 };
 
 const imageStyle = {
@@ -89,6 +99,7 @@ const detailsStyle = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-around',
+    wordWrap: 'break-word',
 };
 
 const detailsGridStyle = {
@@ -96,6 +107,7 @@ const detailsGridStyle = {
     gridTemplateColumns: '1fr 1fr', // Two columns of equal width
     gap: '10px', // Space between the grid items
     marginBottom: '10px', // Space below the grid before the close button
+    overflow: 'auto',
 };
 
 const distanceStyle = {
@@ -118,6 +130,7 @@ const buttonStyle = {
     marginTop: '10px',
     width: '100%', // Ensure button width matches the modal width
     textAlign: 'center',
+    wordWrap: 'break-word',
 };
 
 export default DetailPropertyModal;

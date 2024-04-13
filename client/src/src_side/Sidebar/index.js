@@ -243,6 +243,7 @@ const Sidebar = () => {
 
   // If userProfile exists in localStorage, parse it and set the state
   useEffect(() => {
+    handleClick()
     const storedUserProfile = localStorage.getItem('userProfile')
     if (storedUserProfile) {
       const parsedUserProfile = JSON.parse(storedUserProfile)
@@ -269,7 +270,10 @@ const Sidebar = () => {
             <img src={Home} alt="Home" />
             <Text clicked={click}>Home</Text>
           </Item>
-          <Item onClick={() => setClick(false)} activeClassName="active" to="/competitors">
+          <Item onClick={() => {
+            handleClick()
+            setClick(false)
+            }} activeClassName="active" to="/competitors">
             <img src={Team} alt="Team" />
             <Text clicked={click}>Competitors</Text>
           </Item>

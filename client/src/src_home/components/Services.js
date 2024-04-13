@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 const Services = () => {
   const [user, setUser] = useState([])
   const [profile, setProfile] = useState([])
+  const [scrapingDisabled, setScrapingDisabled] = useState(true); // State to manage if scraping card is disabled
 
   // const responseMessage = (response) => {
   //     console.log("SSSSSSSSSSSSSSSSSSSSSSSS")
@@ -36,7 +37,7 @@ const Services = () => {
 
         <div className="px-12" data-aos="fade-down" data-aos-delay="600">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div className="bg-white transition-all ease-in-out duration-400  overflow-hidden text-gray-700 hover:bg-gray-500 hover:text-white rounded-lg shadow-2xl p-3 group">
+          <div className={`bg-white transition-all ease-in-out duration-400 overflow-hidden text-gray-700 rounded-lg shadow-2xl p-3 group ${scrapingDisabled ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-500 hover:text-white'}`}>
               <div className="m-2 text-justify text-sm">
                 <img
                   alt="card img"
@@ -53,24 +54,26 @@ const Services = () => {
               </div>
             </div>
 
-            <div className="bg-white transition-all ease-in-out duration-400  overflow-hidden text-gray-700 hover:bg-gray-500 hover:text-white rounded-lg shadow-2xl p-3 group">
-              <div className="m-2 text-justify text-sm">
-                <img
-                  alt="card img"
-                  className="rounded-t group-hover:scale-[1.15] transition duration-1000 ease-in-out"
-                  src={img2}
-                />
-                <h2 className="font-semibold my-4 text-2xl text-center">
-                  <Link to="/Login">Solution By Blackholes</Link>
-                </h2>
-                <p className="text-md font-medium">
-                Develop a predictive analytics model integrated with a comprehensive dashboard. This model will analyze historical data and current market trends to forecast future rental rates. The dashboard will offer insights into competitor rates and aid in strategizing for new development projects.
+            <Link to="/home">
+  <div className="bg-white transition-all ease-in-out duration-400 overflow-hidden text-gray-700 hover:bg-gray-500 hover:text-white rounded-lg shadow-2xl p-3 group">
+    <div className="m-2 text-justify text-sm">
+      <img
+        alt="card img"
+        className="rounded-t group-hover:scale-[1.15] transition duration-1000 ease-in-out"
+        src={img2}
+      />
+      <h2 className="font-semibold my-4 text-2xl text-center">
+        Solution By Blackholes
+      </h2>
+      <p className="text-md font-medium">
+        Develop a predictive analytics model integrated with a comprehensive dashboard. This model will analyze historical data and current market trends to forecast future rental rates. The dashboard will offer insights into competitor rates and aid in strategizing for new development projects.
+      </p>
+    </div>
+  </div>
+</Link>
 
-                </p>
-              </div>
-            </div>
 
-            <div className="bg-white transition-all ease-in-out duration-400  overflow-hidden text-gray-700 hover:bg-gray-500 hover:text-white rounded-lg shadow-2xl p-3 group">
+            <div className={`bg-white transition-all ease-in-out duration-400 overflow-hidden text-gray-700 rounded-lg shadow-2xl p-3 group ${scrapingDisabled ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-500 hover:text-white'}`}>
               <div className="m-2 text-justify text-sm">
                 <img
                   alt="card img"

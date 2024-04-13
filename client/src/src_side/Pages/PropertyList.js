@@ -17,6 +17,9 @@ import Modal from 'src/src_map/components/Modal'
 import editicon from '../assets/editicon.png'
 import EditPropertyModal from './EditPropertyModal'
 import DetailPropertyModal from './DetailPropertyModal'
+import dummyImg from '../../src_map/dummyImg.jpg'
+
+
 const PropertyData = [
   {
     property_management_name: 'FACADE investments - NAhas',
@@ -77,13 +80,6 @@ const PropertyListView = () => {
 
   const [selectedProperty, setSelectedProperty] = useState(null);
 
-  // useEffect(() => {
-  //   document.body.style.overflowX = "hidden"; // Disable vertical scrolling
-  //   return () => {
-  //     document.body.style.overflowX = "auto"; // Enable vertical scrolling when component unmounts
-  //   };
-  // }, []);
-
   const [propertyData2, setPropertyData2] = useState(PropertyData)
   const { propertyName } = useParams()
   // alert(propertyName)
@@ -127,7 +123,9 @@ const closeDetailModal = () => {
     setPropertyData2(updatedProperties);
   };
 
-
+  const handleImageError = (e) => {
+    e.target.src = dummyImg; // Set the source to your dummy image
+  };
   const rentInfoStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -193,14 +191,7 @@ const closeDetailModal = () => {
     // </div>
     <div style={styles.container}>
     <div style={styles.cardsContainer}>
-    {/* {selectedProperty && (
-          <EditPropertyModal
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            property={selectedProperty}
-            onSave={savePropertyChanges}
-          />
-        )} */}
+
 
 {isModalOpen && <EditPropertyModal isOpen={isModalOpen} onClose={closeModal} property={selectedProperty} onSave={savePropertyChanges}/>}
             {isDetailModalOpen && <DetailPropertyModal isOpen={isDetailModalOpen} onClose={closeDetailModal} property={selectedProperty} />}
@@ -209,12 +200,12 @@ const closeDetailModal = () => {
         <div key={index} style={styles.propertyCard}>
           <div style={styles.cardContent}>
             <div style={styles.imageContainer}>
-              <img src={property.image} alt="Property" style={styles.propertyImage} />
+              <img src={property.image || dummyImg} alt="Property" style={styles.propertyImage} onError={handleImageError} />
              
   
                    <p style={rentInfoStyle}>
-                 <b>Predicted Rent:</b> {property.predicted_rent} $
-                 
+                 {/* <b>Predicted Rent:</b> {property.predicted_rent} $ */}
+                 <span style={{color: '#FF5722', fontWeight: 'bold'}}><u>Predicted Rent: ${property.predicted_rent}/month</u></span>
                  {property.rent_difference != null ? 
                     parseFloat(property.rent_difference) < 0 ? 
                     <img src={uparrow} alt="Up" height="15" width="15"/> : 
@@ -223,8 +214,8 @@ const closeDetailModal = () => {
                   }
                 </p>
               <p><b>Monthly Rent: </b>{property.monthly_rent !== -1 ? `$${property.monthly_rent}` : 'N/A'}</p>
-               <p><b>source: </b><a target='_blank' href={property.source}><u>{property.source}</u></a></p>
-               <p><b>website:</b> <a target='_blank' href={property.website}><u>{property.website}</u></a></p>
+               <p><b>Source: </b><a target='_blank' href={property.source}><u>https://blackbaygroup.ca/</u></a></p>
+               <p><b>Website:</b> <a target='_blank' href={property.website}><u>https://blackbaygroup.ca/</u></a></p>
               
                {/* <p><b>description:</b> {property.description ? <ExpandableText text={property.description} /> : null }  </p> */}
             </div>
@@ -232,9 +223,9 @@ const closeDetailModal = () => {
               <h2>{property.listing_name}</h2>
               <p><b>Address:</b> {property.address}</p>
                <p><b>Bedrooms: </b>{property.bedroom_count}</p>
-               <p><b>Bathrooms:</b> {property.bathroom_count}</p>
+               <p><b>Bathrooms:</b> {property.bathroom_count == "-1" ? "n/a" : property.bathroom_count }</p>
               
-               <p><b>parking availability: </b>{property.parking_availability}</p>
+               <p><b>Parking availability: </b>{property.parking_availability}</p>
                <button type="button" onClick={() => {
                 openDetailModal(property)
               }} style={{ background: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', padding: '10px 15px', cursor: 'pointer', fontWeight: 'bold'}}>View More Detail</button>
@@ -292,8 +283,7 @@ const ComparisionModule = () => {
           products = [
             {
               name: 'Southwest Property',
-              imageUrl:
-              southwestlogo,
+              imageUrl: southwestlogo,
               features: data.southwest,
             },
             {

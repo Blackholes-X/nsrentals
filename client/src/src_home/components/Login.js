@@ -164,12 +164,12 @@ const Login = () => {
             <button
               onClick={() => {
                 // login()
-                setProfile({"id":"112879997952493344089","email":"sonivrushali1234@gmail.com","verified_email":true,"name":"Vrushali Soni","given_name":"Vrushali","family_name":"Soni","picture":"https://lh3.googleusercontent.com/a/ACg8ocIU4KzwW0C8fzKoMOp3c1vRr_5e9yDimxZtYYf4J69L4XL0LA=s96-c","locale":"en"})
+                setProfile({"id":"112879997952493344089","email":"sonivrushali1234@gmail.com","verified_email":true,"name":"User","given_name":"User","family_name":"Soni","picture":"https://lh3.googleusercontent.com/a/ACg8ocIU4KzwW0C8fzKoMOp3c1vRr_5e9yDimxZtYYf4J69L4XL0LA=s96-c","locale":"en"})
                 setIsAuthenticated(true)
                 localStorage.setItem('isAuthenticated', 'true')
                 // console.log(')))))))))))))))))))))))')
                 // console.log(JSON.stringify(res.data))
-                localStorage.setItem('userProfile', JSON.stringify({"id":"112879997952493344089","email":"sonivrushali1234@gmail.com","verified_email":true,"name":"Vrushali Soni","given_name":"Vrushali","family_name":"Soni","picture":"https://lh3.googleusercontent.com/a/ACg8ocIU4KzwW0C8fzKoMOp3c1vRr_5e9yDimxZtYYf4J69L4XL0LA=s96-c","locale":"en"}))
+                localStorage.setItem('userProfile', JSON.stringify({"id":"112879997952493344089","email":"sonivrushali1234@gmail.com","verified_email":true,"name":"User","given_name":"User","family_name":"Soni","picture":"https://lh3.googleusercontent.com/a/ACg8ocIU4KzwW0C8fzKoMOp3c1vRr_5e9yDimxZtYYf4J69L4XL0LA=s96-c","locale":"en"}))
                 navigate('/home')
               }}
               type="button"

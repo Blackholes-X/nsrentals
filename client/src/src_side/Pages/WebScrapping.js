@@ -27,6 +27,8 @@ const AllListCom = () => {
   const [showModal, setShowModal] = useState(false); // State for showing the modal
   const [viewMode, setViewMode] = useState('listings');
   const [desc, setdesc] = useState(null)
+  const [showTooltip, setShowTooltip] = useState(true);
+
   // Function to simulate progress
   const simulateProgress = () => {
     let interval = setInterval(() => {
@@ -61,7 +63,7 @@ const AllListCom = () => {
         setLoading(false);
         setProgress(100);  // Ensure progress bar reaches 100%
       }
-    }, 5000);  // Wait for 30 seconds before executing the fetch
+    }, 20000);  // Wait for 30 seconds before executing the fetch
   };
 
   const fetchModelList = async () => {
@@ -317,6 +319,12 @@ const AllListCom = () => {
         <div style={{ padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
             <h2 style={{ textAlign: 'center', color: '#333', fontSize: '18px' }}>ML Model List</h2>
             {showModalML && <ModalAlert />}
+            <button onClick={() => setshowModalML(true)} style={{ float:'right', margin: '5px', padding: '5px 10px', backgroundColor: 'Orange', color: 'white', cursor: 'pointer', borderRadius: '5px'}}>
+                                    Retrain
+                                </button>
+                                <button onClick={() => setshowModalML(true)} style={{ float:'right', margin: '5px', padding: '5px 10px', backgroundColor: 'blue', color: 'white', cursor: 'pointer', borderRadius: '5px'}}>
+                                    Refresh Predition
+                                </button>
             <table style={styles.table}>
                 <thead>
                     <tr>
@@ -335,9 +343,11 @@ const AllListCom = () => {
                             <td style={styles.tableCell}>{model.r2_score}</td>
                             <td style={styles.tableCell}>{new Date(model.loaddatetime).toLocaleString()}</td>
                             <td style={styles.tableCell}>
-                                <button onClick={() => setshowModalML(true)} style={{  margin: '5px', padding: '5px 10px', backgroundColor: 'green', color: 'white', cursor: 'pointer', borderRadius: '5px'}}>
+                           
+                            <button onClick={() => setshowModalML(true)} style={{  margin: '5px', padding: '5px 10px', backgroundColor: 'green', color: 'white', cursor: 'pointer', borderRadius: '5px'}}>
                                     Deploy
                                 </button>
+                                
 
                                 
                             </td>
@@ -527,6 +537,7 @@ const AllListCom = () => {
   return (
     <div style={styles.container}>
       <div style={styles.cardsContainer}>
+     
         <Tabs>
           <TabList>
             <Tab>Web Scrapping</Tab>
@@ -536,7 +547,17 @@ const AllListCom = () => {
           <TabPanel>
             <div style={styles.webScrapContainer}>
               <div style={styles.inputGroup}>
-                <input type="text" placeholder="Enter URL to scrap..." style={styles.inputFieldurl} />
+      
+              <input
+  type="text"
+  placeholder="Enter URL to scrap..."
+  style={{ ...styles.inputFieldurl, opacity: viewMode === 'listings' ? 0.5 : 1, pointerEvents: viewMode === 'listings' ? 'none' : 'auto' }}
+  value={viewMode === 'listings' ? 'https://blackbaygroup.ca/' : ''}
+  disabled={viewMode === 'listings'}
+  readOnly={viewMode === 'listings'}
+  
+/>
+                {/* <input type="text" placeholder="Enter URL to scrap..." style={styles.inputFieldurl} /> */}
                 <button onClick={() => {
                   if(viewMode == "listings"){
                     fetchData()
@@ -694,7 +715,18 @@ const styles = {
     fontSize: '16px',
     borderRadius: '4px',
     boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.2)',
-  }
+  },
+  tooltip: {
+    position: "absolute",
+    backgroundColor: "#333",
+    color: "#fff",
+    padding: "5px 10px",
+    borderRadius: "5px",
+    zIndex: 1, // Ensure it's above other elements
+    top: "calc(100% + 5px)", // Position below the button
+    left: "50%", // Position at the center of the button
+    transform: "translateX(-50%)", // Center horizontally
+  },
 };
 
 

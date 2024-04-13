@@ -20,6 +20,8 @@ import southwestlogo from '../../src_side/assets/southwestlogo.png'
 import PropertyDialogComponent from './PropertyDialogComponent'
 import { auto } from '@popperjs/core'
 import Loader_cmparison from './Loader_cmparison'
+import Vimy from '../vimy.jpg'
+
 const comparisionDatavar = []
 
 const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => {
@@ -359,7 +361,7 @@ class App extends Component {
         rent: property.monthly_rent,
         deposit: property.deposit,
         images: images,
-        excerpt: property.excerpt,
+        excerpt: property.description,
       },
       showDialogModal: true, // Open the modal when a property is active
     });
@@ -428,7 +430,7 @@ class App extends Component {
     //   })
     //   .catch((error) => console.error('Error fetching data:', error))
 
-     fetch('http://54.196.154.157:8070/map/southwest-listings?records_limit=20')
+     fetch('http://54.196.154.157:8070/map/southwest-listings?records_limit=107')
         .then((response) => response.json())
         .then((data) => {
           const geoJsonData = {
@@ -479,7 +481,7 @@ class App extends Component {
   }
 
   fetchDataFilter = (url, slug) => {
-    fetch('http://54.196.154.157:8070/map/comp-listings?records_limit=20')
+    fetch('http://54.196.154.157:8070/map/comp-listings?records_limit=66')
       .then((response) => response.json())
       .then((data) => {
         const geoJsonData = {
@@ -521,6 +523,10 @@ class App extends Component {
   render() {
     let numberOFPlaces = this.state.places.features.length
     let lastIndex = numberOFPlaces - 1
+
+    const handleImageError = (e) => {
+      e.target.src = Vimy; // Set the source to your dummy image
+    };
 
 
     return (
@@ -570,7 +576,13 @@ class App extends Component {
            </div>
            <div className="sc-card-body" style={styles2.modalBody}>
              <div style={styles2.imageContainer}>
-               <img src={this.state.propertyDetails.images} alt={"Property View"} style={styles2.modalImage} />
+             <img 
+        src={this.state.propertyDetails.images || Vimy} 
+        style={styles2.modalImage}
+        // style={{width: '80px', height: '80px', marginRight: '20px', borderRadius: '5px',}} 
+        onError={handleImageError} // Set the onError handler
+      />
+               {/* <img src={this.state.propertyDetails.images} alt={"Property View"} style={styles2.modalImage} /> */}
              </div>
              <div style={styles2.infoContainer}>
                <table className="sc-table">
@@ -578,13 +590,13 @@ class App extends Component {
                   <tr><td>Type</td><td>Appartment</td></tr>
                   <tr><td>Rooms</td><td>{this.state.propertyDetails.rooms}</td></tr>
                   <tr><td>Bed Rooms</td><td>{this.state.propertyDetails.rooms}</td></tr>
-                  <tr><td>Rent</td><td>${this.state.propertyDetails.rent}</td></tr>
-                  <tr><td>description</td><td>{this.state.propertyDetails.excerp}</td></tr>
+                  <tr><td>Rent</td><td>{this.state.propertyDetails.rent == "-1" ? "N/A" : "$ "+this.state.propertyDetails.rent}</td></tr>
+                  <tr><td>description</td><td>{this.state.propertyDetails.excerpt.length > 200 ? this.state.propertyDetails.excerpt.substring(0, 200) + '...' : this.state.propertyDetails.excerpt}</td></tr>
                 </tbody>
                </table>
              </div>
            </div>
-           <div className="sc-card-footer">{this.state.propertyDetails.excerpt}</div>
+           <div className="sc-card-footer">{this.state.propertyDetails.excerpt.length > 50 ? this.state.propertyDetails.excerpt.substring(0, 50) + '...' : this.state.propertyDetails.excerpt}</div>
          </div>
        </Modal>
        
@@ -1315,7 +1327,7 @@ class App extends Component {
     })
 
     if (slug == 'public') {
-      fetch('http://54.196.154.157:8070/map/public-listings?records_limit=20')
+      fetch('http://54.196.154.157:8070/map/public-listings?records_limit=100')
         .then((response) => response.json())
         .then((data) => {
           const geoJsonData = {
@@ -1379,7 +1391,7 @@ class App extends Component {
       //   geoJson: southWestData
       // });
 
-      fetch('http://54.196.154.157:8070/map/southwest-listings?records_limit=20')
+      fetch('http://54.196.154.157:8070/map/southwest-listings?records_limit=107')
         .then((response) => response.json())
         .then((data) => {
           const geoJsonData = {
@@ -1489,7 +1501,7 @@ class App extends Component {
       //   geoJson: compeData
       // });
 
-      fetch('http://54.196.154.157:8070/map/comp-listings?records_limit=20')
+      fetch('http://54.196.154.157:8070/map/comp-listings?records_limit=66')
         .then((response) => response.json())
         .then((data) => {
           const geoJsonData = {

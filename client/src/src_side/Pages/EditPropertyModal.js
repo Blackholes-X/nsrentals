@@ -52,14 +52,26 @@ const EditPropertyModal = ({ isOpen, onClose, property, onSave }) => {
             <form onSubmit={handleSubmit} style={formStyle}>
                 <h2 style={headingStyle}>Edit Property Details</h2>
                 <div style={inputGridStyle}>
-                    {Object.keys(formData).map((key) => (
-                        key !== 'id' && (
-                            <div style={formGroupStyle} key={key}>
-                                <label style={labelStyle}>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</label>
-                                <input type="text" name={key} value={formData[key]} onChange={handleChange} style={inputStyle} />
-                            </div>
-                        )
-                    ))}
+                {Object.keys(formData).map((key) => (
+    key !== 'id' && (
+        <div style={formGroupStyle} key={key}>
+            <label style={labelStyle}>
+                {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
+            </label>
+            <input 
+                type="text" 
+                name={key} 
+                value={
+                    formData[key] === -1 ? "N/A" :
+                    (typeof formData[key] === 'number' && formData[key] % 1 !== 0 ? formData[key].toFixed(2) : formData[key])
+                }
+                onChange={handleChange} 
+                style={inputStyle} 
+            />
+        </div>
+    )
+))}
+
                 </div>
                 <div style={buttonGroupStyle}>
                     <button type="submit" style={buttonStyle}>Save Changes</button>
