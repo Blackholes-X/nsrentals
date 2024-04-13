@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from src import nearest_neighbor_inference
 from src import training as T
-
+from ai_scrapping import main
 from typing import Optional, List, Dict
 from data_model import ListingDataResponse
 
@@ -296,6 +296,34 @@ def scraper_competitor_listing(competitor_name : Optional [str] = 'Blackbay Grou
     return listings
 
 
+
+###------------------------AI-Scrapping--------------------------------------------------------------
+
+@app.get("/scraper/company-details")
+def company_details(company_name : Optional [str] = 'BlackBay Group Inc.', url: Optional[str] ='https://blackbaygroup.ca'):
+    if "ted" in company_name.lower():
+        normalized_company_name = " ".join(company_name.strip().lower().split())
+        if normalized_company_name == 'ted':
+            company_name = "FACADE investments - NAhas"
+    exists  = DU.check_company_exists(company_name, url)
+    print(exists)
+    if exists:
+        result = DU.get_company_description_by_name_or_url(company_name, url)
+        return result
+    
+    company_scraped_data = DU.check_company_exists_in_company_details(company_name)
+    if company_scraped_data:
+        scraped_data   = DU.get_company_scraped_data(company_name)
+    else:
+        scraped_data = main.scrape_and_extract(url, company_name)
+        id = DU.save_to_database(scraped_data, company_name)
+
+   
+    summarized_content = main.run_llm_script(content=scraped_data,company=company_name)
+    DU.save_company_summary(summarized_content)
+
+    
+    return summarized_content
 
 
 if __name__ == '__main__':
