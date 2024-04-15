@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import 'react-tabs/style/react-tabs.css'
 import TypewriterForLI from '../componant/TypewriterForLI'
-import Typewriter from '../componant/Typewriter'
+import Typewriter2 from '../componant/Typewriter2'
 import southwestlogo from '../../src_side/assets/southwestlogo.png'
 import blackByLogo from '../../src_side/assets/blackByLogo.png'
 import tedLogo from '../../src_side/assets/tedLogo.png'
@@ -326,32 +326,32 @@ const ComparisionModule = () => {
     )
   }
 
-  const FeatureListWithAnimation = ({ features, delay }) => {
-    const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0)
+  // const FeatureListWithAnimation = ({ features, delay }) => {
+  //   const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0)
 
-    // When the text for a feature completes, move to the next feature
-    const handleAnimationComplete = () => {
-      setCurrentFeatureIndex((index) => (index + 1) % features.length)
-    }
+  //   // When the text for a feature completes, move to the next feature
+  //   const handleAnimationComplete = () => {
+  //     setCurrentFeatureIndex((index) => (index + 1) % features.length)
+  //   }
 
-    useEffect(() => {
-      const timer = setTimeout(
-        handleAnimationComplete,
-        features[currentFeatureIndex].length * delay + 1000,
-      )
-      return () => clearTimeout(timer)
-    }, [currentFeatureIndex, features, delay])
+  //   useEffect(() => {
+  //     const timer = setTimeout(
+  //       handleAnimationComplete,
+  //       features[currentFeatureIndex].length * delay + 1000,
+  //     )
+  //     return () => clearTimeout(timer)
+  //   }, [currentFeatureIndex, features, delay])
 
-    return (
-      <ul>
-        {features.slice(0, currentFeatureIndex + 1).map((feature, index) => (
-          <li key={index}>
-            <Typewriter text={feature} delay={delay} />
-          </li>
-        ))}
-      </ul>
-    )
-  }
+  //   return (
+  //     <ul>
+  //       {features.slice(0, currentFeatureIndex + 1).map((feature, index) => (
+  //         <li key={index}>
+  //           <Typewriter text={feature} delay={delay} />
+  //         </li>
+  //       ))}
+  //     </ul>
+  //   )
+  // }
 
   function ComparisonTable({ products }) {
     const featureNames = [...new Set(products.flatMap((product) => Object.keys(product.features)))]
@@ -367,12 +367,15 @@ const ComparisionModule = () => {
         <div style={featureRowStyle}>
           {products.map((product) => (
             <div key={product.name} style={featureValueStyle}>
-              <FeatureListWithAnimation
+              {/* <p>sssssssssssssssssss{JSON.stringify(product.features)}</p> */}
+              <Typewriter2 sentences={product.features} typingDelay={100} nextSentenceDelay={1000} />
+
+              {/* <FeatureListWithAnimation
                 features={Object.entries(product.features).map(
                   ([key, value]) => `- ${value}`,
                 )}
                 delay={50}
-              />
+              /> */}
 
               {/* <ul>
                 {Object.entries(product.features).map(([feature, value]) => (

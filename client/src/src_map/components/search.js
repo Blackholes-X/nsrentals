@@ -486,6 +486,7 @@ class Sreach extends Component {
                       id={type.slug}
                       data-type={type.slug}
                       checked={type.checked}
+                      disabled={true}
                       onChange={(event) => {
                         onChangeType(event)
                       }}
@@ -511,6 +512,7 @@ class Sreach extends Component {
                       type="radio"
                       name="rooms"
                       id={room.slug}
+                      disabled={true}
                       data-room={room.slug}
                       checked={room.checked}
                       onChange={(event) => {
@@ -530,42 +532,56 @@ class Sreach extends Component {
 
             <h6>Area</h6>
 
-            <div className="sc-form-group sc-grid-1">
+            <div className="sc-form-group sc-grid-1" style={{pointerEvents:'none', opacity: 0.5}}>
               <InputRange
                 maxValue={200}
                 minValue={20}
                 step={5}
+                // disabled={true}
                 value={{ min: areas.from, max: areas.to }}
                 onChange={(value) => {
-                  onChangeArea(value)
+                  // onChangeArea(value)
                 }}
               />
             </div>
 
             <h6>Rent</h6>
 
-            <div className="sc-form-group sc-grid-1">
+            {/* <div className="sc-form-group sc-grid-1">
               <InputRange
                 maxValue={50000}
                 minValue={3000}
                 step={1000}
+                // disabled={true}
                 value={{ min: rents.from, max: rents.to }}
                 onChange={(value) => {
                   onChangeRent(value)
                 }}
               />
-            </div>
+            </div> */}
+        <div className="sc-form-group sc-grid-1" style={{pointerEvents:'none', opacity: 0.5}}>
+        <InputRange
+          maxValue={50000}
+          minValue={3000}
+          step={1000}
+          value={{ min: rents.from, max: rents.to }}
+          onChange={(value) => {
+            // onChangeRent(value)
+          }}
+        />
+      </div>
 
             <h6>Deposit</h6>
 
-            <div className="sc-form-group sc-grid-1">
+            <div className="sc-form-group sc-grid-1" style={{pointerEvents:'none', opacity: 0.5}}>
               <InputRange
                 maxValue={200000}
                 minValue={10000}
                 step={1000}
+                // disabled={true}
                 value={{ min: deposits.from, max: deposits.to }}
                 onChange={(value) => {
-                  onChangeDeposit(value)
+                  // onChangeDeposit(value)
                 }}
               />
             </div>

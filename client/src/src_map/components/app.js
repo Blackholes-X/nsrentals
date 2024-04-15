@@ -11,7 +11,7 @@ import southwesticon from '../southwesticon.png'
 import parking from '../parking.png'
 
 import Modal from './Modal'
-import Typewriter from 'src/src_side/componant/Typewriter'
+import Typewriter2 from 'src/src_side/componant/Typewriter2'
 import TypewriterForLI from 'src/src_side/componant/TypewriterForLI'
 // import bl
 import blackByLogo from '../../src_side/assets/blackByLogo.png'
@@ -100,52 +100,33 @@ const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => 
       </div>
     )
   }
-  function ProductFeatureRow({ featureName, products }) {
-    return (
-      <div style={featureRowStyle}>
-        <div style={featureNameStyle}>Features</div> {/* Static 'Features' column header */}
-        {products.map((product) => (
-          <div key={product.name} style={featureValueStyle}>
-            <ul>
-              {Object.entries(product.features).map(([feature, value]) => (
-                <li key={feature}>
-                  {' '}
-                  <TypewriterForLI text={`${feature}: ${value}`} delay={100} />{' '}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    )
-  }
 
-  const FeatureListWithAnimation = ({ features, delay }) => {
-    const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0)
+  // const FeatureListWithAnimation = ({ features, delay }) => {
+  //   const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0)
 
-    // When the text for a feature completes, move to the next feature
-    const handleAnimationComplete = () => {
-      setCurrentFeatureIndex((index) => (index + 1) % features.length)
-    }
+  //   // When the text for a feature completes, move to the next feature
+  //   const handleAnimationComplete = () => {
+  //     setCurrentFeatureIndex((index) => (index + 1) % features.length)
+  //   }
 
-    useEffect(() => {
-      const timer = setTimeout(
-        handleAnimationComplete,
-        features[currentFeatureIndex].length * delay + 1000,
-      )
-      return () => clearTimeout(timer)
-    }, [currentFeatureIndex, features, delay])
+  //   useEffect(() => {
+  //     const timer = setTimeout(
+  //       handleAnimationComplete,
+  //       features[currentFeatureIndex].length * delay + 1000,
+  //     )
+  //     return () => clearTimeout(timer)
+  //   }, [currentFeatureIndex, features, delay])
 
-    return (
-      <ul>
-        {features.slice(0, currentFeatureIndex + 1).map((feature, index) => (
-          <li key={index}>
-            <Typewriter text={feature} delay={delay} />
-          </li>
-        ))}
-      </ul>
-    )
-  }
+  //   return (
+  //     <ul>
+  //       {features.slice(0, currentFeatureIndex + 1).map((feature, index) => (
+  //         <li key={index}>
+  //           <Typewriter2 text={feature} delay={delay} />
+  //         </li>
+  //       ))}
+  //     </ul>
+  //   )
+  // }
 
   function loadView(){
     return(
@@ -173,12 +154,13 @@ const ComparisionModule = ({ property1, property2, id1, id2, propertyType }) => 
         <div style={featureRowStyle}>
           {products.map((product) => (
             <div key={product.name} style={featureValueStyle}>
-              <FeatureListWithAnimation
+              <Typewriter2 sentences={product.features} typingDelay={100} nextSentenceDelay={1000} />
+              {/* <FeatureListWithAnimation
                 features={Object.entries(product.features).map(
                   ([key, value]) => `- ${value}`,
                 )}
                 delay={50}
-              />
+              /> */}
 
               {/* <ul>
                 {Object.entries(product.features).map(([feature, value]) => (

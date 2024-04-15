@@ -2,8 +2,6 @@ import MotionHoc from './MotionHoc'
 import React, { useState, useEffect } from 'react'
 import PropetyDetailPage from './PropetyDetailPage'
 import { Link } from 'react-router-dom' // Import Link from react-router-dom
-import Typewriter from '../componant/Typewriter'
-
 // const Dashboard = () => {
 //   return (
 //     <div style={styles.container}>

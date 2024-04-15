@@ -4,7 +4,6 @@ import PropetyDetailPage from './PropetyDetailPage'
 import { Link } from 'react-router-dom' // Import Link from react-router-dom
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import 'react-tabs/style/react-tabs.css'
-import Typewriter from '../componant/Typewriter'
 import editicon from '../assets/editicon.png'
 import EditPropertyModal from './EditPropertyModal'
 import DetailPropertyModal from './DetailPropertyModal'
