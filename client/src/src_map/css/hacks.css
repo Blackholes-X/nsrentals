@@ -5,3 +5,10 @@
 .sc-slide-body .sc-form-group {
   margin-bottom: 0 !important;
 }
+
+.sc-slide-body-disable .sc-form-group-disable {
+  margin-bottom: 0 !important;
+  opacity: 0.5;
+  pointer-events: none; /* Disables click events */
+  background-color: #f3f3f3; 
+}

@@ -4,7 +4,6 @@ import PropetyDetailPage from './PropetyDetailPage'
 import { Link } from 'react-router-dom' // Import Link from react-router-dom
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import 'react-tabs/style/react-tabs.css'
-import Typewriter from '../componant/Typewriter'
 import Loader_bar from 'src/src_map/components/Loader_bar'
 import Modal from 'src/src_map/components/Modal'
 import dbimg from '../assets/database.png'
@@ -28,6 +27,7 @@ const AllListCom = () => {
   const [viewMode, setViewMode] = useState('listings');
   const [desc, setdesc] = useState(null)
   const [showTooltip, setShowTooltip] = useState(true);
+  const [url, setUrl] = useState('https://blackbaygroup.ca');
 
   // Function to simulate progress
   const simulateProgress = () => {
@@ -75,18 +75,22 @@ const AllListCom = () => {
 
     setTimeout(async () => {  // Introduce a delay before fetching the data
       try {
-        const response = await fetch('http://54.196.154.157:8070/scraper/competitor-listing?competitor_name=Blackbay%20Group%20Inc.');
+        const encodedUrl = encodeURIComponent(url); 
+        const response = await fetch(`http://54.196.154.157:8070/scraper/company-details?url=${encodedUrl}`);
         const jsonData = await response.json();
-        const formattedData = jsonData.map(item => ({ ...item, isEditing: false }));
-        // setData(formattedData);
-        setdesc("Fully restored character building located on Brunswick Street is just a short distance from downtown Halifax, the Hydrostone Market, and the Halifax Commons. These suites feature granite countertops, hardwood throughout, stainless steel appliances, and high ceilings with lots of natural light. Water and heat are included, tenant is responsible for power. All new energy-efficient appliances, new windows, and spray insulation. Make this stunning location your new home today!")
-        // setData(jsonData);  // Set the fetched data into state
+        if (jsonData && jsonData.description) {
+          setdesc(jsonData.description);  // Set the description from the JSON data
+        } else {
+          console.error('Description not found in the response');
+          setdesc('No description available.');
+        }
         setLoading(false);
         setProgress(100);  // Ensure progress bar reaches 100%
       } catch (error) {
         console.error('Failed to fetch data:', error);
         setLoading(false);
         setProgress(100);  // Ensure progress bar reaches 100%
+        setdesc('Failed to fetch description.');  // Handle case where the fetch fails
       }
     }, 20000);  // Wait for 30 seconds before executing the fetch
   };
@@ -228,7 +232,8 @@ const AllListCom = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showModalML, setshowModalML] = useState(false);
-
+    const [showRetrainModalML, setshowRetrainModalML] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
     useEffect(() => {
         const fetchModelVersions = async () => {
             try {
@@ -246,17 +251,54 @@ const AllListCom = () => {
         fetchModelVersions();
     }, []);
 
+    const handleRetrain = async () => {
+      try {
+          const response = await fetch('http://54.196.154.157:8070/retrain-predictive-models', {
+              method: 'GET' // Assuming POST is required; adjust if necessary
+          });
+          const data = await response.json();
+          // console.log("3EEEEEEEEEEEEEEEEEEEEEEEEEEEEE"+JSON.stringify())
+          setModalMessage(data.message); // Assuming the API sends back a message
+          setshowRetrainModalML(true);
+      } catch (error) {
+          console.error('Retrain request failed:', error);
+          setModalMessage('Failed to initiate model retraining. Please try again.');
+          setshowRetrainModalML(true);
+      }
+  };
+
+
     const ModalAlert = () => {
       const [message, setMessage] = useState("Are you sure you wanna deploy this model?");
     
-      const handleDeployConfirmation = () => {
-        // Simulate deployment action
-        setMessage("Model is deploying in background! ");
+      const handleDeployConfirmation = async () => {
+        setMessage("Initiating model deployment...");
     
+        try {
+            const response = await fetch('http://54.196.154.157:8070/model-redeploy/1', {
+                method: 'POST',  // Assuming POST is the required method for the API
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+            const data = await response.json();
+    
+            // Check the response status to handle it accordingly
+            if (response.ok) {
+                setMessage("Model is deploying in the background! " + data.message);
+            } else {
+                throw new Error(data.message || "Failed to deploy model.");
+            }
+        } catch (error) {
+            console.error('Deployment request failed:', error);
+            setMessage("Error: " + error.message);
+        }
+    
+        // Delay the closing of the modal to allow the user to read the message
         setTimeout(() => {
-          setshowModalML(false); // Automatically close the modal after 3 seconds
-        }, 5000);
-      };
+            setshowModalML(false);
+        }, 5000); // Close modal after 5 seconds
+    };
     
       return (
         <Modal isOpen={true} onClose={() => setshowModalML(false)} style={modalStyle}>
@@ -271,6 +313,19 @@ const AllListCom = () => {
               </button>
             </>
           )}
+        </Modal>
+      );
+    };
+
+    const ModalAlertRetrain = () => {
+      const [message, setMessage] = useState(modalMessage);
+    
+      return (
+        <Modal isOpen={true} onClose={() => setshowRetrainModalML(false)} style={modalStyle}>
+          <h2 style={{textAlign: 'center'}}>{message}</h2>
+          <button onClick={() => setshowRetrainModalML(false)} style={styles2.noButton}>
+                OK
+              </button>
         </Modal>
       );
     };
@@ -319,9 +374,15 @@ const AllListCom = () => {
         <div style={{ padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
             <h2 style={{ textAlign: 'center', color: '#333', fontSize: '18px' }}>ML Model List</h2>
             {showModalML && <ModalAlert />}
-            <button onClick={() => setshowModalML(true)} style={{ float:'right', margin: '5px', padding: '5px 10px', backgroundColor: 'Orange', color: 'white', cursor: 'pointer', borderRadius: '5px'}}>
+            {showRetrainModalML && <ModalAlertRetrain />}
+            {/* <button onClick={() => setshowModalML(true)} style={{ float:'right', margin: '5px', padding: '5px 10px', backgroundColor: 'Orange', color: 'white', cursor: 'pointer', borderRadius: '5px'}}>
                                     Retrain
-                                </button>
+                                </button> */}
+                                 
+            <button onClick={handleRetrain} style={{ margin: '10px', padding: '10px 20px', backgroundColor: 'orange', color: 'white', cursor: 'pointer', borderRadius: '5px' }}>
+                Retrain Model
+            </button>
+
                                 <button onClick={() => setshowModalML(true)} style={{ float:'right', margin: '5px', padding: '5px 10px', backgroundColor: 'blue', color: 'white', cursor: 'pointer', borderRadius: '5px'}}>
                                     Refresh Predition
                                 </button>
@@ -552,9 +613,11 @@ const AllListCom = () => {
   type="text"
   placeholder="Enter URL to scrap..."
   style={{ ...styles.inputFieldurl, opacity: viewMode === 'listings' ? 0.5 : 1, pointerEvents: viewMode === 'listings' ? 'none' : 'auto' }}
-  value={viewMode === 'listings' ? 'https://blackbaygroup.ca/' : ''}
+  value={viewMode === 'listings' ? 'https://blackbaygroup.ca/' : url}
   disabled={viewMode === 'listings'}
   readOnly={viewMode === 'listings'}
+  onChange={e => setUrl(e.target.value)}
+
   
 />
                 {/* <input type="text" placeholder="Enter URL to scrap..." style={styles.inputFieldurl} /> */}
