@@ -29,7 +29,7 @@ const Dashboard = () => {
       <iframe
         title="MCDA_Datamining_Hackathon"
         style={styles.fullScreenIframe}
-        src="https://app.powerbi.com/reportEmbed?reportId=b270a969-9708-45d3-bee9-95935c0ff40b&autoAuth=true&ctid=4711194d-93f6-4861-9472-a801087b4888"
+        src="https://app.powerbi.com/view?r=eyJrIjoiMTNiNTg4MWEtZDEzNi00MDM5LTlkZDgtMzE3MGMwOGJmZGU4IiwidCI6IjQ3MTExOTRkLTkzZjYtNDg2MS05NDcyLWE4MDEwODdiNDg4OCJ9"
         frameBorder="0"
         allowFullScreen={true}
       ></iframe>
