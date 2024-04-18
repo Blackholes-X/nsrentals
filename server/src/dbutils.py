@@ -6,14 +6,19 @@ from typing import Optional
 import os
 import pandas as pd
 import psycopg2
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 import urllib
+from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 import pandas as pd
 from sqlalchemy import create_engine
 from urllib.parse import quote
+import os
+import shutil
+import psycopg2
+import json
 
-
+from data_model import ListingDataResponse as LDR
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -421,13 +426,14 @@ def get_last_listings(table_name: str, limit: int):
         # Updated query to filter out listings based on property_image and source
         query = f"""
             SELECT * FROM {table_name}
-            WHERE property_image != '-1' AND property_image != 'Kijiji User'
+            WHERE image != '-1' AND image != 'Kijiji User'
             ORDER BY load_datetime DESC
             LIMIT %s
         """
         cur.execute(query, (limit,))
         
         listings = cur.fetchall()
+        print('listings',listings)
         if listings:
             # Assuming you know the columns or dynamically fetch if necessary
             columns = [desc[0] for desc in cur.description]
@@ -443,31 +449,32 @@ def get_last_listings(table_name: str, limit: int):
 
 
 
-def get_hrm_building_listings(limit: int):
-    conn = None
-    cur = None
+
+def get_hrm_building_listings():
+
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
     try:
-        conn = get_db_connection()  # Ensure this function returns a DB connection
-        cur = conn.cursor()
-
-        query = """
-            SELECT * FROM hrm_building_listings
-            LIMIT %s;
-        """
-        cur.execute(query, (limit,))
-
-        listings = cur.fetchall()
-        if listings:
-            columns = [desc[0] for desc in cur.description]  # Fetch column names
-            return [dict(zip(columns, listing)) for listing in listings]
-        else:
-            return []
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = " SELECT * FROM hrm_building_listings;"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
     except Exception as e:
-        print(f"An error occurred while fetching HRM building listings: {e}")
-        return []
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
+        print(f"Error fetching data from sec_southwest_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
 
 
 def get_hrm_building_permits(limit: int):
@@ -582,4 +589,534 @@ def read_data_from_sec_comp_rental_listings():
     except Exception as e:
         print(f"Error fetching data from sec_comp_rental_listings table: {e}")
         return pd.DataFrame()  # Return an empty DataFrame in case of error
+    
+def read_data_from_sec_public_rental_data():
+    """Fetch all rows from the sec_public_rental_data table and return as DataFrame."""
 
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_public_rental_data"
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_public_rental_data table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+
+
+
+
+def save_to_database(scraped_data, company_name):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Assuming get_db_connection() is a function that returns a database connection
+        cur = conn.cursor()
+        
+        # SQL query to insert data
+        insert_query = """
+        INSERT INTO company_details (company_name, description) VALUES (%s, %s)
+        ON CONFLICT (company_name) DO UPDATE 
+        SET description = EXCLUDED.description,
+            modifieddate = CURRENT_TIMESTAMP;
+        """
+        
+        # Execute the query
+        cur.execute(insert_query, (company_name, scraped_data))
+        
+        # Commit the changes
+        conn.commit()
+        print(f"Data for {company_name} saved/updated successfully.")
+
+    except Exception as e:
+        print(f"An error occurred in save_to_database: {e}", exc_info=True)
+        # Optionally, you can roll back the transaction if something goes wrong
+        if conn is not None:
+            conn.rollback()
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+def get_company_description(company_name):
+    conn = None
+    cur = None
+    description = None  # Initialize description to None
+    
+    try:
+        conn = get_db_connection()  # Use the existing function to get a database connection
+        cur = conn.cursor()
+        
+        # SQL query to retrieve the description
+        select_query = """
+        SELECT description FROM company_details WHERE company_name = %s;
+        """
+        
+        # Execute the query
+        cur.execute(select_query, (company_name,))
+        
+        # Fetch one result
+        result = cur.fetchone()
+        if result is not None:
+            description = result[0]
+            print(f"Description for {company_name}: {description}")
+        else:
+            print(f"No description found for {company_name}.")
+
+    except Exception as e:
+        print(f"An error occurred in get_company_description: {e}", exc_info=True)
+        # No need to rollback since we're not making any changes
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+    
+    return description
+
+
+def read_data_from_sec_parking_data():
+    """Fetch all rows from the sec_parking_data table and return as DataFrame."""
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query
+        query = "SELECT * FROM sec_parking_data"  # Updated to 'sec_parking_data'
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from sec_parking_data table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
+    
+
+
+def get_latest_model_number():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Using the get_db_connection function to establish a database connection
+        cur = conn.cursor()
+
+        # SQL query to fetch the highest model_number from model_versioning table
+        cur.execute("SELECT model_number FROM model_versioning ORDER BY id DESC LIMIT 1;")
+        # Fetch the result
+        result = cur.fetchone()
+        if result:
+            print("Latest model number retrieved successfully.")
+            return result[0]  # Return the latest model number
+        else:
+            print("No data found in model_versioning table.")
+            return None
+
+    except Exception as e:
+        print(f"An error occurred while fetching the latest model number: {e}")
+        return None  # Return None in case of an error
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+
+
+def insert_model_version(model_number, model_version, r2_score):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # SQL query to insert new model version data into the model_versioning table
+        insert_query = """
+        INSERT INTO model_versioning (model_number, model_version, r2_score) 
+        VALUES (%s, %s, %s);
+        """
+        
+        # Execute the query with provided parameters
+        cur.execute(insert_query, (model_number, model_version, r2_score))
+        conn.commit()  # Commit the transaction to the database
+        print(f"Model version {model_version} with number {model_number} inserted successfully with R2 Score {r2_score}.")
+
+    except Exception as e:
+        print(f"An error occurred when inserting into model_versioning: {e}")
+        if conn is not None:
+            conn.rollback()  # Roll back the transaction in case of error
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+
+def fetch_all_model_versions():
+    conn = None
+    try:
+        conn = get_db_connection()
+        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute("SELECT * FROM model_versioning;")
+            model_versions = cursor.fetchall()
+            return model_versions
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return []
+    finally:
+        if conn:
+            conn.close()
+
+
+def redeploy(model_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Fetch the model number based on the provided ID
+            cursor.execute("SELECT model_number FROM model_versioning WHERE id = %s;", (model_id,))
+            result = cursor.fetchone()
+            if not result:
+                print("Model ID not found.")
+                return False
+            
+            model_number = result[0]
+            source_path = f"./models/model_v{model_number}"
+            target_path = "./models/running_model"
+            
+            # Clear the target directory
+            if os.path.exists(target_path):
+                shutil.rmtree(target_path)
+            os.makedirs(target_path)
+            
+            # Copy files from the source directory to the target directory
+            if os.path.exists(source_path):
+                for item in os.listdir(source_path):
+                    s = os.path.join(source_path, item)
+                    d = os.path.join(target_path, item)
+                    if os.path.isdir(s):
+                        shutil.copytree(s, d)
+                    else:
+                        shutil.copy2(s, d)
+                print(f"Model redeployed successfully from {source_path} to {target_path}.")
+                return True
+            else:
+                print("Source model directory does not exist.")
+                return False
+    except Exception as e:
+        print(f"An error occurred during redeployment: {e}")
+        return False
+    finally:
+        if conn:
+            conn.close()
+
+            
+def update_listing_in_db(listing_data) -> dict:
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    database_uri = f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+
+    try:
+        engine = create_engine(database_uri)
+        SessionLocal = sessionmaker(bind=engine)
+        db_session = SessionLocal()
+
+        # Check if the listing exists
+        listing_exist_query = text(f"SELECT EXISTS(SELECT 1 FROM sec_comp_rental_listings WHERE id = :id)")
+        listing_exists = db_session.execute(listing_exist_query, {'id': listing_data.id}).scalar()
+
+        if not listing_exists:
+            return {"error": "Listing not found", "status": 404}
+
+        # Constructing an SQL update statement dynamically
+        update_statement = "UPDATE sec_comp_rental_listings SET "
+        update_parts = []
+        params = {}
+        for var, value in vars(listing_data).items():
+            if var != "id" and value is not None:  # Skip id since it's used in WHERE clause, and skip None values
+                update_parts.append(f"{var} = :{var}")
+                params[var] = value
+        update_statement += ", ".join(update_parts)
+        update_statement += " WHERE id = :id"
+        params["id"] = listing_data.id
+
+        # Execute the update statement
+        db_session.execute(text(update_statement), params)
+        db_session.commit()
+
+        return {"message": "Listing updated successfully", "status": 200}
+    except Exception as e:
+        return {"error": f"Database error: {e}", "status": 500}
+    finally:
+        db_session.close()
+
+
+def get_scraper_comp_listing(competitor_name = 'Blackbay Group Inc.'):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  
+        cur = conn.cursor()
+
+        query = """
+            SELECT id,listing_name, building_name, property_management_name, address, 
+                   monthly_rent, property_type, bedroom_count, bathroom_count, 
+                   utility_water, utility_heat, utility_electricity, utility_laundry, 
+                   utility_wifi, included_appliances, parking_availability, pet_friendly, 
+                   smoking_allowed, apartment_size, apartment_size_unit, is_furnished, 
+                   lease_duration, availability_status, source, website, image, description, 
+                   property_image
+            FROM sec_comp_rental_listings
+            WHERE
+        """
+
+        params = []
+
+        if competitor_name is not None:
+            query += " property_management_name = %s"  
+            params.append(competitor_name)
+
+        cur.execute(query, tuple(params))
+
+        listings = cur.fetchall()
+        if listings:
+            columns = [desc[0] for desc in cur.description]  # This gets the column names of the fetched data
+            return [dict(zip(columns, listing)) for listing in listings]  # Creates a list of dictionaries for each row
+        else:
+            return []
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+
+def save_company_summary(summarized_content):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # SQL query to insert or update data in the company_description table
+        insert_query = """
+        INSERT INTO company_description (
+            company_name, website_url, logo_url, description, domain_name,
+            geography_served, contact_email, social_media_profiles, address, notes
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (company_name) DO UPDATE
+        SET website_url = EXCLUDED.website_url,
+            logo_url = EXCLUDED.logo_url,
+            description = EXCLUDED.description,
+            domain_name = EXCLUDED.domain_name,
+            geography_served = EXCLUDED.geography_served,
+            contact_email = EXCLUDED.contact_email,
+            social_media_profiles = EXCLUDED.social_media_profiles,
+            address = EXCLUDED.address,
+            notes = EXCLUDED.notes;
+        """
+        
+        # Extract the first dictionary from summarized_content list
+        if summarized_content and isinstance(summarized_content, list):
+            data = summarized_content[0]
+            # Convert social_media_profiles dict to string for database insertion
+            social_media_profiles_str = json.dumps(data.get('Social Media Profiles', {}))
+
+            # Execute the query with provided data
+            cur.execute(insert_query, (
+                data.get('Company Name'), 
+                data.get('Website URL'), 
+                data.get('Logo URL'), 
+                data.get('Description'), 
+                data.get('Domain Name'), 
+                data.get('Geography Served'), 
+                data.get('Contact Email'), 
+                social_media_profiles_str, 
+                data.get('Address'), 
+                data.get('Notes')
+            ))
+            conn.commit()
+            print(f"Company summary for '{data.get('Company Name')}' saved/updated successfully.")
+        else:
+            print("Summarized content is empty or not in the expected format.")
+
+    except Exception as e:
+        print(f"An error occurred in save_company_summary: {e}")
+        # Optionally, you can roll back the transaction if something goes wrong
+        if conn is not None:
+            conn.rollback()
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+def check_company_exists(company_name, url):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+       
+        
+        # Query to check if the company_name and url exist
+        check_query = """
+        SELECT EXISTS (
+            SELECT 1 FROM company_description 
+            WHERE trim(upper(company_name)) = trim(upper(%s)) or trim(upper(website_url)) = trim(upper(%s))
+        );
+        """
+        # Execute the query
+        cur.execute(check_query, (company_name, url))
+
+        # Fetch the result
+        exists = cur.fetchone()[0]
+        
+        return exists
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+def get_company_description_by_name_or_url(company_name, website_url):
+    conn = None
+    cur = None
+    company_data = None
+    try:
+        conn = get_db_connection()  # Use the existing function to get a database connection
+        cur = conn.cursor()
+        
+        # SQL query to retrieve all fields where company_name or website_url matches
+        select_query = """
+        SELECT * FROM company_description 
+        WHERE trim(upper(company_name)) = trim(upper(%s)) or trim(upper(website_url)) = trim(upper(%s));
+        """
+        
+        # Execute the query with provided company_name and website_url
+        cur.execute(select_query, (company_name, website_url))
+        
+        # Fetch one result since company_name or website_url is expected to be unique
+        result = cur.fetchone()
+        if result:
+            # Map the result to a dictionary for easier access by field names
+            columns = [desc[0] for desc in cur.description]
+            company_data = dict(zip(columns, result))
+            print(f"Company data retrieved successfully for {company_name} or {website_url}.")
+        else:
+            print(f"No data found for {company_name} or {website_url}.")
+
+    except Exception as e:
+        print(f"An error occurred while retrieving company description: {e}")
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+    
+    return company_data
+
+
+def get_company_scraped_data(company_name):
+    conn = None
+    cur = None
+    company_description = None  # Directly store the description
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # SQL query to retrieve the description where company_name matches
+        select_query = """
+        SELECT description FROM company_details
+        WHERE trim(upper(company_name)) = trim(upper(%s));
+        """
+        
+
+        # Execute the query with the provided company_name
+        cur.execute(select_query, (company_name,)) 
+        
+        # Fetch one result since company_name is expected to be unique
+        result = cur.fetchone()
+
+        if result:
+            company_description = result[0]  # Directly access the description
+            print(f"Company data retrieved successfully for {company_name}.")
+        else:
+            print(f"No data found for {company_name}.")
+
+    except Exception as e:
+        print(f"An error occurred while retrieving company description: {e}")
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+    
+    return company_description  # Return the description directly
+
+
+def check_company_exists_in_company_details(company_name):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        
+        # Query to check if the company_name and url exist
+        check_query = """
+        SELECT EXISTS (
+            SELECT 1 FROM company_description 
+            WHERE trim(upper(company_name)) = trim(upper(%s))
+        );
+        """
+        # Execute the query
+        cur.execute(check_query, (company_name,))
+
+        # Fetch the result
+        exists = cur.fetchone()[0]
+        
+        return exists
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()

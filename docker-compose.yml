@@ -9,7 +9,7 @@ services:
         REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL}
     image: nsrentals_client:latest
     ports:
-      - "80:80"
+      - "8080:8080"
     depends_on:
       - server
 

@@ -187,6 +187,44 @@ def create_nsrentalsusers_table():
 
 
 
+def create_company_details_table():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Assuming get_db_connection() is a function that returns a database connection
+        cur = conn.cursor()
+
+        # Execute a query to check if the company_details table exists
+        cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'company_details');")
+        exists = cur.fetchone()[0]
+
+        if not exists:
+            # Create the company_details table with the specified columns, including company_name
+            cur.execute("""
+                CREATE TABLE company_details (
+                    company_id SERIAL PRIMARY KEY,
+                    company_name VARCHAR(255) NOT NULL UNIQUE,
+                    description TEXT NOT NULL,
+                    createddate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    modifieddate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            conn.commit()
+            print("Table 'company_details' created successfully.")
+        else:
+            print("Table 'company_details' already exists.")
+
+    except Exception as e:
+        print(f"An error occurred in create_company_details_table: {e}", exc_info=True)
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+
+
 def create_sec_public_rental_data_table():
     conn = None
     cur = None
@@ -562,7 +600,127 @@ def create_table_sec_parking_data():
 
 
 
+def create_model_versioning_table():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Assuming get_db_connection() is a function that returns a database connection
+        cur = conn.cursor()
 
+        # Execute a query to check if the model_versioning table exists
+        cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'model_versioning');")
+        exists = cur.fetchone()[0]
+
+        if not exists:
+            # Create the model_versioning table with the specified columns
+            cur.execute("""
+                CREATE TABLE model_versioning (
+                    id SERIAL PRIMARY KEY,
+                    model_number VARCHAR(255) NOT NULL,
+                    model_version VARCHAR(255) NOT NULL,
+                    r2_score FLOAT NOT NULL,
+                    loaddatetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            # Insert initial data
+            cur.execute("""
+                INSERT INTO model_versioning (model_number, model_version, r2_score)
+                VALUES (%s, %s, %s);
+            """, ('1', 'v1', 84.9))
+            conn.commit()
+            print("Table 'model_versioning' created successfully and initial data inserted.")
+        else:
+            print("Table 'model_versioning' already exists.")
+
+    except Exception as e:
+        print(f"An error occurred in create_model_versioning_table: {e}")
+        if conn:
+            conn.rollback()
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+def create_company_description_table():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Assuming get_db_connection is a previously defined function that connects to your database
+        cur = conn.cursor()
+
+        # Execute a query to check if the company_description table exists
+        cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'company_description');")
+        exists = cur.fetchone()[0]
+
+        if not exists:
+            # Create the company_description table
+            cur.execute("""
+                CREATE TABLE company_description (
+                    id SERIAL PRIMARY KEY,
+                    company_name TEXT NOT NULL,
+                    website_url TEXT NOT NULL,
+                    logo_url TEXT,
+                    description TEXT NOT NULL,
+                    domain_name TEXT,
+                    geography_served TEXT[],
+                    contact_email TEXT,
+                    social_media_profiles JSONB,
+                    address TEXT,
+                    notes TEXT
+                );
+            """)
+            conn.commit()
+            print("Table 'company_description' created successfully.")
+        else:
+            print("Table 'company_description' already exists.")
+
+    except Exception as e:
+        print(f"An error occurred in create_company_description_table: {e}")
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+def add_unique_constraint_company_name():
+    conn = None
+    cur = None
+    try:
+        # Assuming get_db_connection is a function that returns a psycopg2 connection object
+        conn = get_db_connection()  
+        cur = conn.cursor()
+        
+        # SQL command to add a unique constraint
+        alter_table_command = """
+        ALTER TABLE company_description
+        ADD CONSTRAINT company_name_unique UNIQUE (company_name);
+        """
+        
+        cur.execute(alter_table_command)
+        conn.commit()  # Commit the changes to the database
+        print("Unique constraint 'company_name_unique' added to 'company_name' column successfully.")
+
+    except Exception as e:
+        print(f"An error occurred when adding unique constraint: {e}")
+        if conn is not None:
+            conn.rollback()  # Roll back the transaction in case of an error
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+# Example usage
+# add_unique_constraint_company_name()
+
+
+
+# Call the function to create the table
+create_model_versioning_table()
 create_comp_rental_listings_table()
 create_sec_comp_rental_listings()
 create_nsrentalsusers_table()
@@ -575,3 +733,5 @@ create_table_parking_data()
 create_table_sec_parking_data()
 create_south_west_listings_table()
 create_sec_southwest_listings()
+create_company_details_table()
+create_company_description_table()

@@ -16,6 +16,12 @@ ZILLOW_LINK = "https://www.zillow.com/halifax-ns/rentals/?searchQueryState=%7B%2
 KIJIJI_LINK = "https://www.kijiji.ca/b-real-estate/city-of-halifax/c34l1700321"
 # KIJIJI_LINK = "https://www.kijiji.ca/b-for-rent/city-of-halifax/apartment-for-rent/k0c30349001l1700321"
 RENTSEEKER_LINK = "https://www.rentseeker.ca/rentals/apartments/nova-scotia/halifax"
+PARKOPEDIA = "https://en.parkopedia.ca/parking/halifax_ns/?arriving=202403260130&leaving=202403260330"
+IMPARK_PART2 = "https://lots.impark.com/IMP/en?latlng=44.64876350000001,-63.5752387&amp;"
+
+IMPARK = "https://impark.com/halifax/"
+SOUTHWEST = "https://apartments.southwest.ca/searchlisting.aspx"
+
 
 utilities = ['heat', 'electricity', 'laundry', 'wifi']
 

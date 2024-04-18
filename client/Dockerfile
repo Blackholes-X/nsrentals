@@ -9,7 +9,7 @@ ARG REACT_APP_BACKEND_URL
 ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
 # Copy the package.json and yarn.lock files
-COPY package.json ./
+COPY package.json yarn.lock ./
 
 # Install your app dependencies using Yarn
 RUN yarn install
@@ -23,11 +23,14 @@ RUN yarn build
 # Use the Nginx image to serve the built app
 FROM nginx:alpine
 
+# Copy the custom Nginx configuration
+COPY default.conf /etc/nginx/conf.d/default.conf
+
 # Copy the build output to replace the default Nginx contents.
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Expose port 80 to the outside once the container has launched
-EXPOSE 80
+# Expose the new port to the outside once the container has launched
+EXPOSE 8080
 
 # Use the default Nginx command to serve the content
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,5 +1,3 @@
-
-
 from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
@@ -7,6 +5,7 @@ import tiktoken
 
 
 from src import config as C
+
 
 def get_domain(url):
     """
@@ -102,6 +101,3 @@ def read_debug_file(filepath):
     except Exception as e:
         print(f"An error occurred while reading the file: {e}")
         return None
-    
-
-
