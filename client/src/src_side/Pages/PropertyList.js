@@ -85,7 +85,7 @@ const PropertyListView = () => {
   // alert(propertyName)
   useEffect(() => {
     fetch(
-      `http://54.196.154.157:8070/competitors/property-managed-listing?property_management_name=${propertyName}`,
+      `http://54.196.154.157:8070/competitors/property-managed-listing?property_management_name=${propertyName}&records_limit=66`,
     )
       .then((response) => response.json())
       .then((data) => setPropertyData2(data))
