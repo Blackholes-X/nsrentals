@@ -433,7 +433,6 @@ def get_last_listings(table_name: str, limit: int):
         cur.execute(query, (limit,))
         
         listings = cur.fetchall()
-        print('listings',listings)
         if listings:
             # Assuming you know the columns or dynamically fetch if necessary
             columns = [desc[0] for desc in cur.description]
