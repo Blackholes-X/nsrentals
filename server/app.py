@@ -171,12 +171,12 @@ def all_listings(competitor: Optional[bool] = False, public: Optional[bool] = Fa
     try:
         results = {}
         if competitor:
-            results['competitor'] = DU.get_last_listings('sec_comp_rental_listings', 10)
+            results['competitor'] = DU.get_last_listings('sec_comp_rental_listings', 66)
         if public:
-            results['public'] = DU.get_last_listings('sec_public_rental_data', 10)
+            results['public'] = DU.get_last_listings('sec_public_rental_data', 400)
         if southwest:
-            results['southwest'] = DU.get_last_listings('sec_southwest_listings', 10)
-        
+            results['southwest'] = DU.get_last_listings('sec_southwest_listings', 107)
+
         return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
