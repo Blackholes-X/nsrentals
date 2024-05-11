@@ -290,6 +290,10 @@ async def add_competitor_details(url: str, company_name: str):
 
 @app.get("/scraper/competitor-listing")
 def scraper_competitor_listing(competitor_name : Optional [str] = 'Blackbay Group Inc.'):
+    if "ted" in competitor_name.lower():
+        competitor_name = 'FACADE investments - NAhas'
+    elif "blackbay" in competitor_name.lower():
+        competitor_name = 'Blackbay Group Inc.'
     listings = DU.get_scraper_comp_listing(competitor_name)
     if listings is None:
         raise HTTPException(status_code=500, detail="An error occurred while processing your request.")
@@ -326,5 +330,24 @@ def company_details(company_name : Optional [str] = 'BlackBay Group Inc.', url: 
     return summarized_content
 
 
+###------------------------Email-Alert--------------------------------------------------------------
+
+@app.post("/alert/add-subscription")
+def add_subscription_route(email: str):
+    new_id = DU.add_subscription(email)
+    if new_id is None:
+        raise HTTPException(status_code=400, detail="Failed to add subscription")
+    return {"message": "Subscription added successfully"}
+
+
+@app.get("/alert/building-listings")
+def alert_hrm_building_listings():
+    try:
+        listings = DU.get_alert_hrm_building_listings()
+        listings.replace([np.inf, -np.inf, np.nan], None, inplace=True)
+        return  listings.to_dict(orient='records')
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+    
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8070)

@@ -716,6 +716,40 @@ def add_unique_constraint_company_name():
 
 # Example usage
 # add_unique_constraint_company_name()
+def create_email_alert_table():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()  # Assuming get_db_connection is a previously defined function that connects to your database
+        cur = conn.cursor()
+
+        # Execute a query to check if the email_alert table exists
+        cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'email_alert');")
+        exists = cur.fetchone()[0]
+
+        if not exists:
+            # Create the email_alert table
+            cur.execute("""
+                CREATE TABLE email_alert (
+                    id SERIAL PRIMARY KEY,
+                    sub_email TEXT NOT NULL,
+                    timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            conn.commit()
+            print("Table 'email_alert' created successfully.")
+        else:
+            print("Table 'email_alert' already exists.")
+
+    except Exception as e:
+        print(f"An error occurred in create_email_alert_table: {e}")
+
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
 
 
 
@@ -735,3 +769,4 @@ create_south_west_listings_table()
 create_sec_southwest_listings()
 create_company_details_table()
 create_company_description_table()
+create_email_alert_table()
