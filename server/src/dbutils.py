@@ -1119,3 +1119,55 @@ def check_company_exists_in_company_details(company_name):
             cur.close()
         if conn is not None:
             conn.close()
+
+def add_subscription(sub_email):
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO email_alert (sub_email) VALUES (%s) RETURNING id;
+        """, (sub_email,))
+        conn.commit()
+        new_id = cur.fetchone()[0]
+        print(f"Subscription added with ID: {new_id}")
+        return new_id
+    except Exception as e:
+        print(f"An error occurred while adding the subscription: {e}")
+        return None
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+
+
+def get_alert_hrm_building_listings():
+    # URL-encode the password
+    password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD'))
+    
+    # Create the database connection URI, including the URL-encoded password
+    database_uri = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{password}" +
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(database_uri)
+        
+        # Define the SQL query to get the latest 5 records
+        query = """
+        SELECT * FROM hrm_building_listings
+        ORDER BY id DESC  
+        LIMIT 5;
+        """
+        
+        # Use pandas to load the query result into a DataFrame
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        print(f"Error fetching data from hrm_building_listings table: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
