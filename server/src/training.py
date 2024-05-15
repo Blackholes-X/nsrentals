@@ -212,4 +212,5 @@ def retrain_models():
         return True
     except Exception as ex:
         print(f"Error: {ex}")
+        # raise ex
         return False

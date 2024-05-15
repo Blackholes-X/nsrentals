@@ -733,11 +733,11 @@ def get_latest_model_number():
             return result[0]  # Return the latest model number
         else:
             print("No data found in model_versioning table.")
-            return None
+            return 0
 
     except Exception as e:
         print(f"An error occurred while fetching the latest model number: {e}")
-        return None  # Return None in case of an error
+        return 0
 
     finally:
         if cur:
@@ -784,13 +784,22 @@ def fetch_all_model_versions():
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute("SELECT * FROM model_versioning;")
             model_versions = cursor.fetchall()
-            return model_versions
+
+        # Transform each record to replace 'id' with 'model_number'
+        transformed_model_versions = [
+            {**model_version, 'model_number': model_version['id']}
+            for model_version in model_versions
+        ]
+
+        print(transformed_model_versions)
+        return transformed_model_versions
     except Exception as e:
         print(f"An error occurred: {e}")
         return []
     finally:
         if conn:
             conn.close()
+
 
 
 def redeploy(model_id):
