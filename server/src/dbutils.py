@@ -834,7 +834,7 @@ def redeploy(model_id):
                 print(f"Model redeployed successfully from {source_path} to {target_path}.")
                 return True
             else:
-                print("Source model directory does not exist.")
+                print(f"Source model directory does not exist -> Source Path: {source_path}")
                 return False
     except Exception as e:
         print(f"An error occurred during redeployment: {e}")
