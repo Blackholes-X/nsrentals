@@ -814,7 +814,7 @@ def redeploy(model_id):
                 return False
             
             model_number = result[0]
-            source_path = f"./models/model_v{model_number}"
+            source_path = f"./models/model_V{model_number}"
             target_path = "./models/running_model"
             
             # Clear the target directory
