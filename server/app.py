@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, status, BackgroundTasks
+from fastapi import FastAPI, HTTPException, status, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from src import utils as U
@@ -256,6 +256,31 @@ def update_and_refresh_predictions():
     # Call the refresh_predictions function and return its result
     refreshed_predictions = P.update_new_predictions()
     return refreshed_predictions
+
+
+@app.get("/predict_rent")
+def predict_rent(
+    property_type: str,
+    bedroom_count: int,
+    bathroom_count: int,
+    wifi_included: bool,
+    utility_included: bool,
+    utility_water: bool,
+    utility_heat: bool,
+    utility_electricity: bool,
+    parking_availability: bool,
+    pet_friendly: bool,
+    unit_size: int,
+    is_furnished: bool,
+    included_appliances: bool,
+    availability_status: bool
+):
+    predicted_rent = P.ml_predict_rent(property_type, bedroom_count, bathroom_count, wifi_included, 
+                                       utility_included, utility_water, utility_heat, 
+                                       utility_electricity, parking_availability, pet_friendly, 
+                                       unit_size, is_furnished, included_appliances, 
+                                       availability_status)
+    return {"predicted_rent": predicted_rent}
 
 
 ### ---------------------- LLMs ---------------------------------------------

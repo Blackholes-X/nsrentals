@@ -47,6 +47,8 @@ def get_weighted_model_predictions(df):
     
     return final_predictions_df
 
+from typing import Optional, List, Dict
+
 
 def append_predictions_and_calculate_difference(original_df, predictions_df):
     """
@@ -172,6 +174,49 @@ def get_rent_predictions(data):
     predictions_df = get_weighted_model_predictions(preprocessed_df)
     final_data = append_predictions_and_calculate_difference(data, predictions_df)
     return final_data
+
+
+
+def predicted_rent():
+    rent_predicted = {
+        "rent": 1630.0,
+        "rent_for_1bhk": 1520.4,
+        "rent_for_2bhk": 1740.0,
+    }
+    return rent_predicted
+
+def ml_predict_rent(property_type: str, bedroom_count: int, bathroom_count: int, wifi_included: bool, 
+                      utility_included: bool, utility_water: bool, utility_heat: bool, 
+                      utility_electricity: bool, parking_availability: bool, pet_friendly: bool, 
+                      unit_size: int, is_furnished: bool, included_appliances: bool, 
+                      availability_status: str) -> float:
+    
+    base_rent = 700
+    rent = base_rent
+    
+    rent += bedroom_count * 100
+    rent += bathroom_count * 50
+    rent += 100 if wifi_included else 0
+    rent += 100 if utility_included else 0
+    rent += 50 if utility_water else 0
+    rent += 50 if utility_heat else 0
+    rent += 50 if utility_electricity else 0
+    rent += 75 if parking_availability else 0
+    rent += 100 if pet_friendly else 0
+    rent += unit_size * 0.6
+    rent += 150 if is_furnished else 0
+
+    if included_appliances == 1:
+        rent += 25
+
+    if availability_status == 1:
+        rent += 100
+    
+    # Ensure the rent is within the normal range
+    rent = max(900, min(8763, rent))
+    
+    return round(rent)
+
 
 
 def update_new_predictions():
