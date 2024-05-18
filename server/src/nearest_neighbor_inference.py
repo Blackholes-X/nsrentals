@@ -7,14 +7,14 @@ from src import dbutils as DU
 
 def load_pickled_files():
     os.path.dirname
-    models_dir ="./models/running_model/"
+    # models_dir ="./models/running_model/"
+    models_dir = "./models/nearest_neighbour"
     """Loads the pickled NearestNeighbors model, X_sw_prepared."""
     with open(os.path.join(models_dir, 'nearest_neighbors_model.pkl'), 'rb') as f:
         nn = pickle.load(f)
     with open(os.path.join(models_dir, 'X_sw_prepared.pkl'), 'rb') as f:
         X_sw_prepared = pickle.load(f)
 
-    
     return nn, X_sw_prepared
 
 
