@@ -1,9 +1,9 @@
 # NS-Rentals: A Revolutionary Approach to Rental Market Analysis
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Stars](https://img.shields.io/github/stars/yourusername/ns-rentals)](https://github.com/Blackholes-X/nsrentals.git/stargazers)
-[![Forks](https://img.shields.io/github/forks/yourusername/ns-rentals)](https://github.com/Blackholes-X/nsrentals.git/network/members)
-[![Contributors](https://img.shields.io/github/contributors/yourusername/ns-rentals)](https://github.com/Blackholes-X/nsrentals.gits/graphs/contributors)
+[![Stars](https://img.shields.io/github/stars/Blackholes-X/nsrentals)](https://github.com/Blackholes-X/nsrentals/stargazers)
+[![Forks](https://img.shields.io/github/forks/Blackholes-X/nsrentals)](https://github.com/Blackholes-X/nsrentals/network/members)
+[![Contributors](https://img.shields.io/github/contributors/Blackholes-X/nsrentals)](https://github.com/Blackholes-X/nsrentals/graphs/contributors)
 
 ## Introduction
 
