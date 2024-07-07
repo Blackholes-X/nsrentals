@@ -1,10 +1,9 @@
 # NS-Rentals: A Revolutionary Approach to Rental Market Analysis
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Stars](https://img.shields.io/github/stars/yourusername/ns-rentals)](https://github.com/yourusername/ns-rentals/stargazers)
-[![Forks](https://img.shields.io/github/forks/yourusername/ns-rentals)](https://github.com/yourusername/ns-rentals/network/members)
-[![Issues](https://img.shields.io/github/issues/yourusername/ns-rentals)](https://github.com/yourusername/ns-rentals/issues)
-[![Contributors](https://img.shields.io/github/contributors/yourusername/ns-rentals)](https://github.com/yourusername/ns-rentals/graphs/contributors)
+[![Stars](https://img.shields.io/github/stars/yourusername/ns-rentals)](https://github.com/Blackholes-X/nsrentals.git/stargazers)
+[![Forks](https://img.shields.io/github/forks/yourusername/ns-rentals)](https://github.com/Blackholes-X/nsrentals.git/network/members)
+[![Contributors](https://img.shields.io/github/contributors/yourusername/ns-rentals)](https://github.com/Blackholes-X/nsrentals.gits/graphs/contributors)
 
 ## Introduction
 
@@ -57,6 +56,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For any questions or feedback, please contact us at [your-email@example.com](mailto:your-email@example.com).
+For any questions or feedback, please contact us at [raoofnaushad.7@gmail.com](mailto:raoofnaushad.7@gmail.com).
 
 Thank you for using NS-Rentals! We hope this project helps you revolutionize Rental Market Analysis for your Property Management Firm.
